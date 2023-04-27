@@ -7,7 +7,6 @@
     "semantic-release": {
       "executor": "@theunderscorer/nx-semantic-release:semantic-release",
       "options": {
-        "buildTarget": "ac-realms-content:build",
         "outputPath": "dist/packages/ac-realms-content",
         "changelog": true,
         "github": true,
