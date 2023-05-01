@@ -535,8 +535,6 @@ namespace ACE.Database
             {
                 var results = context.Realm.ToList();
 
-                log.Info(context.Realm);
-
                 var pbool = context.RealmPropertiesBool.ToLookup(x => x.RealmId);
                 var pfloat = context.RealmPropertiesFloat.ToLookup(x => x.RealmId);
                 var pint = context.RealmPropertiesInt.ToLookup(x => x.RealmId);
