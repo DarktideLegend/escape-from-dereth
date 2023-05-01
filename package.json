@@ -4,18 +4,18 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "build": "pnpm clean && pnpx nx affected --target=build",
+    "build": "pnpm clean && pnpm nx affected --target=build",
     "clean": "rimraf dist",
     "commit": "pnpm format:write && git add . && git-cz",
     "commit-retry": "pnpm format:write && git add . && git-cz --retry",
     "commit-msg": "commitlint --edit",
-    "docs:write": "pnpx nx affected --target=typedoc",
-    "format:write": "pnpx nx format:write",
-    "format:check": "pnpx nx format:check",
-    "lint": "pnpx nx affected --target=lint",
+    "docs:write": "pnpm nx affected --target=typedoc",
+    "format:write": "pnpm nx format:write",
+    "format:check": "pnpm nx format:check",
+    "lint": "pnpm nx affected --target=lint",
     "prepare": "is-ci || husky install",
     "preinstall": "npx only-allow pnpm",
-    "test": "pnpm clean && pnpx nx affected --target=test --ci --code-coverage"
+    "test": "pnpm clean && pnpm nx affected --target=test --ci --code-coverage"
   },
   "dependencies": {
     "tslib": "^2.3.0"
