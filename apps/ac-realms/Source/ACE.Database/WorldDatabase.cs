@@ -535,6 +535,8 @@ namespace ACE.Database
             {
                 var results = context.Realm.ToList();
 
+                log.Info(context.Realm);
+
                 var pbool = context.RealmPropertiesBool.ToLookup(x => x.RealmId);
                 var pfloat = context.RealmPropertiesFloat.ToLookup(x => x.RealmId);
                 var pint = context.RealmPropertiesInt.ToLookup(x => x.RealmId);
@@ -574,13 +576,13 @@ namespace ACE.Database
                 using (var transaction = context.Database.BeginTransaction())
                 {
                     context.Database.ExecuteSqlCommand("DELETE FROM realm;");
-                    context.BulkInsert(realms);
-                    context.BulkInsert(propsbool);
-                    context.BulkInsert(propsint);
-                    context.BulkInsert(propsint64);
-                    context.BulkInsert(propsfloat);
-                    context.BulkInsert(propsstring);
-                    context.BulkInsert(links);
+                    context.Realm.AddRange(realms);
+                    context.RealmPropertiesBool.AddRange(propsbool);
+                    context.RealmPropertiesInt.AddRange(propsint);
+                    context.RealmPropertiesInt64.AddRange(propsint64);
+                    context.RealmPropertiesFloat.AddRange(propsfloat);
+                    context.RealmPropertiesString.AddRange(propsstring);
+                    context.RealmRulesetLinks.AddRange(links);
                     transaction.Commit();
                 }
             }
