@@ -45,7 +45,7 @@ jobs:
           npm --version
 
       - name: Format
-        run: pnpx nx format:check
+        run: pnpm nx format:check
 
       - name: Lint
         run: |
