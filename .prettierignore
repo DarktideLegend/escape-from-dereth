@@ -4,5 +4,6 @@
 /coverage
 *.md
 *.pnpm-store
+pnpm-lock.yaml
 /.github/ISSUE_TEMPLATE
 /apps/ac-realms
