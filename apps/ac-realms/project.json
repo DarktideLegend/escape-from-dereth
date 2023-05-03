@@ -60,6 +60,19 @@
             "prerelease": true
           }
         ],
+        "plugins": [
+              [
+            "semantic-release-discord-bot",
+            {
+              "packageName": "ac-realms",
+              "notifications": [
+                {
+                  "branch": "main/*"
+                }
+              ]
+            }
+          ]
+        ],
         "tagFormat": "ac-realms-v${VERSION}"
       }
     }
