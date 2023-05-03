@@ -719,15 +719,14 @@ namespace ACE.Server.Managers
 
         public static uint GetFreeInstanceID(bool isTemporaryRuleset, ushort realmId, ushort landblock)
         {
-            uint right = ((uint)landblock << 16) | 0xFFFF;
-            ulong full;
             uint iid;
+            LandblockId landblockId;
             do
             {
                 iid = GetRandomInstanceID(isTemporaryRuleset, realmId);
-                full = ((ulong)iid << 32) | right;
+                landblockId = new LandblockId(iid);
             }
-            while (LandblockManager.landblocks.);
+            while (LandblockManager.landblocks[landblockId.LandblockX, landblockId.LandblockY] != null);
             return iid;
         }
 
