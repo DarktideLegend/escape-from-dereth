@@ -24,6 +24,7 @@ using ACE.Server.Entity.Actions;
 using ACE.Server.Physics;
 using ACE.Server.Physics.Extensions;
 using ACE.Server.WorldObjects.Managers;
+using ACE.Server.Realms;
 
 namespace ACE.Server.WorldObjects
 {
@@ -1030,6 +1031,20 @@ namespace ACE.Server.WorldObjects
             return WorldObjectFactory.CreateWorldObject(weenie, new ObjectGuid(wcid)) as Portal;
         }
 
+        private List<WorldRealm> GetRealmsToApply()
+        {
+            return new List<PropertyInt>()
+            {
+                PropertyInt.SummonTargetRealm,
+                PropertyInt.SummonTargetRealm2,
+                PropertyInt.SummonTargetRealm3
+            }
+            .Select(GetProperty)
+            .Where(x => x.HasValue)
+            .Select(x => RealmManager.GetRealm((ushort)x))
+            .ToList();
+        }
+
         /// <summary>
         /// Handles casting SpellType.PortalRecall spells
         /// </summary>
@@ -1253,7 +1268,7 @@ namespace ACE.Server.WorldObjects
             if (summonLoc != null)
                 summonLoc.LandblockId = new LandblockId(summonLoc.GetCell());
 
-            var success = SummonPortal(portalId, summonLoc, spell.PortalLifetime);
+            var success = SummonPortal(portalId, summonLoc, spell.PortalLifetime, player);
 
             if (!success && player != null)
                 player.Session.Network.EnqueueSend(new GameEventWeenieError(player.Session, WeenieError.YouFailToSummonPortal));
@@ -1262,12 +1277,44 @@ namespace ACE.Server.WorldObjects
         /// <summary>
         /// Spawns a portal for SpellType.PortalSummon spells
         /// </summary>
-        protected static bool SummonPortal(uint portalId, Position location, double portalLifetime)
+        protected bool SummonPortal(uint portalId, Position location, double portalLifetime, Player summoner)
         {
             var portal = GetPortal(portalId);
 
             if (portal == null || location == null)
                 return false;
+
+
+
+            Position targetPosition = new Position(portal.Destination);
+            var summonTargetRealms = GetRealmsToApply();
+
+            bool doEphemeralInstance = false;
+            if (summonTargetRealms.Count > 0)
+                doEphemeralInstance = true;
+            if (summoner.RealmRuleset.GetProperty(RealmPropertyBool.IsDuelingRealm))
+                doEphemeralInstance = true;
+
+            if (doEphemeralInstance)
+            {
+                if (summonTargetRealms.Any(x => x == null))
+                {
+                    log.Error($"SummonTargetRealm for guid {Guid} has an invalid realm ID.");
+                    summoner.Session.Network.EnqueueSend(new GameMessageSystemChat($"Unable to summon: Realm not found.", ChatMessageType.Magic));
+                    return false;
+                }
+                if (summonTargetRealms.Any(x => x.Realm.Type != RealmType.Ruleset))
+                {
+                    log.Error($"SummonTargetRealm for guid {Guid} has invalid realm ID {summonTargetRealms.First(x => x.Realm.Type != RealmType.Ruleset).Realm.Id}. Realm must be of type 'Ruleset'");
+                    summoner.Session.Network.EnqueueSend(new GameMessageSystemChat($"Unable to summon: Invalid realm type.", ChatMessageType.Magic));
+                    return false;
+                }
+                var landblock = RealmManager.GetNewEphemeralLandblock((uint)(portal.Destination.LongLandblockID & 0xFFFFFFFF), summoner, summonTargetRealms.Select(x => x.Realm).ToList());
+                targetPosition.Instance = landblock.Instance;
+            }
+
+
+
 
             var gateway = WorldObjectFactory.CreateNewWorldObject("portalgateway") as Portal;
 
@@ -1684,7 +1731,7 @@ namespace ACE.Server.WorldObjects
         /// </summary>
         public Vector3 CalculateProjectileVelocity(Spell spell, WorldObject target, ProjectileSpellType spellType, Vector3 origin)
         {
-            var casterLoc = PhysicsObj.Position.ACEPosition();
+            var casterLoc = PhysicsObj.Position.ACEPosition(Location);
 
             var speed = GetProjectileSpeed(spell);
 
@@ -1697,7 +1744,7 @@ namespace ACE.Server.WorldObjects
                 return Vector3.Transform(Vector3.UnitY, casterLoc.Rotation) * speed;
             }
 
-            var targetLoc = target.PhysicsObj.Position.ACEPosition();
+            var targetLoc = target.PhysicsObj.Position.ACEPosition(target.Location);
 
             var strikeSpell = spellType == ProjectileSpellType.Strike;
 
@@ -1754,8 +1801,8 @@ namespace ACE.Server.WorldObjects
 
             var spellProjectiles = new List<SpellProjectile>();
 
-            var casterLoc = PhysicsObj.Position.ACEPosition();
-            var targetLoc = target?.PhysicsObj.Position.ACEPosition();
+            var casterLoc = PhysicsObj.Position.ACEPosition(Location);
+            var targetLoc = target?.PhysicsObj.Position.ACEPosition(target.Location);
 
             for (var i = 0; i < origins.Count; i++)
             {

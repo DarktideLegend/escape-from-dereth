@@ -13,6 +13,7 @@ using ACE.Server.WorldObjects;
 
 using Biota = ACE.Database.Models.Shard.Biota;
 using LandblockInstance = ACE.Database.Models.World.LandblockInstance;
+using ACE.Server.Realms;
 
 namespace ACE.Server.Factories
 {
@@ -23,8 +24,11 @@ namespace ACE.Server.Factories
         /// <summary>
         /// A new biota be created taking all of its values from weenie.
         /// </summary>
-        public static WorldObject CreateWorldObject(Weenie weenie, ObjectGuid guid)
+        public static WorldObject CreateWorldObject(Weenie weenie, ObjectGuid guid, AppliedRuleset ruleset = null)
         {
+            if (ruleset == null)
+                ruleset = RealmManager.DefaultRuleset;
+
             if (weenie == null)
                 return null;
 
@@ -46,15 +50,15 @@ namespace ACE.Server.Factories
                 case WeenieType.PKModifier:
                     return new PKModifier(weenie, guid);
                 case WeenieType.Cow:
-                    return new Cow(weenie, guid);
+                    return new Cow(weenie, guid, ruleset);
                 case WeenieType.Creature:
-                    return new Creature(weenie, guid);
+                    return new Creature(weenie, guid, ruleset);
                 case WeenieType.Container:
                     return new Container(weenie, guid);
                 case WeenieType.Scroll:
                     return new Scroll(weenie, guid);
                 case WeenieType.Vendor:
-                    return new Vendor(weenie, guid);
+                    return new Vendor(weenie, guid, ruleset);
                 case WeenieType.Coin:
                     return new Coin(weenie, guid);
                 case WeenieType.Key:
@@ -66,7 +70,7 @@ namespace ACE.Server.Factories
                 case WeenieType.Game:
                     return new Game(weenie, guid);
                 case WeenieType.GamePiece:
-                    return new GamePiece(weenie, guid);
+                    return new GamePiece(weenie, guid, ruleset);
                 case WeenieType.AllegianceBindstone:
                     return new Bindstone(weenie, guid);
                 case WeenieType.Clothing:
@@ -124,9 +128,9 @@ namespace ACE.Server.Factories
                 case WeenieType.PetDevice:
                     return new PetDevice(weenie, guid);
                 case WeenieType.Pet:
-                    return new Pet(weenie, guid);
+                    return new Pet(weenie, guid, ruleset);
                 case WeenieType.CombatPet:
-                    return new CombatPet(weenie, guid);
+                    return new CombatPet(weenie, guid, ruleset);
                 case WeenieType.Allegiance:
                     return new Allegiance(weenie, guid);
                 case WeenieType.AugmentationDevice:
@@ -271,7 +275,7 @@ namespace ACE.Server.Factories
         /// <summary>
         /// This will create a list of WorldObjects, all with new GUIDs and for every position provided.
         /// </summary>
-        public static List<WorldObject> CreateNewWorldObjects(List<LandblockInstance> sourceObjects, List<Biota> biotas, uint? restrict_wcid = null)
+        public static List<WorldObject> CreateNewWorldObjects(List<LandblockInstance> sourceObjects, List<Biota> biotas, uint? restrict_wcid, uint iid, AppliedRuleset ruleset)
         {
             var results = new List<WorldObject>();
 
@@ -282,7 +286,7 @@ namespace ACE.Server.Factories
 
                 if (weenie == null)
                 {
-                    log.Warn($"CreateNewWorldObjects: Database does not contain weenie {instance.WeenieClassId} for instance 0x{instance.Guid:X8} at {new Position(instance.ObjCellId, instance.OriginX, instance.OriginY, instance.OriginZ, instance.AnglesX, instance.AnglesY, instance.AnglesZ, instance.AnglesW).ToLOCString()}");
+                    log.Warn($"CreateNewWorldObjects: Database does not contain weenie {instance.WeenieClassId} for instance 0x{instance.Guid:X8} at {new Position(instance.ObjCellId, instance.OriginX, instance.OriginY, instance.OriginZ, instance.AnglesX, instance.AnglesY, instance.AnglesZ, instance.AnglesW, iid).ToLOCString()}");
                     continue;
                 }
 
@@ -298,7 +302,7 @@ namespace ACE.Server.Factories
                 {
                     worldObject = CreateWorldObject(weenie, guid);
 
-                    worldObject.Location = new Position(instance.ObjCellId, instance.OriginX, instance.OriginY, instance.OriginZ, instance.AnglesX, instance.AnglesY, instance.AnglesZ, instance.AnglesW);
+                    worldObject.Location = new Position(instance.ObjCellId, instance.OriginX, instance.OriginY, instance.OriginZ, instance.AnglesX, instance.AnglesY, instance.AnglesZ, instance.AnglesW, iid);
                 }
                 else
                 {
@@ -307,7 +311,7 @@ namespace ACE.Server.Factories
                     if (worldObject.Location == null)
                     {
                         log.Warn($"CreateNewWorldObjects: {worldObject.Name} (0x{worldObject.Guid}) Location was null. CreationTimestamp = {worldObject.CreationTimestamp} ({Common.Time.GetDateTimeFromTimestamp(worldObject.CreationTimestamp ?? 0).ToLocalTime()}) | Location restored from world db instance.");
-                        worldObject.Location = new Position(instance.ObjCellId, instance.OriginX, instance.OriginY, instance.OriginZ, instance.AnglesX, instance.AnglesY, instance.AnglesZ, instance.AnglesW);
+                        worldObject.Location = new Position(instance.ObjCellId, instance.OriginX, instance.OriginY, instance.OriginZ, instance.AnglesX, instance.AnglesY, instance.AnglesZ, instance.AnglesW, iid);
                     }
                 }
 
@@ -349,11 +353,11 @@ namespace ACE.Server.Factories
         /// <summary>
         /// This will create a new WorldObject with a new GUID.
         /// </summary>
-        public static WorldObject CreateNewWorldObject(Weenie weenie)
+        public static WorldObject CreateNewWorldObject(Weenie weenie, AppliedRuleset ruleset)
         {
             var guid = GuidManager.NewDynamicGuid();
 
-            var worldObject = CreateWorldObject(weenie, guid);
+            var worldObject = CreateWorldObject(weenie, guid, ruleset);
 
             if (worldObject == null)
                 GuidManager.RecycleDynamicGuid(guid);
@@ -365,14 +369,14 @@ namespace ACE.Server.Factories
         /// This will create a new WorldObject with a new GUID.
         /// It will return null if weenieClassId was not found.
         /// </summary>
-        public static WorldObject CreateNewWorldObject(uint weenieClassId)
+        public static WorldObject CreateNewWorldObject(uint weenieClassId, AppliedRuleset ruleset = null)
         {
             var weenie = DatabaseManager.World.GetCachedWeenie(weenieClassId);
 
             if (weenie == null)
                 return null;
 
-            return CreateNewWorldObject(weenie);
+            return CreateNewWorldObject(weenie, ruleset);
         }
 
         /// <summary>

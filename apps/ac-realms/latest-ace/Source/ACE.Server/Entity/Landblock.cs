@@ -213,7 +213,7 @@ namespace ACE.Server.Entity
         {
             var objects = DatabaseManager.World.GetCachedInstancesByLandblock(Id.Landblock);
             var shardObjects = DatabaseManager.Shard.BaseDatabase.GetStaticObjectsByLandblock(Id.Landblock);
-            var factoryObjects = WorldObjectFactory.CreateNewWorldObjects(objects, shardObjects);
+            var factoryObjects = WorldObjectFactory.CreateNewWorldObjects(objects, shardObjects, null, Instance, RealmRuleset);
 
             actionQueue.EnqueueAction(new ActionEventDelegate(() =>
             {
@@ -297,7 +297,7 @@ namespace ACE.Server.Entity
 
                     pos.Frame.Origin.Z = PhysicsLandblock.GetZ(pos.Frame.Origin);
 
-                    wo.Location = new Position(pos.ObjCellID, pos.Frame.Origin, pos.Frame.Orientation);
+                    wo.Location = new Position(pos.ObjCellID, pos.Frame.Origin, pos.Frame.Orientation, Instance);
 
                     var sortCell = LScape.get_landcell(pos.ObjCellID) as SortCell;
                     if (sortCell != null && sortCell.has_building())
@@ -387,7 +387,7 @@ namespace ACE.Server.Entity
                 var weenie = DatabaseManager.World.GetCachedWeenie(obj.WeenieClassId);
                 WeenieMeshes.Add(
                     new ModelMesh(weenie.GetProperty(PropertyDataId.Setup) ?? 0,
-                    new DatLoader.Entity.Frame(new Position(obj.ObjCellId, obj.OriginX, obj.OriginY, obj.OriginZ, obj.AnglesX, obj.AnglesY, obj.AnglesZ, obj.AnglesW))));
+                    new DatLoader.Entity.Frame(new Position(obj.ObjCellId, obj.OriginX, obj.OriginY, obj.OriginZ, obj.AnglesX, obj.AnglesY, obj.AnglesZ, obj.AnglesW, this.Instance))));
             }
         }
 
@@ -859,6 +859,8 @@ namespace ACE.Server.Entity
             }
 
             wo.CurrentLandblock = this;
+
+            wo.Location.Instance = Instance;
 
             if (wo.PhysicsObj == null)
                 wo.InitPhysicsObj();

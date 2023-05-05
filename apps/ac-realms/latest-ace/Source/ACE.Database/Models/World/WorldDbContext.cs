@@ -411,6 +411,244 @@ namespace ACE.Database.Models.World
                     .HasComment("Unique Name of Quest");
             });
 
+            modelBuilder.Entity<Realm>(entity =>
+            {
+                entity.ToTable("realm");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasColumnName("name")
+                    .HasColumnType("text");
+
+                entity.Property(e => e.ParentRealmId).HasColumnName("parent_realm_id");
+
+                entity.Property(e => e.PropertyCountRandomized).HasColumnName("property_count_randomized");
+
+                entity.Property(e => e.Type).HasColumnName("type");
+            });
+
+            modelBuilder.Entity<RealmPropertiesBool>(entity =>
+            {
+                entity.HasKey(e => new { e.RealmId, e.Type })
+                    .HasName("PRIMARY");
+
+                entity.ToTable("realm_properties_bool");
+
+                entity.HasIndex(e => e.Type)
+                    .HasName("idx_type");
+
+                entity.Property(e => e.RealmId)
+                    .HasColumnName("realm_Id")
+                    .HasDefaultValueSql("'0'");
+
+                entity.Property(e => e.Type)
+                    .HasColumnName("type")
+                    .HasDefaultValueSql("'0'");
+
+                entity.Property(e => e.Locked)
+                    .HasColumnName("locked")
+                    .HasColumnType("bit(1)");
+
+                entity.Property(e => e.Probability).HasColumnName("probability");
+
+                entity.Property(e => e.Value)
+                    .HasColumnName("value")
+                    .HasColumnType("bit(1)");
+
+                entity.HasOne(d => d.Realm)
+                    .WithMany(p => p.RealmPropertiesBool)
+                    .HasForeignKey(d => d.RealmId)
+                    .HasConstraintName("realm_bool");
+            });
+
+            modelBuilder.Entity<RealmPropertiesFloat>(entity =>
+            {
+                entity.HasKey(e => new { e.RealmId, e.Type })
+                    .HasName("PRIMARY");
+
+                entity.ToTable("realm_properties_float");
+
+                entity.HasIndex(e => e.Type)
+                    .HasName("idx_type");
+
+                entity.Property(e => e.RealmId)
+                    .HasColumnName("realm_Id")
+                    .HasDefaultValueSql("'0'");
+
+                entity.Property(e => e.Type)
+                    .HasColumnName("type")
+                    .HasDefaultValueSql("'0'");
+
+                entity.Property(e => e.CompositionType).HasColumnName("composition_type");
+
+                entity.Property(e => e.Locked)
+                    .HasColumnName("locked")
+                    .HasColumnType("bit(1)");
+
+                entity.Property(e => e.Probability).HasColumnName("probability");
+
+                entity.Property(e => e.RandomHighRange).HasColumnName("random_high_range");
+
+                entity.Property(e => e.RandomLowRange).HasColumnName("random_low_range");
+
+                entity.Property(e => e.RandomType).HasColumnName("random_type");
+
+                entity.Property(e => e.Value).HasColumnName("value");
+
+                entity.HasOne(d => d.Realm)
+                    .WithMany(p => p.RealmPropertiesFloat)
+                    .HasForeignKey(d => d.RealmId)
+                    .HasConstraintName("realm_float");
+            });
+
+            modelBuilder.Entity<RealmPropertiesInt>(entity =>
+            {
+                entity.HasKey(e => new { e.RealmId, e.Type })
+                    .HasName("PRIMARY");
+
+                entity.ToTable("realm_properties_int");
+
+                entity.HasIndex(e => e.Type)
+                    .HasName("idx_type");
+
+                entity.Property(e => e.RealmId)
+                    .HasColumnName("realm_Id")
+                    .HasDefaultValueSql("'0'");
+
+                entity.Property(e => e.Type)
+                    .HasColumnName("type")
+                    .HasDefaultValueSql("'0'");
+
+                entity.Property(e => e.CompositionType).HasColumnName("composition_type");
+
+                entity.Property(e => e.Locked)
+                    .HasColumnName("locked")
+                    .HasColumnType("bit(1)");
+
+                entity.Property(e => e.Probability).HasColumnName("probability");
+
+                entity.Property(e => e.RandomHighRange).HasColumnName("random_high_range");
+
+                entity.Property(e => e.RandomLowRange).HasColumnName("random_low_range");
+
+                entity.Property(e => e.RandomType).HasColumnName("random_type");
+
+                entity.Property(e => e.Value).HasColumnName("value");
+
+                entity.HasOne(d => d.Realm)
+                    .WithMany(p => p.RealmPropertiesInt)
+                    .HasForeignKey(d => d.RealmId)
+                    .HasConstraintName("realm_int");
+            });
+
+            modelBuilder.Entity<RealmPropertiesInt64>(entity =>
+            {
+                entity.HasKey(e => new { e.RealmId, e.Type })
+                    .HasName("PRIMARY");
+
+                entity.ToTable("realm_properties_int64");
+
+                entity.Property(e => e.RealmId)
+                    .HasColumnName("realm_Id")
+                    .HasDefaultValueSql("'0'");
+
+                entity.Property(e => e.Type)
+                    .HasColumnName("type")
+                    .HasDefaultValueSql("'0'");
+
+                entity.Property(e => e.CompositionType).HasColumnName("composition_type");
+
+                entity.Property(e => e.Locked)
+                    .HasColumnName("locked")
+                    .HasColumnType("bit(1)");
+
+                entity.Property(e => e.Probability).HasColumnName("probability");
+
+                entity.Property(e => e.RandomHighRange).HasColumnName("random_high_range");
+
+                entity.Property(e => e.RandomLowRange).HasColumnName("random_low_range");
+
+                entity.Property(e => e.RandomType).HasColumnName("random_type");
+
+                entity.Property(e => e.Value).HasColumnName("value");
+
+                entity.HasOne(d => d.Realm)
+                    .WithMany(p => p.RealmPropertiesInt64)
+                    .HasForeignKey(d => d.RealmId)
+                    .HasConstraintName("realm_int64");
+            });
+
+            modelBuilder.Entity<RealmPropertiesString>(entity =>
+            {
+                entity.HasKey(e => new { e.RealmId, e.Type })
+                    .HasName("PRIMARY");
+
+                entity.ToTable("realm_properties_string");
+
+                entity.HasIndex(e => e.Type)
+                    .HasName("idx_type");
+
+                entity.Property(e => e.RealmId)
+                    .HasColumnName("realm_Id")
+                    .HasDefaultValueSql("'0'");
+
+                entity.Property(e => e.Type)
+                    .HasColumnName("type")
+                    .HasDefaultValueSql("'0'");
+
+                entity.Property(e => e.Locked)
+                    .HasColumnName("locked")
+                    .HasColumnType("bit(1)");
+
+                entity.Property(e => e.Probability).HasColumnName("probability");
+
+                entity.Property(e => e.Value)
+                    .IsRequired()
+                    .HasColumnName("value")
+                    .HasColumnType("text");
+
+                entity.HasOne(d => d.Realm)
+                    .WithMany(p => p.RealmPropertiesString)
+                    .HasForeignKey(d => d.RealmId)
+                    .HasConstraintName("realm_string");
+            });
+
+            modelBuilder.Entity<RealmRulesetLinks>(entity =>
+            {
+                entity.HasKey(e => new { e.RealmId, e.Order })
+                    .HasName("PRIMARY");
+
+                entity.ToTable("realm_ruleset_links");
+
+                entity.HasIndex(e => e.LinkedRealmId)
+                    .HasName("realm_link_child");
+
+                entity.Property(e => e.RealmId).HasColumnName("realm_id");
+
+                entity.Property(e => e.Order).HasColumnName("order");
+
+                entity.Property(e => e.LinkType).HasColumnName("link_type");
+
+                entity.Property(e => e.LinkedRealmId).HasColumnName("linked_realm_id");
+
+                entity.Property(e => e.Probability).HasColumnName("probability");
+
+                entity.Property(e => e.ProbabilityGroup).HasColumnName("probability_group");
+
+                entity.HasOne(d => d.LinkedRealm)
+                    .WithMany(p => p.RealmRulesetLinksLinkedRealm)
+                    .HasForeignKey(d => d.LinkedRealmId)
+                    .HasConstraintName("realm_link_child");
+
+                entity.HasOne(d => d.Realm)
+                    .WithMany(p => p.RealmRulesetLinksRealm)
+                    .HasForeignKey(d => d.RealmId)
+                    .HasConstraintName("realm_link_parent");
+            });
+
+
             modelBuilder.Entity<Recipe>(entity =>
             {
                 entity.ToTable("recipe");
