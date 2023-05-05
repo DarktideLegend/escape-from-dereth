@@ -209,7 +209,7 @@ namespace ACE.Server.WorldObjects
             location.Frame.Origin = Location.Pos;
             location.Frame.Orientation = Location.Rotation;
 
-            var success = PhysicsObj.enter_world(location);
+            var success = PhysicsObj.enter_world(location, Location.Instance);
 
             if (!success || PhysicsObj.CurCell == null)
             {
@@ -730,7 +730,10 @@ namespace ACE.Server.WorldObjects
                 ApplyVisualEffects(PlayScript.Create);
 
             if (Generator != null)
+            {
+                Location.Instance = Generator.Location.Instance;
                 OnGeneration(Generator);
+            }
 
             //Console.WriteLine($"{Name}.EnterWorld()");
 

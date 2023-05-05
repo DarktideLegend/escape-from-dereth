@@ -941,7 +941,7 @@ namespace ACE.Server.Command.Handlers
                     positionData[i] = position;
                 }
 
-                session.Player.Teleport(new Position(cell, positionData[0], positionData[1], positionData[2], positionData[4], positionData[5], positionData[6], positionData[3]));
+                session.Player.Teleport(new Position(cell, positionData[0], positionData[1], positionData[2], positionData[4], positionData[5], positionData[6], positionData[3], session.Player.Location.Instance));
             }
             catch (Exception)
             {
@@ -2418,7 +2418,7 @@ namespace ACE.Server.Command.Handlers
         /// </summary>
         private static WorldObject CreateObjectForCommand(Session session, Weenie weenie)
         {
-            var obj = WorldObjectFactory.CreateNewWorldObject(weenie);
+            var obj = WorldObjectFactory.CreateNewWorldObject(weenie, session.Player.RealmRuleset);
 
             //if (obj.TimeToRot == null)
                 //obj.TimeToRot = double.MaxValue;
@@ -3442,7 +3442,7 @@ namespace ACE.Server.Command.Handlers
 
             var guid = GuidManager.NewPlayerGuid();
 
-            var player = new Player(weenie, guid, session.AccountId);
+            var player = new Player(weenie, guid, session.AccountId, RealmManager.DefaultRuleset);
 
             player.Biota.WeenieType = session.Player.WeenieType;
 
@@ -3479,7 +3479,7 @@ namespace ACE.Server.Command.Handlers
                         if (weenieOfWearable == null)
                             continue;
 
-                        var worldObject = WorldObjectFactory.CreateNewWorldObject(weenieOfWearable);
+                        var worldObject = WorldObjectFactory.CreateNewWorldObject(weenieOfWearable, session.Player.RealmRuleset);
 
                         if (worldObject == null)
                             continue;
@@ -3503,7 +3503,7 @@ namespace ACE.Server.Command.Handlers
                         if (weenieOfWearable == null)
                             continue;
 
-                        var worldObject = WorldObjectFactory.CreateNewWorldObject(weenieOfWearable);
+                        var worldObject = WorldObjectFactory.CreateNewWorldObject(weenieOfWearable, session.Player.RealmRuleset);
 
                         if (worldObject == null)
                             continue;
@@ -4712,7 +4712,7 @@ namespace ACE.Server.Command.Handlers
             }
             session.Network.EnqueueSend(new GameMessageSystemChat($"Moving {obj.Name} ({obj.Guid}) to current location", ChatMessageType.Broadcast));
 
-            obj.Location = obj.PhysicsObj.Position.ACEPosition();
+            obj.Location = obj.PhysicsObj.Position.ACEPosition(newLoc);
 
             if (prevLoc.Landblock != obj.Location.Landblock)
             {

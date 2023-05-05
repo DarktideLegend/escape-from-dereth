@@ -445,7 +445,7 @@ namespace ACE.Server.WorldObjects
 
             var cachedWeenie = DatabaseManager.World.GetCachedWeenie("corpse");
 
-            var corpse = WorldObjectFactory.CreateNewWorldObject(cachedWeenie) as Corpse;
+            var corpse = WorldObjectFactory.CreateNewWorldObject(cachedWeenie, RealmRuleset) as Corpse;
 
             var prefix = "Corpse";
 
@@ -488,9 +488,29 @@ namespace ACE.Server.WorldObjects
                 corpse.Biota.PropertiesTextureMap = objDesc.TextureChanges.Clone(corpse.BiotaDatabaseLock);
             }
 
-            // use the physics location for accuracy,
-            // especially while jumping
-            corpse.Location = PhysicsObj.Position.ACEPosition();
+            var player = this as Player;
+            bool atHideout = false;
+            if (player?.HomeRealm != null &&
+                player.Location.RealmID != player.HomeRealm &&
+                RealmManager.GetRealm(player.HomeRealm).StandardRules.GetProperty(RealmPropertyBool.HideoutEnabled))
+            {
+                atHideout = true;
+                var loc = player.HideoutLocation;
+                //Randomize the location of the corpse within a small square
+                loc = new Position(loc.ObjCellID,
+                    loc.Pos.X + (float)Common.ThreadSafeRandom.Next(-2f, 2f),
+                    loc.Pos.Y + (float)Common.ThreadSafeRandom.Next(-2f, 2f),
+                    loc.Pos.Z, loc.Rotation.X, loc.Rotation.Y, loc.Rotation.Z, loc.Rotation.W, loc.Instance);
+                var rads = (float)Common.ThreadSafeRandom.Next(0.0f, (float)Math.PI * 2.0f);
+                loc.Rotation = System.Numerics.Quaternion.CreateFromAxisAngle(System.Numerics.Vector3.UnitZ, rads);
+
+                corpse.Location = loc;
+            } else
+            {
+                // use the physics location for accuracy,
+                // especially while jumping
+                corpse.Location = PhysicsObj.Position.ACEPosition(Location);
+            }
 
             corpse.VictimId = Guid.Full;
             corpse.Name = $"{prefix} of {Name}";
@@ -518,8 +538,6 @@ namespace ACE.Server.WorldObjects
             corpse.LongDesc = $"Killed by {killerName}.";
 
             bool saveCorpse = false;
-
-            var player = this as Player;
 
             if (player != null)
             {

@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Numerics;
 using ACE.Entity.Enum;
@@ -7,6 +8,8 @@ namespace ACE.Entity
 {
     public class Position
     {
+        public uint ObjCellID { get; set; }
+
         private LandblockId landblockId;
 
         public LandblockId LandblockId
@@ -29,6 +32,9 @@ namespace ACE.Entity
         public uint GlobalCellY { get => LandblockY * 8 + CellY; }
 
         public uint Instance;
+
+        public ulong LongObjCellID => (ulong)Instance << 32 | Cell;
+        public ulong LongLandblockID => ((ulong)Instance << 32 | ObjCellID) | 0xFFFF;
 
         public Vector3 Pos
         {
@@ -129,10 +135,10 @@ namespace ACE.Entity
             if (rotate180)
             {
                 var rotate = new Quaternion(0, 0, qz, qw) * Quaternion.CreateFromYawPitchRoll(0, 0, (float)Math.PI);
-                return new Position(LandblockId.Raw, PositionX + dx, PositionY + dy, PositionZ + bumpHeight, 0f, 0f, rotate.Z, rotate.W);
+                return new Position(LandblockId.Raw, PositionX + dx, PositionY + dy, PositionZ + bumpHeight, 0f, 0f, rotate.Z, rotate.W, Instance);
             }
             else
-                return new Position(LandblockId.Raw, PositionX + dx, PositionY + dy, PositionZ + bumpHeight, 0f, 0f, qz, qw);
+                return new Position(LandblockId.Raw, PositionX + dx, PositionY + dy, PositionZ + bumpHeight, 0f, 0f, qz, qw, Instance);
         }
 
         /// <summary>
@@ -235,11 +241,15 @@ namespace ACE.Entity
             LandblockId = new LandblockId(pos.LandblockId.Raw);
             Pos = pos.Pos;
             Rotation = pos.Rotation;
+
+            Instance = pos.Instance;
         }
 
-        public Position(uint blockCellID, float newPositionX, float newPositionY, float newPositionZ, float newRotationX, float newRotationY, float newRotationZ, float newRotationW, bool relativePos = false)
+        public Position(uint blockCellID, float newPositionX, float newPositionY, float newPositionZ, float newRotationX, float newRotationY, float newRotationZ, float newRotationW, uint instance, bool relativePos = false)
         {
             LandblockId = new LandblockId(blockCellID);
+
+            Instance = instance;
 
             if (!relativePos)
             {
@@ -270,12 +280,13 @@ namespace ACE.Entity
                 SetPosition(Pos);
         }
 
-        public Position(uint blockCellID, Vector3 position, Quaternion rotation)
+        public Position(uint blockCellID, Vector3 position, Quaternion rotation, uint instance)
         {
             LandblockId = new LandblockId(blockCellID);
 
             Pos = position;
             Rotation = rotation;
+            Instance = instance;
 
             if ((blockCellID & 0xFFFF) == 0)
                 SetPosition(Pos);
@@ -533,7 +544,7 @@ namespace ACE.Entity
 
         public string ToLOCString()
         {
-            return $"0x{LandblockId.Raw:X8} [{PositionX:F6} {PositionY:F6} {PositionZ:F6}] {RotationW:F6} {RotationX:F6} {RotationY:F6} {RotationZ:F6}";
+            return $"0x{LandblockId.Raw:X8} [{PositionX:F6} {PositionY:F6} {PositionZ:F6}] {RotationW:F6} {RotationX:F6} {RotationY:F6} {RotationZ:F6} {Instance}";
         }
 
         public static readonly int BlockLength = 192;
@@ -568,5 +579,6 @@ namespace ACE.Entity
         {
             Instance = InstanceIDFromVars(newRealmId, 0, false);
         }
+
     }
 }

@@ -39,7 +39,7 @@ namespace ACE.Server.Factories
             else if (weenieType == WeenieType.Sentinel)
                 player = new Sentinel(weenie, guid, accountId);
             else
-                player = new Player(weenie, guid, accountId);
+                player = new Player(weenie, guid, accountId, RealmManager.DefaultRuleset);
 
             player.SetProperty(PropertyInt.HeritageGroup, (int)characterCreateInfo.Heritage);
             player.SetProperty(PropertyString.HeritageGroup, heritageGroup.Name);
@@ -104,26 +104,26 @@ namespace ACE.Server.Factories
             {
                 if (characterCreateInfo.Appearance.HeadgearStyle < uint.MaxValue) // No headgear is max UINT
                 {
-                    var hat = GetClothingObject(sex.GetHeadgearWeenie(characterCreateInfo.Appearance.HeadgearStyle), characterCreateInfo.Appearance.HeadgearColor, characterCreateInfo.Appearance.HeadgearHue);
+                    var hat = GetClothingObject(sex.GetHeadgearWeenie(characterCreateInfo.Appearance.HeadgearStyle), characterCreateInfo.Appearance.HeadgearColor, characterCreateInfo.Appearance.HeadgearHue, RealmManager.DefaultRuleset);
                     if (hat != null)
                         player.TryEquipObject(hat, hat.ValidLocations ?? 0);
                     else
                         player.TryAddToInventory(CreateIOU(sex.GetHeadgearWeenie(characterCreateInfo.Appearance.HeadgearStyle)));
                 }
 
-                var shirt = GetClothingObject(sex.GetShirtWeenie(characterCreateInfo.Appearance.ShirtStyle), characterCreateInfo.Appearance.ShirtColor, characterCreateInfo.Appearance.ShirtHue);
+                var shirt = GetClothingObject(sex.GetShirtWeenie(characterCreateInfo.Appearance.ShirtStyle), characterCreateInfo.Appearance.ShirtColor, characterCreateInfo.Appearance.ShirtHue, RealmManager.DefaultRuleset);
                 if (shirt != null)
                     player.TryEquipObject(shirt, shirt.ValidLocations ?? 0);
                 else
                     player.TryAddToInventory(CreateIOU(sex.GetShirtWeenie(characterCreateInfo.Appearance.ShirtStyle)));
 
-                var pants = GetClothingObject(sex.GetPantsWeenie(characterCreateInfo.Appearance.PantsStyle), characterCreateInfo.Appearance.PantsColor, characterCreateInfo.Appearance.PantsHue);
+                var pants = GetClothingObject(sex.GetPantsWeenie(characterCreateInfo.Appearance.PantsStyle), characterCreateInfo.Appearance.PantsColor, characterCreateInfo.Appearance.PantsHue, RealmManager.DefaultRuleset);
                 if (pants != null)
                     player.TryEquipObject(pants, pants.ValidLocations ?? 0);
                 else
                     player.TryAddToInventory(CreateIOU(sex.GetPantsWeenie(characterCreateInfo.Appearance.PantsStyle)));
 
-                var shoes = GetClothingObject(sex.GetFootwearWeenie(characterCreateInfo.Appearance.FootwearStyle), characterCreateInfo.Appearance.FootwearColor, characterCreateInfo.Appearance.FootwearHue);
+                var shoes = GetClothingObject(sex.GetFootwearWeenie(characterCreateInfo.Appearance.FootwearStyle), characterCreateInfo.Appearance.FootwearColor, characterCreateInfo.Appearance.FootwearHue, RealmManager.DefaultRuleset);
                 if (shoes != null)
                     player.TryEquipObject(shoes, shoes.ValidLocations ?? 0);
                 else
@@ -356,9 +356,9 @@ namespace ACE.Server.Factories
 
             player.Location = new Position(starterArea.Locations[0].ObjCellID,
                 starterArea.Locations[0].Frame.Origin.X, starterArea.Locations[0].Frame.Origin.Y, starterArea.Locations[0].Frame.Origin.Z,
-                starterArea.Locations[0].Frame.Orientation.X, starterArea.Locations[0].Frame.Orientation.Y, starterArea.Locations[0].Frame.Orientation.Z, starterArea.Locations[0].Frame.Orientation.W);
+                starterArea.Locations[0].Frame.Orientation.X, starterArea.Locations[0].Frame.Orientation.Y, starterArea.Locations[0].Frame.Orientation.Z, starterArea.Locations[0].Frame.Orientation.W, 0);
 
-            var instantiation = new Position(0xA9B40019, 84, 7.1f, 94, 0, 0, -0.0784591f, 0.996917f); // ultimate fallback.
+            var instantiation = new Position(0xA9B40019, 84, 7.1f, 94, 0, 0, -0.0784591f, 0.996917f, 0); // ultimate fallback.
             var spellFreeRide = new Database.Models.World.Spell();
             switch (starterArea.Name)
             {
@@ -381,7 +381,7 @@ namespace ACE.Server.Factories
                     break;
             }
             if (spellFreeRide != null && spellFreeRide.Name != "")
-                instantiation = new Position(spellFreeRide.PositionObjCellId.Value, spellFreeRide.PositionOriginX.Value, spellFreeRide.PositionOriginY.Value, spellFreeRide.PositionOriginZ.Value, spellFreeRide.PositionAnglesX.Value, spellFreeRide.PositionAnglesY.Value, spellFreeRide.PositionAnglesZ.Value, spellFreeRide.PositionAnglesW.Value);
+                instantiation = new Position(spellFreeRide.PositionObjCellId.Value, spellFreeRide.PositionOriginX.Value, spellFreeRide.PositionOriginY.Value, spellFreeRide.PositionOriginZ.Value, spellFreeRide.PositionAnglesX.Value, spellFreeRide.PositionAnglesY.Value, spellFreeRide.PositionAnglesZ.Value, spellFreeRide.PositionAnglesW.Value, 0);
 
             player.Instantiation = new Position(instantiation);
 
@@ -414,14 +414,14 @@ namespace ACE.Server.Factories
             return CreateResult.Success;
         }
 
-        private static WorldObject GetClothingObject(uint weenieClassId, uint palette, double shade)
+        private static WorldObject GetClothingObject(uint weenieClassId, uint palette, double shade, Realms.AppliedRuleset ruleset)
         {
             var weenie = DatabaseManager.World.GetCachedWeenie(weenieClassId);
 
             if (weenie == null)
                 return null;
 
-            var worldObject = (Clothing)WorldObjectFactory.CreateNewWorldObject(weenie);
+            var worldObject = (Clothing)WorldObjectFactory.CreateNewWorldObject(weenie, ruleset);
 
             worldObject.SetProperties((int)palette, shade);
 

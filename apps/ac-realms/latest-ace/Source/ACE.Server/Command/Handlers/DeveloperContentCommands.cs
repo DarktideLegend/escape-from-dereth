@@ -1777,7 +1777,7 @@ namespace ACE.Server.Command.Handlers.Processors
 
             newPos.Frame.Origin.Z = session.Player.CurrentLandblock.PhysicsLandblock.GetZ(newPos.Frame.Origin);
 
-            wo.Location = new Position(newPos.ObjCellID, newPos.Frame.Origin, newPos.Frame.Orientation);
+            wo.Location = new Position(newPos.ObjCellID, newPos.Frame.Origin, newPos.Frame.Orientation, pos.Instance);
 
             var sortCell = Physics.Common.LScape.get_landcell(newPos.ObjCellID) as Physics.Common.SortCell;
             if (sortCell != null && sortCell.has_building())
@@ -2794,7 +2794,7 @@ namespace ACE.Server.Command.Handlers.Processors
                 {
                     //session.Network.EnqueueSend(new GameMessageSystemChat($"Moving {obj.Name} ({obj.Guid}) to home position: {obj.Location} to {instance.ObjCellId:X8} [{instance.OriginX} {instance.OriginY} {instance.OriginZ}]", ChatMessageType.Broadcast));
 
-                    var homePos = new Position(instance.ObjCellId, instance.OriginX, instance.OriginY, instance.OriginZ, instance.AnglesX, instance.AnglesY, instance.AnglesZ, instance.AnglesW);
+                    var homePos = new Position(instance.ObjCellId, instance.OriginX, instance.OriginY, instance.OriginZ, instance.AnglesX, instance.AnglesY, instance.AnglesZ, instance.AnglesW, session.Player.Location.Instance);
 
                     // slide?
                     var setPos = new Physics.Common.SetPosition(homePos.PhysPosition(), Physics.Common.SetPositionFlags.Teleport /* | Physics.Common.SetPositionFlags.Slide*/);
@@ -2813,7 +2813,7 @@ namespace ACE.Server.Command.Handlers.Processors
 
                 var transit = obj.PhysicsObj.transition(obj.PhysicsObj.Position, newPos, true);
 
-                var errorMsg = $"{obj.Name} ({obj.Guid}) failed to move from {obj.PhysicsObj.Position.ACEPosition()} to {newPos.ACEPosition()}";
+                var errorMsg = $"{obj.Name} ({obj.Guid}) failed to move from {obj.PhysicsObj.Position.ACEPosition(obj.Location)} to {newPos.ACEPosition(obj.Location)}";
 
                 if (transit == null)
                 {
@@ -2833,7 +2833,7 @@ namespace ACE.Server.Command.Handlers.Processors
 
             // update ace location
             var prevLoc = new Position(obj.Location);
-            obj.Location = obj.PhysicsObj.Position.ACEPosition();
+            obj.Location = obj.PhysicsObj.Position.ACEPosition(obj.Location);
 
             if (prevLoc.Landblock != obj.Location.Landblock)
                 LandblockManager.RelocateObjectForPhysics(obj, true);
