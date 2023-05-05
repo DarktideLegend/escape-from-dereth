@@ -97,7 +97,7 @@ namespace ACE.Server.WorldObjects
             proj.ProjectileLauncher = weapon;
             proj.ProjectileAmmo = ammo;
 
-            proj.Location = new Position(Location);
+            proj.Location = new Position(Location.Cell, origin, orientation, Location.Instance);
             proj.Location.Pos = origin;
             proj.Location.Rotation = orientation;
 
@@ -253,8 +253,8 @@ namespace ACE.Server.WorldObjects
 
         public Vector3 CalculateProjectileVelocity(Vector3 localOrigin, WorldObject target, float projectileSpeed, out Vector3 origin, out Quaternion rotation)
         {
-            var sourceLoc = PhysicsObj.Position.ACEPosition();
-            var targetLoc = target.PhysicsObj.Position.ACEPosition();
+            var sourceLoc = PhysicsObj.Position.ACEPosition(Location);
+            var targetLoc = target.PhysicsObj.Position.ACEPosition(target.Location);
 
             var crossLandblock = sourceLoc.Landblock != targetLoc.Landblock;
 

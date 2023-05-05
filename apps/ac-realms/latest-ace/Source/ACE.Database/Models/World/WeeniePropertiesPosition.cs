@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 #nullable disable
@@ -18,6 +18,8 @@ namespace ACE.Database.Models.World
         public float AnglesX { get; set; }
         public float AnglesY { get; set; }
         public float AnglesZ { get; set; }
+        public uint? Instance { get; set; }
+
 
         public virtual Weenie Object { get; set; }
     }

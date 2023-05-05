@@ -12,6 +12,7 @@ using ACE.Server.Physics.Util;
 using ACE.Server.WorldObjects;
 
 using Position = ACE.Entity.Position;
+using ACE.Server.Managers;
 
 namespace ACE.Server.Entity
 {
@@ -48,6 +49,7 @@ namespace ACE.Server.Entity
             if (p.Indoors)
             {
                 var iPos = new Position();
+                iPos.Instance = p.Instance;
                 iPos.LandblockId = p.LandblockId;
                 iPos.Pos = new Vector3(pos.X, pos.Y, pos.Z);
                 iPos.Rotation = p.Rotation;
@@ -64,6 +66,7 @@ namespace ACE.Server.Entity
             var landblockID = blockX << 24 | blockY << 16 | 0xFFFF;
 
             var position = new Position();
+            position.Instance = p.Instance;
             position.LandblockId = new LandblockId((byte)blockX, (byte)blockY);
             position.PositionX = localX;
             position.PositionY = localY;
@@ -71,6 +74,11 @@ namespace ACE.Server.Entity
             position.Rotation = p.Rotation;
             position.LandblockId = new LandblockId(GetCell(position));
             return position;
+        }
+
+        public static Landblock TryGetLandblock(this Position p)
+        {
+            return LandblockManager.TryGetLandblock(p.LandblockId);
         }
 
         /// <summary>
@@ -315,9 +323,11 @@ namespace ACE.Server.Entity
             return HouseCell.HouseCells.ContainsKey(cell);
         }
 
-        public static Position ACEPosition(this Physics.Common.Position pos)
+        public static Position ACEPosition(this Physics.Common.Position pos, Position source)
         {
-            return new Position(pos.ObjCellID, pos.Frame.Origin, pos.Frame.Orientation);
+            var newPos = new Position(pos.ObjCellID, pos.Frame.Origin, pos.Frame.Orientation, source.Instance);
+            newPos.Instance = source.Instance;
+            return newPos;
         }
 
         public static Physics.Common.Position PhysPosition(this Position pos)

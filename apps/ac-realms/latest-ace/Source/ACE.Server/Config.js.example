@@ -214,7 +214,7 @@
         // this process will still use ./content by default, or the the config_properties_string
         // value for 'content_folder' if it exists
         // example: [ "c:\\mycontent", "c:\\ftproot\\editor1content", "c:\\ftproot\\editor2content" ]
-        "worldcustomizationaddedpaths": [],
+        "worldcustomizationaddedpaths": [ "C:\\Users\\node_\\projects\\escape-from-dereth\\packages\\content\\ac-realms-content" ],
 
         // when retrieving a file list of .sql files in the autoapplyworldcustomizations process
         // this will cause the file search to retrieve all files recursively from each directory

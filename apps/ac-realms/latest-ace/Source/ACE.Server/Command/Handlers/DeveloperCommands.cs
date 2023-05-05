@@ -671,7 +671,7 @@ namespace ACE.Server.Command.Handlers
                 positionData[i] = position;
             }
 
-            session.Player.Teleport(new Position(cell, positionData[0], positionData[1], positionData[2], positionData[3], positionData[4], positionData[5], positionData[6]));
+            session.Player.Teleport(new Position(cell, positionData[0], positionData[1], positionData[2], positionData[3], positionData[4], positionData[5], positionData[6], session.Player.Location.Instance));
         }
 
         /// <summary>
@@ -2119,7 +2119,7 @@ namespace ACE.Server.Command.Handlers
                     return;
                 }
 
-                var pos = new Position(dest.ObjCellId, dest.OriginX, dest.OriginY, dest.OriginZ, dest.AnglesX, dest.AnglesY, dest.AnglesZ, dest.AnglesW);
+                var pos = new Position(dest.ObjCellId, dest.OriginX, dest.OriginY, dest.OriginZ, dest.AnglesX, dest.AnglesY, dest.AnglesZ, dest.AnglesW, session.Player.Location.Instance);
                 WorldObject.AdjustDungeon(pos);
 
                 session.Player.Teleport(pos);
@@ -2153,7 +2153,7 @@ namespace ACE.Server.Command.Handlers
                     return;
                 }
 
-                var pos = new Position(dest.ObjCellId, dest.OriginX, dest.OriginY, dest.OriginZ, dest.AnglesX, dest.AnglesY, dest.AnglesZ, dest.AnglesW);
+                var pos = new Position(dest.ObjCellId, dest.OriginX, dest.OriginY, dest.OriginZ, dest.AnglesX, dest.AnglesY, dest.AnglesZ, dest.AnglesW, session.Player.Location.Instance);
                 WorldObject.AdjustDungeon(pos);
 
                 session.Player.Teleport(pos);
@@ -3920,7 +3920,7 @@ namespace ACE.Server.Command.Handlers
                     session.Network.EnqueueSend(new GameEventPortalStorm(session));
 
                     // We're going to move the player to 0,0
-                    Position newPos = new Position(0x7F7F001C, 84, 84, 80, 0, 0, 0, 1);
+                    Position newPos = new Position(0x7F7F001C, 84, 84, 80, 0, 0, 0, 1, session.Player.Location.Instance);
                     session.Player.Teleport(newPos);
                     break;
                 case 3:

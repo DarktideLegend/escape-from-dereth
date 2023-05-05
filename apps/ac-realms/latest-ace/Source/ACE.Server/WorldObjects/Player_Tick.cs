@@ -337,7 +337,7 @@ namespace ACE.Server.WorldObjects
             //Console.WriteLine($"{PhysicsObj.Position.Frame.Origin}");
             //Console.WriteLine($"{PhysicsObj.Position.Frame.get_heading()}");
 
-            PhysicsObj.update_object();
+            PhysicsObj.update_object(Location.Instance);
 
             // sync ace position?
             Location.Rotation = PhysicsObj.Position.Frame.Orientation;
@@ -468,9 +468,9 @@ namespace ACE.Server.WorldObjects
 
                             PhysicsObj.set_request_pos(newPosition.Pos, newPosition.Rotation, curCell, Location.LandblockId.Raw);
                             if (FastTick)
-                                success = PhysicsObj.update_object_server_new();
+                                success = PhysicsObj.update_object_server_new(true, newPosition.Instance);
                             else
-                                success = PhysicsObj.update_object_server();
+                                success = PhysicsObj.update_object_server(true, newPosition.Instance);
 
                             if (PhysicsObj.CurCell == null && curCell.ID >> 16 != 0x18A)
                             {
@@ -578,7 +578,7 @@ namespace ACE.Server.WorldObjects
 
             var landblockUpdate = blockcell << 16 != CurrentLandblock.Id.Landblock;
 
-            Location = new ACE.Entity.Position(blockcell, pos, rotate);
+            Location = new ACE.Entity.Position(blockcell, pos, rotate, Location.Instance);
 
             return landblockUpdate;
         }

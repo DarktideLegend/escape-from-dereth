@@ -342,9 +342,17 @@ namespace ACE.Server.WorldObjects
         {
             // build and send MoveToPosition message to client
             var motion = GetMoveToPosition(position, runRate, walkRunThreshold, speed);
+
+            // use old implementation for now
+            if (setLoc)
+            {
+                Location = new Position(position);
+                PhysicsObj.SetPositionSimple(new Physics.Common.Position(position), true, position.Instance);
+            }
+
             EnqueueBroadcastMotion(motion);
 
-            if (!setLoc) return;
+            /* if (!setLoc) return;
 
             // start executing MoveTo iterator on server
             if (!PhysicsObj.IsMovingOrAnimating)
@@ -353,7 +361,8 @@ namespace ACE.Server.WorldObjects
             var mvp = new MovementParameters(motion.MoveToParameters);
             PhysicsObj.MoveToPosition(new Physics.Common.Position(position), mvp);
 
-            AddMoveToTick();
+            EnqueueBroadcastMotion(motion);
+            AddMoveToTick();*/
         }
 
         private void AddMoveToTick()
@@ -364,7 +373,7 @@ namespace ACE.Server.WorldObjects
             {
                 if (!IsDead && PhysicsObj?.MovementManager?.MoveToManager != null && PhysicsObj.IsMovingTo())
                 {
-                    PhysicsObj.update_object();
+                    PhysicsObj.update_object(Location.Instance);
                     UpdatePosition_SyncLocation();
                     SendUpdatePosition();
 

@@ -60,6 +60,7 @@ namespace ACE.Server.WorldObjects
                 relativeDestination.Pos += new Vector3(RelativeDestination.PositionX, RelativeDestination.PositionY, RelativeDestination.PositionZ);
                 relativeDestination.Rotation = new Quaternion(RelativeDestination.RotationX, relativeDestination.RotationY, relativeDestination.RotationZ, relativeDestination.RotationW);
                 relativeDestination.LandblockId = new LandblockId(relativeDestination.GetCell());
+                relativeDestination.Instance = Location.Instance;
 
                 UpdatePortalDestination(relativeDestination);
             }
@@ -275,9 +276,11 @@ namespace ACE.Server.WorldObjects
             // player.Session.Network.EnqueueSend(new GameMessageSystemChat("Portal sending player to destination", ChatMessageType.System));
 #endif
             var portalDest = new Position(Destination);
+            if (portalDest.Instance == 0)
+                portalDest.SetToDefaultRealmInstance(Location.RealmID);
             AdjustDungeon(portalDest);
 
-            WorldManager.ThreadSafeTeleport(player, portalDest, new ActionEventDelegate(() =>
+            WorldManager.ThreadSafeTeleport(player, portalDest, false, new ActionEventDelegate(() =>
             {
                 // If the portal just used is able to be recalled to,
                 // save the destination coordinates to the LastPortal character position save table

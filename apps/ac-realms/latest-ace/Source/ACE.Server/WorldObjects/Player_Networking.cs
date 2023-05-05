@@ -304,6 +304,7 @@ namespace ACE.Server.WorldObjects
         public void SetRequestedLocation(Position pos, bool broadcast = true)
         {
             RequestedLocation = pos;
+            RequestedLocation.Instance = Location.Instance;
             RequestedLocationBroadcast = broadcast;
         }
 
@@ -494,7 +495,7 @@ namespace ACE.Server.WorldObjects
                     if (cachedWeenie == null)
                         return false;
 
-                    var wo = Factories.WorldObjectFactory.CreateNewWorldObject(cachedWeenie);
+                    var wo = Factories.WorldObjectFactory.CreateNewWorldObject(cachedWeenie, RealmRuleset);
                     if (wo == null)
                         return false;
 

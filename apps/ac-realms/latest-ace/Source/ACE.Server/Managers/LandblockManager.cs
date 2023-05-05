@@ -13,6 +13,7 @@ using ACE.Entity;
 using ACE.Entity.Enum;
 using ACE.Server.Entity;
 using ACE.Server.WorldObjects;
+using ACE.Server.Realms;
 
 namespace ACE.Server.Managers
 {
@@ -397,7 +398,7 @@ namespace ACE.Server.Managers
         /// <summary>
         /// Returns a reference to a landblock, loading the landblock if not already active
         /// </summary>
-        public static Landblock GetLandblock(LandblockId landblockId, bool loadAdjacents, bool permaload = false)
+        public static Landblock GetLandblock(LandblockId landblockId, bool loadAdjacents, bool permaload = false, EphemeralRealm ephemeralRealm = null)
         {
             Landblock landblock;
 
@@ -749,6 +750,18 @@ namespace ACE.Server.Managers
             ushort left = (ushort)(instanceId >> 16);
             isTemporaryRuleset = (left & 0x8000) == 0x8000;
             realmId = (ushort)(left & 0x7FFF);
+        }
+
+        internal static Landblock TryGetLandblock(LandblockId landblockId)
+        {
+            lock (landblockMutex)
+            {
+                Landblock landblock;
+
+                landblock = landblocks[landblockId.LandblockX, landblockId.LandblockY];
+
+                return landblock;
+            }
         }
 
     }
