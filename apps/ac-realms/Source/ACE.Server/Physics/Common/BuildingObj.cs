@@ -51,25 +51,23 @@ namespace ACE.Server.Physics.Common
             return transitionState;
         }
 
-        public void find_building_transit_cells(Position pos, int numSphere, List<Sphere> sphere, CellArray cellArray, SpherePath path, uint instance)
+        public void find_building_transit_cells(Position pos, int numSphere, List<Sphere> sphere, CellArray cellArray, SpherePath path)
         {
-            ulong longcellid = ((ulong)instance << 32) | CurCell.ID;
             foreach (var portal in Portals)
             {
-                var otherCell = portal.GetOtherCell(longcellid);
+                var otherCell = portal.GetOtherCell(CurCell.ID);
                 if (otherCell != null)
                     otherCell.check_building_transit(portal.OtherPortalId, pos, numSphere, sphere, cellArray, path);
             }
         }
 
-        public void find_building_transit_cells(int numParts, List<PhysicsPart> parts, CellArray cellArray, uint instance)
+        public void find_building_transit_cells(int numParts, List<PhysicsPart> parts, CellArray cellArray)
         {
-            ulong longcellid = ((ulong)instance << 32) | CurCell.ID;
             foreach (var portal in Portals)
             {
-                var otherCell = portal.GetOtherCell(longcellid);
+                var otherCell = portal.GetOtherCell(CurCell.ID);
                 if (otherCell != null)
-                    otherCell.check_building_transit(portal.OtherPortalId, numParts, parts, cellArray, instance);
+                    otherCell.check_building_transit(portal.OtherPortalId, numParts, parts, cellArray);
             }
         }
 
@@ -137,6 +135,8 @@ namespace ACE.Server.Physics.Common
 
             foreach (var buildingCell in BuildingCells.Where(i => i.Environment != null))
             {
+                if (buildingCell.Environment == null) continue;
+
                 foreach (var cellStruct in buildingCell.Environment.Cells.Values)
                 {
                     foreach (var vertex in cellStruct.VertexArray.Vertices.Values)

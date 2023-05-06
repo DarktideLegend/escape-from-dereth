@@ -24,8 +24,7 @@ namespace ACE.Server.Physics.Animation
         public SpherePath SpherePath;
         public CollisionInfo CollisionInfo;
         public CellArray CellArray;
-        public ObjCell NewCellPtr;
-        public uint Instance;
+        //public ObjCell NewCellPtr;
 
         public Transition()
         {
@@ -92,7 +91,7 @@ namespace ACE.Server.Physics.Animation
             SpherePath.CellArrayValid = true;
             SpherePath.HitsInteriorCell = false;
 
-            ObjCell.find_cell_list(CellArray, ref newCell, SpherePath, Instance);
+            ObjCell.find_cell_list(CellArray, ref newCell, SpherePath);
         }
 
         public void CalcNumSteps(ref Vector3 offset, ref Vector3 offsetPerStep, ref int numSteps)
@@ -156,8 +155,8 @@ namespace ACE.Server.Physics.Animation
             SpherePath.HitsInteriorCell = false;
 
             //ObjCell newCell = null;
-            var newCell = new ObjCell();    // null check?
-            ObjCell.find_cell_list(CellArray, ref newCell, SpherePath, Instance);
+            var newCell = ObjCell.EmptyCell;    // null check?
+            ObjCell.find_cell_list(CellArray, ref newCell, SpherePath);
 
             for (var i = 0; i < CellArray.Cells.Count; i++)
             {
@@ -492,7 +491,7 @@ namespace ACE.Server.Physics.Animation
             return result == TransitionState.OK;
         }
 
-        public bool FindTransitionalPosition(uint instance)
+        public bool FindTransitionalPosition()
         {
             if (SpherePath.BeginCell == null) return false;
 
@@ -526,7 +525,7 @@ namespace ACE.Server.Physics.Animation
                 SpherePath.HitsInteriorCell = false;
 
                 ObjCell empty = null;
-                ObjCell.find_cell_list(CellArray, ref empty, SpherePath, instance);
+                ObjCell.find_cell_list(CellArray, ref empty, SpherePath);
                 return true;
             }
 
@@ -594,10 +593,10 @@ namespace ACE.Server.Physics.Animation
             return transitionState == TransitionState.OK;
         }
 
-        public bool FindValidPosition(uint instance)
+        public bool FindValidPosition()
         {
             if (SpherePath.InsertType == InsertType.Transition)
-                return FindTransitionalPosition(instance);
+                return FindTransitionalPosition();
             else
                 return FindPlacementPosition();
         }
@@ -608,7 +607,7 @@ namespace ACE.Server.Physics.Animation
             SpherePath = new SpherePath();
             CollisionInfo = new CollisionInfo();
             CellArray = new CellArray();
-            NewCellPtr = new ObjCell();
+            //NewCellPtr = new ObjCell();
         }
 
         public void InitContactPlane(uint cellID, Plane contactPlane, bool isWater)
@@ -688,9 +687,9 @@ namespace ACE.Server.Physics.Animation
         /// Initializes a new default transition
         /// </summary>
         /// <returns></returns>
-        public static Transition MakeTransition(uint instance)
+        public static Transition MakeTransition()
         {
-            var transition = new Transition() { Instance = instance };
+            var transition = new Transition();
             transition.Init();
             return transition;
         }
@@ -865,21 +864,23 @@ namespace ACE.Server.Physics.Animation
                                     stepDownHeight = SpherePath.GlobalSphere[0].Radius * 0.5f;
                             }
 
-                            if (radsum < stepDownHeight)
+                            if (radsum >= stepDownHeight)
                             {
-                                // bad path
-                                stepDownHeight *= 0.5f;
-                                if (StepDown(stepDownHeight, zVal) || StepDown(stepDownHeight, zVal))   // double step..
+                                if (StepDown(stepDownHeight, zVal))
                                 {
                                     SpherePath.Walkable = null;
                                     return TransitionState.OK;
                                 }
                             }
-
-                            if (StepDown(stepDownHeight, zVal)) // triple step?
+                            else
                             {
-                                SpherePath.Walkable = null;
-                                return TransitionState.OK;
+                                // 2 half-steps
+                                stepDownHeight *= 0.5f;
+                                if (StepDown(stepDownHeight, zVal) || StepDown(stepDownHeight, zVal))
+                                {
+                                    SpherePath.Walkable = null;
+                                    return TransitionState.OK;
+                                }
                             }
 
                             if (EdgeSlide(ref transitState, stepDownHeight, zVal))

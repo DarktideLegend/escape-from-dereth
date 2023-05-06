@@ -41,13 +41,13 @@ namespace ACE.Server.Entity
     {
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public uint Id;
+        public static float AdjacencyLoadRange { get; } = 96f;
+        public static float OutdoorChatRange { get; } = 75f;
+        public static float IndoorChatRange { get; } = 25f;
+        public static float MaxXY { get; } = 192f;
+        public static float MaxObjectRange { get; } = 192f;
+        public static float MaxObjectGhostRange { get; } = 250f;
 
-        public ushort ShortId => (ushort)(Id >> 16);
-
-        public byte X => (byte)(Id >> 24);
-
-        public byte Y => (byte)(Id >> 16);
 
         public uint Instance;
         public AppliedRuleset RealmRuleset { get; private set; }
@@ -55,15 +55,8 @@ namespace ACE.Server.Entity
 
         //Will be null if its a standard realm landblock - I.e. the default for a realm and not with an added ruleset applied
         public EphemeralRealm InnerRealmInfo { get; set; }
-        public ulong LongId
-        {
-            get => (ulong)Instance << 32 | Id;
-            set
-            {
-                Id = (uint)value;
-                Instance = (uint)(value >> 32);
-            }
-        }
+
+        public LandblockId Id { get; }
 
         /// <summary>
         /// Flag indicates if this landblock is permanently loaded (for example, towns on high-traffic servers)
@@ -98,6 +91,11 @@ namespace ACE.Server.Entity
         private readonly LinkedList<WorldObject> sortedWorldObjectsByNextHeartbeat = new LinkedList<WorldObject>();
         private readonly LinkedList<WorldObject> sortedGeneratorsByNextGeneratorUpdate = new LinkedList<WorldObject>();
         private readonly LinkedList<WorldObject> sortedGeneratorsByNextRegeneration = new LinkedList<WorldObject>();
+
+        /// <summary>
+        /// This is used to detect and manage cross-landblock group (which is potentially cross-thread) operations.
+        /// </summary>
+        public LandblockGroup CurrentLandblockGroup { get; internal set; }
 
         public List<Landblock> Adjacents = new List<Landblock>();
 
@@ -174,43 +172,24 @@ namespace ACE.Server.Entity
             set => fogColor = value;
         }
 
-        // this is used for debugging the instancing branch
-        // if you are in an instanced version of a dungeon (instance > 0)
-        // the base instance should never load
 
-        public static HashSet<ulong> TestDungeons = new HashSet<ulong>()
+        public Landblock(LandblockId id)
         {
-            0x01D9FFFF,
-        };
+            //log.Debug($"Landblock({(id.Raw | 0xFFFF):X8})");
 
-        public Landblock(ulong objCellID)
-        {
-            RealmHelpers = new RealmShortcuts(this);
-            LongId = objCellID | 0xFFFF;
+            Id = id;
 
-            log.Info($"Landblock({LongId:X8})");
-
-            if (TestDungeons.Contains(LongId))
-            {
-                log.Error($"Landblock({objCellID:X8}): base instance is loading!");
-                log.Error(System.Environment.StackTrace);
-            }
-
-            CellLandblock = DatManager.CellDat.ReadFromDat<CellLandblock>(Id);
-            LandblockInfo = DatManager.CellDat.ReadFromDat<LandblockInfo>(Id & 0xFFFF0000 | 0xFFFE);
+            CellLandblock = DatManager.CellDat.ReadFromDat<CellLandblock>(Id.Raw | 0xFFFF);
+            LandblockInfo = DatManager.CellDat.ReadFromDat<LandblockInfo>((uint)Id.Landblock << 16 | 0xFFFE);
 
             lastActiveTime = DateTime.UtcNow;
 
-            // load physics landblock
-            var cellLandblock = DBObj.GetCellLandblock(Id);
-            PhysicsLandblock = new Physics.Common.Landblock(cellLandblock, Instance);
+            var cellLandblock = DBObj.GetCellLandblock(Id.Raw | 0xFFFF);
+            PhysicsLandblock = new Physics.Common.Landblock(cellLandblock);
         }
 
-        public void Init(bool reload, EphemeralRealm ephemeralRealm = null)
+        public void Init(bool reload = false)
         {
-            RealmRuleset = GetOrApplyRuleset(ephemeralRealm);
-            InnerRealmInfo = ephemeralRealm;
-
             if (!reload)
                 PhysicsLandblock.PostInit();
 
@@ -226,29 +205,14 @@ namespace ACE.Server.Entity
             //LoadMeshes(objects);
         }
 
-        private AppliedRuleset GetOrApplyRuleset(EphemeralRealm ephemeralRealm = null)
-        {
-            if (ephemeralRealm != null)
-                return AppliedRuleset.MakeRerolledRuleset(ephemeralRealm.RulesetTemplate);
-
-            Position.ParseInstanceID(this.Instance, out bool _istemp, out var realmid, out var _shortinstid);
-            var realm = RealmManager.GetRealm(realmid);
-            if (realm == null)
-            {
-                //Shouldn't happen
-                throw new Exception($"Error: Realm {realmid} is null when creating landblock.");
-            }
-            return AppliedRuleset.MakeRerolledRuleset(realm.RulesetTemplate);
-        }
-
         /// <summary>
         /// Monster Locations, Generators<para />
         /// This will be called from a separate task from our constructor. Use thread safety when interacting with this landblock.
         /// </summary>
         private void CreateWorldObjects()
         {
-            var objects = DatabaseManager.World.GetCachedInstancesByLandblock(ShortId);
-            var shardObjects = DatabaseManager.Shard.BaseDatabase.GetStaticObjectsByLandblock(ShortId);
+            var objects = DatabaseManager.World.GetCachedInstancesByLandblock(Id.Landblock);
+            var shardObjects = DatabaseManager.Shard.BaseDatabase.GetStaticObjectsByLandblock(Id.Landblock);
             var factoryObjects = WorldObjectFactory.CreateNewWorldObjects(objects, shardObjects, null, Instance, RealmRuleset);
 
             actionQueue.EnqueueAction(new ActionEventDelegate(() =>
@@ -296,7 +260,7 @@ namespace ACE.Server.Entity
         /// </summary>
         private void SpawnDynamicShardObjects()
         {
-            var dynamics = DatabaseManager.Shard.BaseDatabase.GetDynamicObjectsByLandblock(ShortId, Instance);
+            var dynamics = DatabaseManager.Shard.BaseDatabase.GetDynamicObjectsByLandblock(Id.Landblock);
             var factoryShardObjects = WorldObjectFactory.CreateWorldObjects(dynamics);
 
             actionQueue.EnqueueAction(new ActionEventDelegate(() =>
@@ -312,10 +276,8 @@ namespace ACE.Server.Entity
         /// </summary>
         private void SpawnEncounters()
         {
-            var shortId = (ushort)(Id >> 16);
-
             // get the encounter spawns for this landblock
-            var encounters = DatabaseManager.World.GetCachedEncountersByLandblock(shortId);
+            var encounters = DatabaseManager.World.GetCachedEncountersByLandblock(Id.Landblock);
 
             foreach (var encounter in encounters)
             {
@@ -323,51 +285,54 @@ namespace ACE.Server.Entity
 
                 if (wo == null) continue;
 
-                var xPos = Math.Clamp(encounter.CellX * 24.0f, 0.5f, 191.5f);
-                var yPos = Math.Clamp(encounter.CellY * 24.0f, 0.5f, 191.5f);
-
-                var pos = new Physics.Common.Position();
-                pos.ObjCellID = Id & 0xFFFF0000 | 1;
-                pos.Frame = new Physics.Animation.AFrame(new Vector3(xPos, yPos, 0), Quaternion.Identity);
-                pos.adjust_to_outside();
-
-                pos.Frame.Origin.Z = PhysicsLandblock.GetZ(pos.Frame.Origin);
-
-                wo.Location = new Position(pos.ObjCellID, pos.Frame.Origin, pos.Frame.Orientation, false, Instance);
-
-                var icellid = ((ulong)Instance << 32 | (ulong)pos.ObjCellID);
-                var sortCell = LScape.get_landcell(icellid) as SortCell;
-                if (sortCell != null && sortCell.has_building())
-                    continue;
-
-                if (PropertyManager.GetBool("override_encounter_spawn_rates").Item)
-                {
-                    wo.RegenerationInterval = PropertyManager.GetDouble("encounter_regen_interval").Item;
-
-                    wo.ReinitializeHeartbeats();
-
-                    if (wo.Biota.PropertiesGenerator != null)
-                    {
-                        // While this may be ugly, it's done for performance reasons.
-                        // Common weenie properties are not cloned into the bota on creation. Instead, the biota references simply point to the weenie collections.
-                        // The problem here is that we want to update one of those common collection properties. If the biota is referencing the weenie collection,
-                        // then we'll end up updating the global weenie (from the cache), instead of just this specific biota.
-                        if (wo.Biota.PropertiesGenerator == wo.Weenie.PropertiesGenerator)
-                        {
-                            wo.Biota.PropertiesGenerator = new List<PropertiesGenerator>(wo.Weenie.PropertiesGenerator.Count);
-
-                            foreach (var record in wo.Weenie.PropertiesGenerator)
-                                wo.Biota.PropertiesGenerator.Add(record.Clone());
-                        }
-
-                        foreach (var profile in wo.Biota.PropertiesGenerator)
-                            profile.Delay = (float) PropertyManager.GetDouble("encounter_delay").Item;
-                    }
-                }
-
                 actionQueue.EnqueueAction(new ActionEventDelegate(() =>
                 {
-                    AddWorldObject(wo);
+                    var xPos = Math.Clamp(encounter.CellX * 24.0f, 0.5f, 191.5f);
+                    var yPos = Math.Clamp(encounter.CellY * 24.0f, 0.5f, 191.5f);
+
+                    var pos = new Physics.Common.Position();
+                    pos.ObjCellID = (uint)(Id.Landblock << 16) | 1;
+                    pos.Frame = new Physics.Animation.AFrame(new Vector3(xPos, yPos, 0), Quaternion.Identity);
+                    pos.adjust_to_outside();
+
+                    pos.Frame.Origin.Z = PhysicsLandblock.GetZ(pos.Frame.Origin);
+
+                    wo.Location = new Position(pos.ObjCellID, pos.Frame.Origin, pos.Frame.Orientation, Instance);
+
+                    var sortCell = LScape.get_landcell(pos.ObjCellID) as SortCell;
+                    if (sortCell != null && sortCell.has_building())
+                    {
+                        wo.Destroy();
+                        return;
+                    }
+
+                    if (PropertyManager.GetBool("override_encounter_spawn_rates").Item)
+                    {
+                        wo.RegenerationInterval = PropertyManager.GetDouble("encounter_regen_interval").Item;
+
+                        wo.ReinitializeHeartbeats();
+
+                        if (wo.Biota.PropertiesGenerator != null)
+                        {
+                            // While this may be ugly, it's done for performance reasons.
+                            // Common weenie properties are not cloned into the bota on creation. Instead, the biota references simply point to the weenie collections.
+                            // The problem here is that we want to update one of those common collection properties. If the biota is referencing the weenie collection,
+                            // then we'll end up updating the global weenie (from the cache), instead of just this specific biota.
+                            if (wo.Biota.PropertiesGenerator == wo.Weenie.PropertiesGenerator)
+                            {
+                                wo.Biota.PropertiesGenerator = new List<PropertiesGenerator>(wo.Weenie.PropertiesGenerator.Count);
+
+                                foreach (var record in wo.Weenie.PropertiesGenerator)
+                                    wo.Biota.PropertiesGenerator.Add(record.Clone());
+                            }
+
+                            foreach (var profile in wo.Biota.PropertiesGenerator)
+                                profile.Delay = (float)PropertyManager.GetDouble("encounter_delay").Item;
+                        }
+                    }
+
+                    if (!AddWorldObject(wo))
+                        wo.Destroy();
                 }));
             }
         }
@@ -513,6 +478,47 @@ namespace ACE.Server.Entity
                 ServerPerformanceMonitor.AddToCumulativeEvent(ServerPerformanceMonitor.CumulativeEventHistoryType.Landblock_Tick_Monster_Tick, stopwatch.Elapsed.TotalSeconds);
             }
 
+            stopwatch.Restart();
+            while (sortedGeneratorsByNextGeneratorUpdate.Count > 0)
+            {
+                var first = sortedGeneratorsByNextGeneratorUpdate.First.Value;
+
+                // If they wanted to run before or at now
+                if (first.NextGeneratorUpdateTime <= currentUnixTime)
+                {
+                    sortedGeneratorsByNextGeneratorUpdate.RemoveFirst();
+                    first.GeneratorUpdate(currentUnixTime);
+                    //InsertWorldObjectIntoSortedGeneratorUpdateList(first);
+                    sortedGeneratorsByNextGeneratorUpdate.AddLast(first);
+                }
+                else
+                {
+                    break;
+                }
+            }
+            ServerPerformanceMonitor.AddToCumulativeEvent(ServerPerformanceMonitor.CumulativeEventHistoryType.Landblock_Tick_GeneratorUpdate, stopwatch.Elapsed.TotalSeconds);
+
+            stopwatch.Restart();
+            while (sortedGeneratorsByNextRegeneration.Count > 0) // GeneratorRegeneration()
+            {
+                var first = sortedGeneratorsByNextRegeneration.First.Value;
+
+                //Console.WriteLine($"{first.Name}.Landblock_Tick_GeneratorRegeneration({currentUnixTime})");
+
+                // If they wanted to run before or at now
+                if (first.NextGeneratorRegenerationTime <= currentUnixTime)
+                {
+                    sortedGeneratorsByNextRegeneration.RemoveFirst();
+                    first.GeneratorRegeneration(currentUnixTime);
+                    InsertWorldObjectIntoSortedGeneratorRegenerationList(first); // Generators can have regnerations at different intervals
+                }
+                else
+                {
+                    break;
+                }
+            }
+            ServerPerformanceMonitor.AddToCumulativeEvent(ServerPerformanceMonitor.CumulativeEventHistoryType.Landblock_Tick_GeneratorRegeneration, stopwatch.Elapsed.TotalSeconds);
+
             // Heartbeat
             stopwatch.Restart();
             if (lastHeartBeat + heartbeatInterval <= DateTime.UtcNow)
@@ -613,47 +619,6 @@ namespace ACE.Server.Entity
                 }
             }
             ServerPerformanceMonitor.AddToCumulativeEvent(ServerPerformanceMonitor.CumulativeEventHistoryType.Landblock_Tick_WorldObject_Heartbeat, stopwatch.Elapsed.TotalSeconds);
-
-            stopwatch.Restart();
-            while (sortedGeneratorsByNextGeneratorUpdate.Count > 0)
-            {
-                var first = sortedGeneratorsByNextGeneratorUpdate.First.Value;
-
-                // If they wanted to run before or at now
-                if (first.NextGeneratorUpdateTime <= currentUnixTime)
-                {
-                    sortedGeneratorsByNextGeneratorUpdate.RemoveFirst();
-                    first.GeneratorUpdate(currentUnixTime);
-                    //InsertWorldObjectIntoSortedGeneratorUpdateList(first);
-                    sortedGeneratorsByNextGeneratorUpdate.AddLast(first);
-                }
-                else
-                {
-                    break;
-                }
-            }
-            ServerPerformanceMonitor.AddToCumulativeEvent(ServerPerformanceMonitor.CumulativeEventHistoryType.Landblock_Tick_GeneratorUpdate, stopwatch.Elapsed.TotalSeconds);
-
-            stopwatch.Restart();
-            while (sortedGeneratorsByNextRegeneration.Count > 0) // GeneratorRegeneration()
-            {
-                var first = sortedGeneratorsByNextRegeneration.First.Value;
-
-                //Console.WriteLine($"{first.Name}.Landblock_Tick_GeneratorRegeneration({currentUnixTime})");
-
-                // If they wanted to run before or at now
-                if (first.NextGeneratorRegenerationTime <= currentUnixTime)
-                {
-                    sortedGeneratorsByNextRegeneration.RemoveFirst();
-                    first.GeneratorRegeneration(currentUnixTime);
-                    InsertWorldObjectIntoSortedGeneratorRegenerationList(first); // Generators can have regnerations at different intervals
-                }
-                else
-                {
-                    break;
-                }
-            }
-            ServerPerformanceMonitor.AddToCumulativeEvent(ServerPerformanceMonitor.CumulativeEventHistoryType.Landblock_Tick_GeneratorRegeneration, stopwatch.Elapsed.TotalSeconds);
 
             Monitor5m.RegisterEventEnd();
             Monitor1h.RegisterEventEnd();
@@ -862,6 +827,37 @@ namespace ACE.Server.Entity
 
         private bool AddWorldObjectInternal(WorldObject wo)
         {
+            if (LandblockManager.CurrentlyTickingLandblockGroupsMultiThreaded)
+            {
+                if (CurrentLandblockGroup != null && CurrentLandblockGroup != LandblockManager.CurrentMultiThreadedTickingLandblockGroup.Value)
+                {
+                    log.Error($"Landblock 0x{Id} entered AddWorldObjectInternal in a cross-thread operation.");
+                    log.Error($"Landblock 0x{Id} CurrentLandblockGroup: {CurrentLandblockGroup}");
+                    log.Error($"LandblockManager.CurrentMultiThreadedTickingLandblockGroup.Value: {LandblockManager.CurrentMultiThreadedTickingLandblockGroup.Value}");
+
+                    log.Error($"wo: 0x{wo.Guid}:{wo.Name} [{wo.WeenieClassId} - {wo.WeenieType}], previous landblock 0x{wo.CurrentLandblock?.Id}");
+
+                    if (wo.WeenieType == WeenieType.ProjectileSpell)
+                    {
+                        if (wo.ProjectileSource != null)
+                            log.Error($"wo.ProjectileSource: 0x{wo.ProjectileSource?.Guid}:{wo.ProjectileSource?.Name}, position: {wo.ProjectileSource?.Location}");
+
+                        if (wo.ProjectileTarget != null)
+                            log.Error($"wo.ProjectileTarget: 0x{wo.ProjectileTarget?.Guid}:{wo.ProjectileTarget?.Name}, position: {wo.ProjectileTarget?.Location}");
+                    }
+
+                    log.Error(System.Environment.StackTrace);
+
+                    log.Error("PLEASE REPORT THIS TO THE ACE DEV TEAM !!!");
+
+                    // Prevent possible multi-threaded crash
+                    if (wo.WeenieType == WeenieType.ProjectileSpell)
+                        return false;
+
+                    // This may still crash...
+                }
+            }
+
             wo.CurrentLandblock = this;
 
             wo.Location.Instance = Instance;
@@ -880,12 +876,13 @@ namespace ACE.Server.Entity
 
                     if (wo.Generator != null)
                     {
-                        log.Debug($"AddWorldObjectInternal: couldn't spawn 0x{wo.Guid}:{wo.Name} [{wo.WeenieClassId} - {wo.WeenieType}] from generator {wo.Generator.WeenieClassId} - 0x{wo.Generator.Guid}:{wo.Generator.Name}");
+                        log.Debug($"AddWorldObjectInternal: couldn't spawn 0x{wo.Guid}:{wo.Name} [{wo.WeenieClassId} - {wo.WeenieType}] at {wo.Location.ToLOCString()} from generator {wo.Generator.WeenieClassId} - 0x{wo.Generator.Guid}:{wo.Generator.Name}");
                         wo.NotifyOfEvent(RegenerationType.PickUp); // Notify generator the generated object is effectively destroyed, use Pickup to catch both cases.
                     }
-
-                    else if (wo.ProjectileTarget == null)
-                        log.Warn($"AddWorldObjectInternal: couldn't spawn 0x{wo.Guid}:{wo.Name} [{wo.WeenieClassId} - {wo.WeenieType}]");
+                    else if (wo.IsGenerator) // Some generators will fail random spawns if they're circumference spans over water or cliff edges
+                        log.Debug($"AddWorldObjectInternal: couldn't spawn generator 0x{wo.Guid}:{wo.Name} [{wo.WeenieClassId} - {wo.WeenieType}] at {wo.Location.ToLOCString()}");
+                    else if (wo.ProjectileTarget == null && !(wo is SpellProjectile))
+                        log.Warn($"AddWorldObjectInternal: couldn't spawn 0x{wo.Guid}:{wo.Name} [{wo.WeenieClassId} - {wo.WeenieType}] at {wo.Location.ToLOCString()}");
 
                     return false;
                 }
@@ -901,6 +898,23 @@ namespace ACE.Server.Entity
 
             if (wo is Player player)
                 player.SetFogColor(FogColor);
+
+            if (wo is Corpse && wo.Level.HasValue)
+            {
+                var corpseLimit = PropertyManager.GetLong("corpse_spam_limit").Item;
+                var corpseList = worldObjects.Values.Union(pendingAdditions.Values).Where(w => w is Corpse && w.Level.HasValue && w.VictimId == wo.VictimId).OrderBy(w => w.CreationTimestamp);
+
+                if (corpseList.Count() > corpseLimit)
+                {
+                    var corpse = GetObject(corpseList.First(w => w.TimeToRot > Corpse.EmptyDecayTime).Guid);
+
+                    if (corpse != null)
+                    {
+                        log.Warn($"[CORPSE] Landblock.AddWorldObjectInternal(): {wo.Name} (0x{wo.Guid}) exceeds the per player limit of {corpseLimit} corpses for 0x{Id.Landblock:X4}. Adjusting TimeToRot for oldest {corpse.Name} (0x{corpse.Guid}), CreationTimestamp: {corpse.CreationTimestamp} ({Common.Time.GetDateTimeFromTimestamp(corpse.CreationTimestamp ?? 0).ToLocalTime():yyyy-MM-dd HH:mm:ss}), to Corpse.EmptyDecayTime({Corpse.EmptyDecayTime}).");
+                        corpse.TimeToRot = Corpse.EmptyDecayTime;
+                    }
+                }
+            }
 
             return true;
         }
@@ -922,6 +936,24 @@ namespace ACE.Server.Entity
 
         private void RemoveWorldObjectInternal(ObjectGuid objectId, bool adjacencyMove = false, bool fromPickup = false, bool showError = true)
         {
+            if (LandblockManager.CurrentlyTickingLandblockGroupsMultiThreaded)
+            {
+                if (CurrentLandblockGroup != null && CurrentLandblockGroup != LandblockManager.CurrentMultiThreadedTickingLandblockGroup.Value)
+                {
+                    log.Error($"Landblock 0x{Id} entered RemoveWorldObjectInternal in a cross-thread operation.");
+                    log.Error($"Landblock 0x{Id} CurrentLandblockGroup: {CurrentLandblockGroup}");
+                    log.Error($"LandblockManager.CurrentMultiThreadedTickingLandblockGroup.Value: {LandblockManager.CurrentMultiThreadedTickingLandblockGroup.Value}");
+
+                    log.Error($"objectId: 0x{objectId}");
+
+                    log.Error(System.Environment.StackTrace);
+
+                    log.Error("PLEASE REPORT THIS TO THE ACE DEV TEAM !!!");
+
+                    // This may still crash...
+                }
+            }
+
             if (worldObjects.TryGetValue(objectId, out var wo))
                 pendingRemovals.Add(objectId);
             else if (!pendingAdditions.Remove(objectId, out wo))
@@ -1094,6 +1126,8 @@ namespace ACE.Server.Entity
         /// </summary>
         public void Unload()
         {
+            var landblockID = Id.Raw | 0xFFFF;
+
             //log.Debug($"Landblock.Unload({landblockID:X8})");
 
             ProcessPendingWorldObjectAdditionsAndRemovals();
@@ -1104,7 +1138,7 @@ namespace ACE.Server.Entity
             foreach (var wo in worldObjects.ToList())
             {
                 if (!wo.Value.BiotaOriginatedFromOrHasBeenSavedToDatabase())
-                    wo.Value.Destroy(false);
+                    wo.Value.Destroy(false, true);
                 else
                     RemoveWorldObjectInternal(wo.Key);
             }
@@ -1114,7 +1148,9 @@ namespace ACE.Server.Entity
             actionQueue.Clear();
 
             // remove physics landblock
-            LScape.unload_landblock(Id);
+            LScape.unload_landblock(landblockID);
+
+            PhysicsLandblock.release_shadow_objs();
         }
 
         public void DestroyAllNonPlayerObjects()
@@ -1213,6 +1249,15 @@ namespace ACE.Server.Entity
                 if (isDungeon != null)
                     return isDungeon.Value;
 
+                // hack for NW island
+                // did a worldwide analysis for adding watercells into the formula,
+                // but they are inconsistently defined for some of the edges of map unfortunately
+                if (Id.LandblockX < 0x08 && Id.LandblockY > 0xF8)
+                {
+                    isDungeon = false;
+                    return isDungeon.Value;
+                }
+
                 // a dungeon landblock is determined by:
                 // - all heights being 0
                 // - having at least 1 EnvCell (0x100+)
@@ -1253,6 +1298,7 @@ namespace ACE.Server.Entity
                 return hasDungeon.Value;
             }
         }
+
 
         public List<House> Houses = new List<House>();
 

@@ -1,7 +1,0 @@
-{
-    "name" : "default",
-    "type" : "Realm",
-    "properties" : {
-        "Description": "Default Realm"
-    }
-}

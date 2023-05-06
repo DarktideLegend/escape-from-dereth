@@ -9,10 +9,14 @@ using ACE.Server.Physics.Animation;
 using ACE.Server.Physics.Combat;
 using ACE.Server.Physics.Managers;
 
+using log4net;
+
 namespace ACE.Server.Physics.Common
 {
     public class ObjCell: PartCell, IEquatable<ObjCell>
     {
+        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public uint ID;
         public LandDefs.WaterType WaterType;
         public Position Pos;
@@ -29,6 +33,7 @@ namespace ACE.Server.Physics.Common
         public List<DatLoader.Entity.Stab> VisibleCells;
         public bool SeenOutside;
         public List<uint> VoyeurTable;
+
         public Landblock CurLandblock;
 
         /// <summary>
@@ -45,6 +50,8 @@ namespace ACE.Server.Physics.Common
         /// TODO: The above solution should remove the need for ObjCell access locking, and also increase performance
         /// </summary>
         private readonly ReaderWriterLockSlim readerWriterLockSlim = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
+
+        public static readonly ObjCell EmptyCell = new ObjCell();
 
         public ObjCell(): base()
         {
@@ -221,7 +228,7 @@ namespace ACE.Server.Physics.Common
             }
         }
 
-        public static ObjCell GetVisible(uint cellID, uint instance)
+        public static ObjCell GetVisible(uint cellID)
         {
             if (cellID == 0) return null;
 
@@ -230,8 +237,7 @@ namespace ACE.Server.Physics.Common
                return EnvCell.get_visible(cellID);
             else
                 return LandCell.Get(cellID);*/
-
-            return LScape.get_landcell(cellID, instance);
+            return LScape.get_landcell(cellID);
         }
 
         public void Init()
@@ -326,12 +332,12 @@ namespace ACE.Server.Physics.Common
             return false;
         }
 
-        public static void find_cell_list(Position position, int numSphere, List<Sphere> sphere, CellArray cellArray, ref ObjCell currCell, SpherePath path, uint instance)
+        public static void find_cell_list(Position position, int numSphere, List<Sphere> sphere, CellArray cellArray, ref ObjCell currCell, SpherePath path)
         {
             cellArray.NumCells = 0;
             cellArray.AddedOutside = false;
 
-            var visibleCell = GetVisible(position.ObjCellID, instance);
+            var visibleCell = GetVisible(position.ObjCellID);
 
             if ((position.ObjCellID & 0xFFFF) >= 0x100)
             {
@@ -341,7 +347,7 @@ namespace ACE.Server.Physics.Common
                 cellArray.add_cell(position.ObjCellID, visibleCell);
             }
             else
-                LandCell.add_all_outside_cells(position, numSphere, sphere, cellArray, instance);
+                LandCell.add_all_outside_cells(position, numSphere, sphere, cellArray);
 
             if (visibleCell != null && numSphere != 0)
             {
@@ -350,7 +356,7 @@ namespace ACE.Server.Physics.Common
                     var cell = cellArray.Cells.Values.ElementAt(i);
                     if (cell == null) continue;
 
-                    cell.find_transit_cells(position, numSphere, sphere, cellArray, path, instance);
+                    cell.find_transit_cells(position, numSphere, sphere, cellArray, path);
                 }
                 //var checkCells = cellArray.Cells.Values.ToList();
                 //foreach (var cell in checkCells)
@@ -407,7 +413,7 @@ namespace ACE.Server.Physics.Common
             }
         }
 
-        public static void find_cell_list(Position position, int numCylSphere, List<CylSphere> cylSphere, CellArray cellArray, SpherePath path, uint instance)
+        public static void find_cell_list(Position position, int numCylSphere, List<CylSphere> cylSphere, CellArray cellArray, SpherePath path)
         {
             if (numCylSphere > 10)
                 numCylSphere = 10;
@@ -423,35 +429,35 @@ namespace ACE.Server.Physics.Common
             }
 
             ObjCell empty = null;
-            find_cell_list(position, numCylSphere, spheres, cellArray, ref empty, path, instance);
+            find_cell_list(position, numCylSphere, spheres, cellArray, ref empty, path);
         }
 
-        public static void find_cell_list(Position position, Sphere sphere, CellArray cellArray, SpherePath path, uint instance)
+        public static void find_cell_list(Position position, Sphere sphere, CellArray cellArray, SpherePath path)
         {
             var globalSphere = new Sphere();
             globalSphere.Center = position.LocalToGlobal(sphere.Center);
             globalSphere.Radius = sphere.Radius;
 
             ObjCell empty = null;
-            find_cell_list(position, 1, globalSphere, cellArray, ref empty, path, instance);
+            find_cell_list(position, 1, globalSphere, cellArray, ref empty, path);
         }
 
-        public static void find_cell_list(CellArray cellArray, ref ObjCell checkCell, SpherePath path, uint instance)
+        public static void find_cell_list(CellArray cellArray, ref ObjCell checkCell, SpherePath path)
         {
-            find_cell_list(path.CheckPos, path.NumSphere, path.GlobalSphere, cellArray, ref checkCell, path, instance);
+            find_cell_list(path.CheckPos, path.NumSphere, path.GlobalSphere, cellArray, ref checkCell, path);
         }
 
-        public static void find_cell_list(Position position, int numSphere, Sphere sphere, CellArray cellArray, ref ObjCell currCell, SpherePath path, uint instance)
+        public static void find_cell_list(Position position, int numSphere, Sphere sphere, CellArray cellArray, ref ObjCell currCell, SpherePath path)
         {
-            find_cell_list(position, numSphere, new List<Sphere>() { sphere }, cellArray, ref currCell, path, instance);
+            find_cell_list(position, numSphere, new List<Sphere>() { sphere }, cellArray, ref currCell, path);
         }
 
-        public virtual void find_transit_cells(int numParts, List<PhysicsPart> parts, CellArray cellArray, uint instance)
+        public virtual void find_transit_cells(int numParts, List<PhysicsPart> parts, CellArray cellArray)
         {
             // empty base
         }
 
-        public virtual void find_transit_cells(Position position, int numSphere, List<Sphere> sphere, CellArray cellArray, SpherePath path, uint instance)
+        public virtual void find_transit_cells(Position position, int numSphere, List<Sphere> sphere, CellArray cellArray, SpherePath path)
         {
             // empty base
         }
@@ -460,8 +466,8 @@ namespace ACE.Server.Physics.Common
         {
             if (CurLandblock != null)
                 return CurLandblock.WaterType;
-            else
-                return LandDefs.WaterType.NotWater;
+
+            return LandDefs.WaterType.NotWater;
         }
 
         public float get_water_depth(Vector3 point)
@@ -474,8 +480,8 @@ namespace ACE.Server.Physics.Common
 
             if (CurLandblock != null)
                 return CurLandblock.calc_water_depth(ID, point);
-            else
-                return 0.1f;
+
+            return 0.1f;
         }
 
         public void hide_object(PhysicsObj obj)
@@ -501,6 +507,12 @@ namespace ACE.Server.Physics.Common
         public virtual bool point_in_cell(Vector3 point)
         {
             return false;
+        }
+
+        public void release_shadow_objs()
+        {
+            foreach (var shadowObj in ShadowObjectList)
+                shadowObj.PhysicsObj.ShadowObjects.Remove(ID);
         }
 
         public void release_objects()

@@ -226,6 +226,14 @@ namespace ACE.Server.WorldObjects
         }
 
         /// <summary>
+        /// Returns TRUE if playerGuid is a member
+        /// </summary>
+        public bool IsMember(ObjectGuid playerGuid)
+        {
+            return Members.ContainsKey(playerGuid);
+        }
+
+        /// <summary>
         /// Returns TRUE if playerGuid is an officer
         /// </summary>
         public bool IsOfficer(ObjectGuid playerGuid)
@@ -281,13 +289,14 @@ namespace ACE.Server.WorldObjects
 
             // is landblock loaded?
             var houseGuid = Monarch.Player.HouseInstance.Value;
-            var landblock = (houseGuid << 4) | 0xFFFF;
+            var landblock = (ushort)((houseGuid >> 12) & 0xFFFF);
 
-            var isLoaded = LandblockManager.IsLoaded(landblock);
+            var landblockId = new LandblockId((uint)(landblock << 16 | 0xFFFF));
+            var isLoaded = LandblockManager.IsLoaded(landblockId);
 
             if (isLoaded)
             {
-                var loaded = LandblockManager.GetLandblockBase(landblock, false);
+                var loaded = LandblockManager.GetLandblock(landblockId, false);
                 return loaded.GetObject(new ObjectGuid(houseGuid)) as House;
             }
 
