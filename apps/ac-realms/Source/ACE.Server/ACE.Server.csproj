@@ -36,7 +36,6 @@
     <ItemGroup>
         <None Remove="Realms\reserved_realms\default.jsonc" />
         <None Remove="Realms\reserved_realms\hideout.jsonc" />
-        <None Remove="starterGear.json" />
         <None Include="..\..\LICENSE">
             <Pack>True</Pack>
             <PackagePath></PackagePath>
@@ -47,7 +46,6 @@
     <ItemGroup>
         <EmbeddedResource Include="Realms\reserved_realms\hideout.jsonc" />
         <EmbeddedResource Include="Realms\reserved_realms\default.jsonc" />
-        <EmbeddedResource Include="starterGear.json" />
     </ItemGroup>
 
   <ItemGroup>
