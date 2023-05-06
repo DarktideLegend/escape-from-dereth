@@ -92,13 +92,15 @@ namespace ACE.Server.Entity
 
             if (landblocks.Add(landblock))
             {
+                landblock.CurrentLandblockGroup = this;
+
                 if (landblocks.Count == 1)
                     IsDungeon = landblock.IsDungeon;
 
-                if (landblock.X < xMin) xMin = landblock.X;
-                if (landblock.X > xMax) xMax = landblock.X;
-                if (landblock.Y < yMin) yMin = landblock.Y;
-                if (landblock.Y > yMax) yMax = landblock.Y;
+                if (landblock.Id.LandblockX < xMin) xMin = landblock.Id.LandblockX;
+                if (landblock.Id.LandblockX > xMax) xMax = landblock.Id.LandblockX;
+                if (landblock.Id.LandblockY < yMin) yMin = landblock.Id.LandblockY;
+                if (landblock.Id.LandblockY > yMax) yMax = landblock.Id.LandblockY;
 
                 xCenter = xMin + ((xMax - xMin) / 2.0);
                 yCenter = yMin + ((yMax - yMin) / 2.0);
@@ -116,15 +118,17 @@ namespace ACE.Server.Entity
         {
             if (landblocks.Remove(landblock))
             {
+                landblock.CurrentLandblockGroup = null;
+
                 // Empty landblock groups will be discarded immediately
                 if (landblocks.Count == 0)
                     return true;
 
-                uniqueLandblockIdsRemoved.Add(landblock.Id);
+                uniqueLandblockIdsRemoved.Add(landblock.Id.Raw);
 
-                // If this landblock is on the perimieter of the group, recalculate the boundaries (they may end up the same)
-                if (landblock.X == xMin || landblock.X == xMax ||
-                    landblock.Y == yMin || landblock.Y == yMax)
+                // If this landblock is on the perimeter of the group, recalculate the boundaries (they may end up the same)
+                if (landblock.Id.LandblockX == xMin || landblock.Id.LandblockX == xMax ||
+                    landblock.Id.LandblockY == yMin || landblock.Id.LandblockY == yMax)
                 {
                     RecalculateBoundaries();
                 }
@@ -155,10 +159,10 @@ namespace ACE.Server.Entity
 
             foreach (var existing in landblocks)
             {
-                if (existing.X < xMin) xMin = existing.X;
-                if (existing.X > xMax) xMax = existing.X;
-                if (existing.Y < yMin) yMin = existing.Y;
-                if (existing.Y > yMax) yMax = existing.Y;
+                if (existing.Id.LandblockX < xMin) xMin = existing.Id.LandblockX;
+                if (existing.Id.LandblockX > xMax) xMax = existing.Id.LandblockX;
+                if (existing.Id.LandblockY < yMin) yMin = existing.Id.LandblockY;
+                if (existing.Id.LandblockY > yMax) yMax = existing.Id.LandblockY;
             }
 
             xCenter = xMin + ((xMax - xMin) / 2.0);
@@ -171,11 +175,11 @@ namespace ACE.Server.Entity
 
         private LandblockGroup DoTrySplit()
         {
-            var newLandblockGroup = new LandblockGroup();
+            var landblockGroupSplitHelper = new LandblockGroupSplitHelper();
 
             var remainingLandblocks = new List<Landblock>(landblocks);
 
-            newLandblockGroup.Add(remainingLandblocks[remainingLandblocks.Count - 1]);
+            landblockGroupSplitHelper.Add(remainingLandblocks[remainingLandblocks.Count - 1]);
             remainingLandblocks.RemoveAt(remainingLandblocks.Count - 1);
 
             doAnotherPass:
@@ -183,9 +187,9 @@ namespace ACE.Server.Entity
 
             for (int i = remainingLandblocks.Count - 1; i >= 0; i--)
             {
-                if (newLandblockGroup.BoundaryDistance(remainingLandblocks[i]) < LandblockGroupMinSpacing)
+                if (landblockGroupSplitHelper.BoundaryDistance(remainingLandblocks[i]) < LandblockGroupMinSpacing)
                 {
-                    newLandblockGroup.Add(remainingLandblocks[i]);
+                    landblockGroupSplitHelper.Add(remainingLandblocks[i]);
                     remainingLandblocks.RemoveAt(i);
                     needsAnotherPass = true;
                 }
@@ -195,12 +199,20 @@ namespace ACE.Server.Entity
                 goto doAnotherPass;
 
             // If they're the same size, there's no split possible
-            if (Count == newLandblockGroup.Count)
+            if (Count == landblockGroupSplitHelper.Count)
                 return null;
 
-            // Remove the split landblocks. Do this manually, not through the public Remove() function
-            foreach (var landblock in newLandblockGroup)
+            // Split was a success
+            var newLandblockGroup = new LandblockGroup();
+
+            foreach (var landblock in landblockGroupSplitHelper)
+            {
+                // Remove the split landblocks. Do this manually, not through the public Remove() function
                 landblocks.Remove(landblock);
+
+                // Add them through the proper .Add() method to the new LandblockGroup
+                newLandblockGroup.Add(landblock);
+            }
 
             RecalculateBoundaries();
 
@@ -258,7 +270,7 @@ namespace ACE.Server.Entity
 
 
         /// <summary>
-        /// This will calculate the distance from the landblock group border.<para />
+        /// This will calculate the distance from the landblock group boarder.<para />
         /// -X = Inside the bounds, where -1 is the outer perimeter<para />
         ///  0 = Outside of the bounds but adjacent (touching)<para />
         /// +X = Has X landblocks between this and the bounds of the group<para />
@@ -267,12 +279,12 @@ namespace ACE.Server.Entity
         public int BoundaryDistance(Landblock landblock)
         {
             return (int)Math.Max(
-                Math.Abs(xCenter - landblock.X) - (width + 1) / 2.0,
-                Math.Abs(yCenter - landblock.Y) - (height + 1) / 2.0);
+                Math.Abs(xCenter - landblock.Id.LandblockX) - (width + 1) / 2.0,
+                Math.Abs(yCenter - landblock.Id.LandblockY) - (height + 1) / 2.0);
         }
 
         /// <summary>
-        /// This will calculate the distance between the landblock group borders.<para />
+        /// This will calculate the distance between the landblock group boarders.<para />
         /// -X = Inside the bounds, where -1 is an overlapping outer perimeter<para />
         ///  0 = Outside of the bounds but adjacent (touching)<para />
         /// +X = Has X landblocks between this and the bounds of the group<para />

@@ -120,7 +120,7 @@ namespace ACE.Server.Physics.Common
             {
                 var blockCellID = ID & 0xFFFF0000 | visibleCellID;
                 if (VisibleCells.ContainsKey(blockCellID)) continue;
-                var cell = (EnvCell)LScape.get_landcell(blockCellID, CurLandblock.Instance);
+                var cell = (EnvCell)LScape.get_landcell(blockCellID);
                 VisibleCells.Add(visibleCellID, cell);
             }
         }
@@ -143,7 +143,7 @@ namespace ACE.Server.Physics.Common
             }
         }
 
-        public void check_building_transit(int portalId, int numParts, List<PhysicsPart> parts, CellArray cellArray, uint instance)
+        public void check_building_transit(int portalId, int numParts, List<PhysicsPart> parts, CellArray cellArray)
         {
             //if (portalId == 0) return;
             if (portalId == ushort.MaxValue) return;
@@ -185,7 +185,7 @@ namespace ACE.Server.Physics.Common
                         continue;
 
                     cellArray.add_cell(ID, this);
-                    find_transit_cells(numParts, parts, cellArray, instance);
+                    find_transit_cells(numParts, parts, cellArray);
                     return;
                 }
             }
@@ -219,7 +219,7 @@ namespace ACE.Server.Physics.Common
             return null;
         }
 
-        public EnvCell GetVisible(uint cellID)
+        public new EnvCell GetVisible(uint cellID)
         {
             EnvCell envCell = null;
             VisibleCells.TryGetValue(cellID, out envCell);
@@ -242,7 +242,7 @@ namespace ACE.Server.Physics.Common
             return envCell;
         }
 
-        public override void find_transit_cells(int numParts, List<PhysicsPart> parts, CellArray cellArray, uint instance)
+        public override void find_transit_cells(int numParts, List<PhysicsPart> parts, CellArray cellArray)
         {
             var checkOutside = false;
 
@@ -296,7 +296,7 @@ namespace ACE.Server.Physics.Common
                     }
 
                     var cellBox = new BBox();
-                    cellBox.LocalToLocal(bbox, Pos, otherCell.Pos);
+                    cellBox.LocalToLocal(bbox, part.Pos, otherCell.Pos);
                     if (otherCell.CellStructure.box_intersects_cell(cellBox))
                     {
                         cellArray.add_cell(otherCell.ID, otherCell);
@@ -308,7 +308,7 @@ namespace ACE.Server.Physics.Common
                 LandCell.add_all_outside_cells(numParts, parts, cellArray, ID);
         }
 
-        public override void find_transit_cells(Position position, int numSphere, List<Sphere> spheres, CellArray cellArray, SpherePath path, uint instance)
+        public override void find_transit_cells(Position position, int numSphere, List<Sphere> spheres, CellArray cellArray, SpherePath path)
         {
             var checkOutside = false;
 
@@ -367,7 +367,7 @@ namespace ACE.Server.Physics.Common
                 }
             }
             if (checkOutside)
-                LandCell.add_all_outside_cells(position, numSphere, spheres, cellArray, instance);
+                LandCell.add_all_outside_cells(position, numSphere, spheres, cellArray);
         }
 
         public void init_static_objects()
