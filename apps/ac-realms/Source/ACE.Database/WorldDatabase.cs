@@ -666,13 +666,28 @@ namespace ACE.Database
 
             using (var context = new WorldDbContext())
             {
-                using (var transaction = context.Database.BeginTransaction())
+                var executionStrategy = context.Database.CreateExecutionStrategy();
+                executionStrategy.Execute(() =>
                 {
-                    context.Database.ExecuteSqlRaw("DELETE FROM realm;");
-                    context.Realm.AddRange(realms);
-                    context.SaveChanges();
-                    transaction.Commit();
-                }
+                    using (var transaction = context.Database.BeginTransaction())
+                    {
+                        try
+                        {
+
+                            context.Database.ExecuteSqlRaw("DELETE FROM realm;");
+                            context.Realm.AddRange(realms);
+                            context.SaveChanges();
+                            transaction.Commit();
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                        }
+
+                    }
+
+                });
+
             }
         }
     }
