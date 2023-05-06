@@ -7,9 +7,6 @@ services:
       - docker.env
     volumes:
       - './db-data-latest:/var/lib/mysql'
-      - ./Database:/ace/Database
-      - ./Scripts/initdb.sh:/docker-entrypoint-initdb.d/1.sh
-      - ../../../packages/shared-db/ACE-World-Database-v0.9.269.sql.gz:/docker-entrypoint-initdb.d/2.sql.gz
     ports:
       - '3307:3306/tcp'
     restart: unless-stopped
