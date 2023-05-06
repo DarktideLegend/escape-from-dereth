@@ -70,10 +70,8 @@ namespace ACE.Server.WorldObjects
         /// Should only be adjusted by Landblock -- default is null
         /// </summary>
         public Landblock CurrentLandblock { get; internal set; }
-        public AppliedRuleset RealmRuleset => CurrentLandblock?.RealmRuleset;
 
-        public DateTime? ItemManaDepletionMessageTimestamp { get; set; } = null;
-        public DateTime? ItemManaConsumptionTimestamp { get; set; } = null;
+        public AppliedRuleset RealmRuleset => CurrentLandblock?.RealmRuleset;
 
         public bool IsBusy { get; set; }
         public bool IsShield { get => CombatUse != null && CombatUse == ACE.Entity.Enum.CombatUse.Shield; }
@@ -85,14 +83,17 @@ namespace ACE.Server.WorldObjects
         public bool IsAmmoLauncher { get => IsBow || IsAtlatl; }
         public bool IsThrownWeapon { get => DefaultCombatStyle != null && DefaultCombatStyle == CombatStyle.ThrownWeapon; }
         public bool IsRanged { get => IsAmmoLauncher || IsThrownWeapon; }
+        public bool IsCaster { get => DefaultCombatStyle != null && (DefaultCombatStyle == CombatStyle.Magic); }
 
         public EmoteManager EmoteManager;
         public EnchantmentManagerWithCaching EnchantmentManager;
 
-        public WorldObject ProjectileSource;
-        public WorldObject ProjectileTarget;
+        // todo: move these to a base projectile class
+        public WorldObject ProjectileSource { get; set; }
+        public WorldObject ProjectileTarget { get; set; }
 
-        public WorldObject ProjectileLauncher;
+        public WorldObject ProjectileLauncher { get; set; }
+        public WorldObject ProjectileAmmo { get; set; }
 
         public bool HitMsg;     // FIXME: find a better way to do this for projectiles
 
@@ -106,7 +107,7 @@ namespace ACE.Server.WorldObjects
         protected WorldObject(Weenie weenie, ObjectGuid guid)
         {
             Weenie = weenie;
-            Biota = ACE.Entity.Adapter.WeenieConverter.ConvertToBiota(weenie, guid.Full, false, weenie.CanReferenceCommonProperties);
+            Biota = ACE.Entity.Adapter.WeenieConverter.ConvertToBiota(weenie, guid.Full, false, true);
             Guid = guid;
 
             InitializePropertyDictionaries();
@@ -188,18 +189,12 @@ namespace ACE.Server.WorldObjects
             if (PhysicsObj.CurCell != null)
                 return false;
 
-            /*if ((Location.LongObjCellID | 0xFFFF) == 0x1D9FFFF)
-            {
-                Console.WriteLine($"{Name}");
-                var debug = true;
-            }*/
-
             AdjustDungeon(Location);
 
             // exclude linkspots from spawning
             if (WeenieClassId == 10762) return true;
 
-            var cell = LScape.get_landcell(Location.LongObjCellID);
+            var cell = LScape.get_landcell(Location.Cell);
             if (cell == null)
             {
                 PhysicsObj.DestroyObject();
@@ -234,8 +229,14 @@ namespace ACE.Server.WorldObjects
 
         public void SyncLocation()
         {
-            Location.ObjCellID = PhysicsObj.Position.ObjCellID;
-            Location.Pos = PhysicsObj.Position.Frame.Origin;
+            Location.LandblockId = new LandblockId(PhysicsObj.Position.ObjCellID);
+
+            // skip ObjCellID check when updating from physics
+            // TODO: update to newer version of ACE.Entity.Position
+            Location.PositionX = PhysicsObj.Position.Frame.Origin.X;
+            Location.PositionY = PhysicsObj.Position.Frame.Origin.Y;
+            Location.PositionZ = PhysicsObj.Position.Frame.Origin.Z;
+
             Location.Rotation = PhysicsObj.Position.Frame.Orientation;
         }
 
@@ -722,9 +723,6 @@ namespace ACE.Server.WorldObjects
             if (Location == null)
                 return false;
 
-            if (Generator != null)
-                Location.Instance = Generator.Location.Instance;
-
             if (!LandblockManager.AddObject(this))
                 return false;
 
@@ -732,7 +730,10 @@ namespace ACE.Server.WorldObjects
                 ApplyVisualEffects(PlayScript.Create);
 
             if (Generator != null)
+            {
+                Location.Instance = Generator.Location.Instance;
                 OnGeneration(Generator);
+            }
 
             //Console.WriteLine($"{Name}.EnterWorld()");
 
@@ -751,22 +752,17 @@ namespace ACE.Server.WorldObjects
         {
             if (pos == null) return false;
 
-            /*if ((pos.LongObjCellID | 0xFFFF) == 0x1D9FFFF)
-            {
-                var debug = true;
-            }*/
-
-            var landblock = LScape.get_landblock(pos.LongObjCellID);
+            var landblock = LScape.get_landblock(pos.Cell);
             if (landblock == null || !landblock.HasDungeon) return false;
 
-            var dungeonID = pos.LongObjCellID >> 16;
+            var dungeonID = pos.Cell >> 16;
 
             var adjustCell = AdjustCell.Get(dungeonID);
             var cellID = adjustCell.GetCell(pos.Pos);
 
-            if (cellID != null && pos.ObjCellID != cellID.Value)
+            if (cellID != null && pos.Cell != cellID.Value)
             {
-                pos.ObjCellID = cellID.Value;
+                pos.LandblockId = new LandblockId(cellID.Value);
                 return true;
             }
             return false;
@@ -775,17 +771,12 @@ namespace ACE.Server.WorldObjects
         // todo: This should really be an extension method for Position, or a static method within Position, or even AdjustPos
         public static bool AdjustDungeonPos(Position pos)
         {
-            /*if ((pos.LongObjCellID | 0xFFFF) == 0x1D9FFFF)
-            {
-                var debug = true;
-            }*/
-
             if (pos == null) return false;
 
-            var landblock = LScape.get_landblock(pos.LongObjCellID);
+            var landblock = LScape.get_landblock(pos.Cell);
             if (landblock == null || !landblock.HasDungeon) return false;
 
-            var dungeonID = pos.ObjCellID >> 16;
+            var dungeonID = pos.Cell >> 16;
 
             var adjusted = AdjustPos.Adjust(dungeonID, pos);
             return adjusted;
@@ -849,7 +840,7 @@ namespace ACE.Server.WorldObjects
         /// If this is a container or a creature, all of the inventory and/or equipped objects will also be destroyed.<para />
         /// An object should only be destroyed once.
         /// </summary>
-        public virtual void Destroy(bool raiseNotifyOfDestructionEvent = true)
+        public void Destroy(bool raiseNotifyOfDestructionEvent = true, bool fromLandblockUnload = false)
         {
             if (IsDestroyed)
             {
@@ -876,11 +867,25 @@ namespace ACE.Server.WorldObjects
             if (this is Pet pet && pet.P_PetOwner?.CurrentActivePet == this)
                 pet.P_PetOwner.CurrentActivePet = null;
 
+            if (this is Vendor vendor)
+            {
+                foreach (var wo in vendor.DefaultItemsForSale.Values)
+                    wo.Destroy();
+
+                foreach (var wo in vendor.UniqueItemsForSale.Values)
+                    wo.Destroy();
+            }
+
             if (raiseNotifyOfDestructionEvent)
                 NotifyOfEvent(RegenerationType.Destruction);
 
             if (IsGenerator)
-                OnGeneratorDestroy();
+            {
+                if (fromLandblockUnload)
+                    ProcessGeneratorDestructionDirective(GeneratorDestruct.Destroy, fromLandblockUnload);
+                else
+                    OnGeneratorDestroy();
+            }
 
             CurrentLandblock?.RemoveWorldObject(Guid);
 
@@ -920,7 +925,7 @@ namespace ACE.Server.WorldObjects
         /// adds to the physics animation system, and broadcasts to nearby players
         /// </summary>
         /// <returns>The amount it takes to execute the motion</returns>
-        public float ExecuteMotion(Motion motion, bool sendClient = true, float? maxRange = null)
+        public float ExecuteMotion(Motion motion, bool sendClient = true, float? maxRange = null, bool persist = false)
         {
             var motionCommand = motion.MotionState.ForwardCommand;
 
@@ -946,6 +951,9 @@ namespace ACE.Server.WorldObjects
                 motionInterp.apply_raw_movement(true, true);
             }
 
+            if (persist && PropertyManager.GetBool("persist_movement").Item)
+                motion.Persist(CurrentMotionState);
+
             // hardcoded ready?
             var animLength = MotionTable.GetAnimationLength(MotionTableId, CurrentMotionState.Stance, CurrentMotionState.MotionState.ForwardCommand, motionCommand);
             CurrentMotionState = motion;
@@ -957,9 +965,19 @@ namespace ACE.Server.WorldObjects
             return animLength;
         }
 
+        public float ExecuteMotionPersist(Motion motion, bool sendClient = true, float? maxRange = null)
+        {
+            return ExecuteMotion(motion, sendClient, maxRange, true);
+        }
+
         public void SetStance(MotionStance stance, bool broadcast = true)
         {
-            CurrentMotionState = new Motion(stance);
+            var motion = new Motion(stance);
+
+            if (PropertyManager.GetBool("persist_movement").Item)
+                motion.Persist(CurrentMotionState);
+
+            CurrentMotionState = motion;
 
             if (broadcast)
                 EnqueueBroadcastMotion(CurrentMotionState);
@@ -971,8 +989,8 @@ namespace ACE.Server.WorldObjects
         /// </summary>
         public Quadrant GetRelativeDir(WorldObject target)
         {
-            var sourcePos = new Vector3(Location.Pos.X, Location.Pos.Y, 0);
-            var targetPos = new Vector3(target.Location.Pos.X, target.Location.Pos.Y, 0);
+            var sourcePos = new Vector3(Location.PositionX, Location.PositionY, 0);
+            var targetPos = new Vector3(target.Location.PositionX, target.Location.PositionY, 0);
             var targetDir = new AFrame(target.Location.Pos, target.Location.Rotation).get_vector_heading();
 
             targetDir.Z = 0;
@@ -1055,6 +1073,29 @@ namespace ACE.Server.WorldObjects
                 return new List<WorldObject>();
             else
                 return new List<WorldObject>() { this };
+        }
+
+        public bool HasArmorLevel()
+        {
+            return ArmorLevel > 0;
+        }
+
+        public virtual bool IsBeingTradedOrContainsItemBeingTraded(HashSet<ObjectGuid> guidList) => guidList.Contains(Guid);
+
+        public bool IsSocietyArmor => WieldSkillType >= (int)PropertyInt.SocietyRankCelhan && WieldSkillType <= (int)PropertyInt.SocietyRankRadblo;
+
+        public int StructureUnitValue
+        {
+            get
+            {
+                var weenie = DatabaseManager.World.GetCachedWeenie(WeenieClassId);
+                var weenieValue = weenie?.GetValue() ?? 0;
+                var weenieMaxStructure = weenie?.GetMaxStructure() ?? 1;
+
+                var structureUnitValue = weenieValue / weenieMaxStructure;
+
+                return Math.Max(0, structureUnitValue);
+            }
         }
     }
 }

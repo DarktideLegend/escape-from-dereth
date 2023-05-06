@@ -18,7 +18,7 @@ namespace ACE.Server.WorldObjects
         /// <summary>
         /// Return to home if target distance exceeds this range
         /// </summary>
-        public static readonly float MaxChaseRange = 192.0f;
+        public static readonly float MaxChaseRange = 96.0f;
         public static readonly float MaxChaseRangeSq = MaxChaseRange * MaxChaseRange;
 
         /// <summary>
@@ -97,6 +97,7 @@ namespace ACE.Server.WorldObjects
             IsMoving = true;
             LastMoveTime = Timers.RunningTime;
             NextCancelTime = LastMoveTime + ThreadSafeRandom.Next(2, 4);
+            moveBit = false;
 
             var mvp = GetMovementParameters();
             if (turnTo)
@@ -251,17 +252,14 @@ namespace ACE.Server.WorldObjects
                 CancelMoveTo();
         }
 
-        public static bool ForcePos = true;
-
-        public void UpdatePosition()
+        public void UpdatePosition(bool netsend = true)
         {
             stopwatch.Restart();
             PhysicsObj.update_object(Location.Instance);
             ServerPerformanceMonitor.AddToCumulativeEvent(ServerPerformanceMonitor.CumulativeEventHistoryType.Monster_Navigation_UpdatePosition_PUO, stopwatch.Elapsed.TotalSeconds);
             UpdatePosition_SyncLocation();
 
-            //SendUpdatePosition(ForcePos);
-            if (ForcePos)
+            if (netsend)
                 SendUpdatePosition();
 
             if (DebugMove)
@@ -283,17 +281,18 @@ namespace ACE.Server.WorldObjects
             // was the position successfully moved to?
             // use the physics position as the source-of-truth?
             var newPos = PhysicsObj.Position;
-            if (Location.ObjCellID != newPos.ObjCellID)
+
+            if (Location.LandblockId.Raw != newPos.ObjCellID)
             {
-                var prevBlockCell = Location.ObjCellID;
-                var prevBlock = Location.Landblock;
-                var prevCell = Location.Cell;
+                var prevBlockCell = Location.LandblockId.Raw;
+                var prevBlock = Location.LandblockId.Raw >> 16;
+                var prevCell = Location.LandblockId.Raw & 0xFFFF;
 
                 var newBlockCell = newPos.ObjCellID;
                 var newBlock = newPos.ObjCellID >> 16;
                 var newCell = newPos.ObjCellID & 0xFFFF;
 
-                Location.ObjCellID = newPos.ObjCellID;
+                Location.LandblockId = new LandblockId(newPos.ObjCellID);
 
                 if (prevBlock != newBlock)
                 {
@@ -306,7 +305,12 @@ namespace ACE.Server.WorldObjects
                     //Console.WriteLine("Moving " + Name + " to " + Location.LandblockId.Raw.ToString("X8"));
             }
 
-            Location.Pos = newPos.Frame.Origin;
+            // skip ObjCellID check when updating from physics
+            // TODO: update to newer version of ACE.Entity.Position
+            Location.PositionX = newPos.Frame.Origin.X;
+            Location.PositionY = newPos.Frame.Origin.Y;
+            Location.PositionZ = newPos.Frame.Origin.Z;
+
             Location.Rotation = newPos.Frame.Orientation;
 
             if (DebugMove)
@@ -380,7 +384,7 @@ namespace ACE.Server.WorldObjects
         /// </summary>
         public bool IsFacing(WorldObject target)
         {
-            if (target == null) return false;
+            if (target?.Location == null) return false;
 
             var angle = GetAngle(target);
             var dist = Math.Max(0, GetDistanceToTarget());
@@ -447,10 +451,12 @@ namespace ACE.Server.WorldObjects
                 return;
 
             var homePosition = GetPosition(PositionType.Home);
-            var matchIndoors = Location.Indoors == homePosition.Indoors;
+            //var matchIndoors = Location.Indoors == homePosition.Indoors;
 
-            var globalPos = matchIndoors ? Location.ToGlobal() : Location.Pos;
-            var globalHomePos = matchIndoors ? homePosition.ToGlobal() : homePosition.Pos;
+            //var globalPos = matchIndoors ? Location.ToGlobal() : Location.Pos;
+            //var globalHomePos = matchIndoors ? homePosition.ToGlobal() : homePosition.Pos;
+            var globalPos = Location.ToGlobal();
+            var globalHomePos = homePosition.ToGlobal();
 
             var homeDistSq = Vector3.DistanceSquared(globalHomePos, globalPos);
 

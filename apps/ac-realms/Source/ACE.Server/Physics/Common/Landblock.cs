@@ -9,6 +9,7 @@ using ACE.Entity;
 using ACE.Server.Physics.Animation;
 using ACE.Server.Physics.BSP;
 using ACE.Server.Physics.Extensions;
+using ACE.Server.Managers;
 
 namespace ACE.Server.Physics.Common
 {
@@ -32,8 +33,6 @@ namespace ACE.Server.Physics.Common
         public List<PhysicsObj> Scenery;
         public List<PhysicsObj> ServerObjects { get; set; }
 
-        public uint Instance;
-
         public static bool UseSceneFiles = true;
 
         public Landblock() : base()
@@ -41,7 +40,7 @@ namespace ACE.Server.Physics.Common
             Init();
         }
 
-        public Landblock(CellLandblock landblock, uint instance)
+        public Landblock(CellLandblock landblock)
             : base(landblock)
         {
             Init();
@@ -54,8 +53,6 @@ namespace ACE.Server.Physics.Common
             BlockCoord = LandDefs.blockid_to_lcoord(landblock.Id).Value;
             _landblock = landblock;
             get_land_limits();
-
-            Instance = instance;
         }
 
         public new void Init()
@@ -71,12 +68,7 @@ namespace ACE.Server.Physics.Common
 
         public void PostInit()
         {
-            var lbid = ID & 0xFFFF0000;
-            for (uint i = 1; i <= 64; i++)
-            {
-                var landcell = LScape.get_landcell(lbid | i, Instance);
-                landcell.CurLandblock = this;
-            }
+            init_landcell();
 
             init_buildings();
             init_static_objs();
@@ -153,8 +145,7 @@ namespace ACE.Server.Physics.Common
             var cellY = (int)point.Y / 24;
 
             var blockCellID = (ID & 0xFFFF0000) | (uint)(cellX * 8 + cellY) + 1;
-            var iCellID = ((ulong)Instance << 32) | (ulong)blockCellID;
-            return (LandCell)LScape.get_landcell(iCellID);
+            return (LandCell)LScape.get_landcell((uint)blockCellID);
         }
 
         public void destroy_buildings()
@@ -560,6 +551,15 @@ namespace ACE.Server.Physics.Common
             DynObjsInitDone = false;
         }
 
+        /// <summary>
+        /// Release shadow objects pointing to cells in this landblock
+        /// </summary>
+        public void release_shadow_objs()
+        {
+            foreach (var cell in LandCells.Values)
+                cell.release_shadow_objs();
+        }
+
         public void release_visible_cells()
         {
             // legacy method
@@ -579,6 +579,16 @@ namespace ACE.Server.Physics.Common
                 // return cached value
                 if (isDungeon != null)
                     return isDungeon.Value;
+
+                // hack for NW island
+                // did a worldwide analysis for adding watercells into the formula,
+                // but they are inconsistently defined for some of the edges of map unfortunately
+                if (BlockCoord.X < 64 && BlockCoord.Y > 1976)
+                {
+                    //Console.WriteLine($"Allowing {ID:X8}");
+                    isDungeon = false;
+                    return isDungeon.Value;
+                }
 
                 // a dungeon landblock is determined by:
                 // - all heights being 0

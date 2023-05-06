@@ -52,7 +52,7 @@ namespace ACE.Server.Physics.Common
 
         public Position(ACE.Entity.Position p)
         {
-            ObjCellID = p.ObjCellID;
+            ObjCellID = p.Cell;
             Frame = new AFrame(p.Pos, p.Rotation);
         }
 
@@ -285,6 +285,11 @@ namespace ACE.Server.Physics.Common
         public override string ToString()
         {
             return $"0x{ObjCellID:X8} {Frame}";
+        }
+
+        public string ShortLoc()
+        {
+            return $"0x{ObjCellID:X8} [{Frame.Origin.X} {Frame.Origin.Y} {Frame.Origin.Z}]";
         }
     }
 }

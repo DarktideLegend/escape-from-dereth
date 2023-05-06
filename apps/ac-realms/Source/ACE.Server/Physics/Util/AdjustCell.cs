@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Numerics;
 using ACE.DatLoader;
 using ACE.DatLoader.FileTypes;
@@ -7,30 +8,28 @@ namespace ACE.Server.Physics.Util
 {
     public class AdjustCell
     {
-        public List<Common.EnvCell> EnvCells { get; set; }
-        public static Dictionary<ulong, AdjustCell> AdjustCells { get; set; } = new Dictionary<ulong, AdjustCell>();
+        public List<Common.EnvCell> EnvCells;
+        public static ConcurrentDictionary<uint, AdjustCell> AdjustCells = new ConcurrentDictionary<uint, AdjustCell>();
 
-        public AdjustCell(ulong iDungeonID)
+        public AdjustCell(uint dungeonID)
         {
-            var dungeonID = (ushort)iDungeonID;
-
-            uint blockInfoID = (uint)((dungeonID << 16) | 0xFFFE);
+            uint blockInfoID = dungeonID << 16 | 0xFFFE;
             var blockinfo = DatManager.CellDat.ReadFromDat<LandblockInfo>(blockInfoID);
             var numCells = blockinfo.NumCells;
 
-            BuildEnv(iDungeonID, numCells);
+            BuildEnv(dungeonID, numCells);
         }
 
-        public void BuildEnv(ulong iDungeonID, uint numCells)
+        public void BuildEnv(uint dungeonID, uint numCells)
         {
             EnvCells = new List<Common.EnvCell>();
             uint firstCellID = 0x100;
             for (uint i = 0; i < numCells; i++)
             {
                 uint cellID = firstCellID + i;
-                ulong iBlockCell = iDungeonID << 16 | cellID;
+                uint blockCell = dungeonID << 16 | cellID;
 
-                var objCell = Common.LScape.get_landcell(iBlockCell);
+                var objCell = Common.LScape.get_landcell(blockCell);
                 var envCell = objCell as Common.EnvCell;
                 if (envCell != null)
                     EnvCells.Add(envCell);
@@ -45,14 +44,14 @@ namespace ACE.Server.Physics.Util
             return null;
         }
 
-        public static AdjustCell Get(ulong iDungeonID)
+        public static AdjustCell Get(uint dungeonID)
         {
             AdjustCell adjustCell = null;
-            AdjustCells.TryGetValue(iDungeonID, out adjustCell);
+            AdjustCells.TryGetValue(dungeonID, out adjustCell);
             if (adjustCell == null)
             {
-                adjustCell = new AdjustCell(iDungeonID);
-                AdjustCells.Add(iDungeonID, adjustCell);
+                adjustCell = new AdjustCell(dungeonID);
+                AdjustCells.TryAdd(dungeonID, adjustCell);
             }
             return adjustCell;
         }

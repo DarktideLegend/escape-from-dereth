@@ -47,19 +47,7 @@ namespace ACE.Server.Physics
         public PhysicsObj Parent;
         public ChildList Children;
         public Position Position;
-
-        private ObjCell _curCell;
-        public ObjCell CurCell
-        {
-            get => _curCell;
-            set
-            {
-                _curCell = value;
-                if (_curCell?.CurLandblock != null)
-                    CurLandblock = _curCell.CurLandblock;
-            }
-        }
-
+        public ObjCell CurCell;
         public Landblock CurLandblock;
         public int NumShadowObjects;
         public Dictionary<uint, ShadowObj> ShadowObjects;
@@ -109,8 +97,7 @@ namespace ACE.Server.Physics
             MovementManager.MotionInterpreter.InterpretedState.HasCommands() || MovementManager.MoveToManager.Initialized;
 
         // server
-        public Position RequestPos { get; set; }
-        public uint RequestInstance { get; set; }
+        public Position RequestPos;
 
         public string Name
         {
@@ -158,6 +145,9 @@ namespace ACE.Server.Physics
             UpdateTime = PhysicsTimer.CurrentTime;
             UpdateTimes = new int[UpdateTimeLength];
             PhysicsTimer_CurrentTime = PhysicsTimer.CurrentTime;
+
+            // todo: only allocate these for server objects
+            // get rid of 'DatObject', use the existing WeenieObj == null
             WeenieObj = new WeenieObject();
             ObjMaint = new ObjectMaint(this);
 
@@ -239,7 +229,7 @@ namespace ACE.Server.Physics
             }
         }
 
-        public ObjCell AdjustPosition(Position position, Vector3 low_pt, bool dontCreateCells, bool searchCells, uint instance)
+        public ObjCell AdjustPosition(Position position, Vector3 low_pt, bool dontCreateCells, bool searchCells)
         {
             var cellID = position.ObjCellID & 0xFFFF;
 
@@ -249,10 +239,10 @@ namespace ACE.Server.Physics
             if (cellID < 0x100)
             {
                 LandDefs.AdjustToOutside(position);
-                return ObjCell.GetVisible(position.ObjCellID, instance);
+                return ObjCell.GetVisible(position.ObjCellID);
             }
 
-            var visibleCell = (EnvCell)ObjCell.GetVisible(position.ObjCellID, instance);
+            var visibleCell = (EnvCell)ObjCell.GetVisible(position.ObjCellID);
             if (visibleCell == null) return null;
 
             var point = position.LocalToGlobal(low_pt);
@@ -267,7 +257,7 @@ namespace ACE.Server.Physics
                 return null;
 
             position.adjust_to_outside();
-            return ObjCell.GetVisible(position.ObjCellID, instance);
+            return ObjCell.GetVisible(position.ObjCellID);
         }
 
         public bool CacheHasPhysicsBSP()
@@ -316,7 +306,7 @@ namespace ACE.Server.Physics
             if (!setPos.Flags.HasFlag(SetPositionFlags.Slide))
                 transition.SpherePath.PlacementAllowsSliding = false;
 
-            if (!transition.FindValidPosition(setPos.Instance)) return false;
+            if (!transition.FindValidPosition()) return false;
 
             if (setPos.Flags.HasFlag(SetPositionFlags.Slide))
                 return true;
@@ -547,7 +537,7 @@ namespace ACE.Server.Physics
             if (CurCell != newCell)
             {
                 change_cell(newCell);
-                calc_cross_cells(newCell.CurLandblock.Instance);
+                calc_cross_cells();
             }
             return SetPositionError.OK;
         }
@@ -1161,7 +1151,7 @@ namespace ACE.Server.Physics
 
         public SetPositionError SetPosition(SetPosition setPos)
         {
-            var transition = Transition.MakeTransition(setPos.Instance);
+            var transition = Transition.MakeTransition();
             if (transition == null)
                 return SetPositionError.GeneralFailure;
 
@@ -1269,7 +1259,7 @@ namespace ACE.Server.Physics
             {
                 if (State.HasFlag(PhysicsState.HasPhysicsBSP))
                 {
-                    calc_cross_cells(transition.Instance);
+                    calc_cross_cells();
                     return true;
                 }
 
@@ -1288,7 +1278,7 @@ namespace ACE.Server.Physics
         {
             if (CurCell == null) prepare_to_enter_world();
 
-            var newCell = AdjustPosition(pos, transition.SpherePath.LocalSphere[0].Center, setPos.Flags.HasFlag(SetPositionFlags.DontCreateCells), true, transition.Instance);
+            var newCell = AdjustPosition(pos, transition.SpherePath.LocalSphere[0].Center, setPos.Flags.HasFlag(SetPositionFlags.DontCreateCells), true);
 
             if (newCell == null)
             {
@@ -1319,6 +1309,21 @@ namespace ACE.Server.Physics
             {
                 // send initial CO as ethereal
                 WeenieObj.WorldObject.SetProperty(PropertyBool.Ethereal, true);
+            }
+
+            if (entering_world && transition.SpherePath.CurPos.Landblock != pos.Landblock)
+            {
+                // AdjustToOutside and find_cell_list can inconsistently result in 2 different cells for edges
+                // if something directly on a landblock edge has resulted in a different landblock from find_cell_list, discard completely
+
+                // this can also (more legitimately) happen even if the object isn't directly on landblock edge, but is near it
+                // an object trying to spawn on a hillside near a landblock edge might get pushed slightly during spawning,
+                // resulting in a successful spawn in a neighboring landblock. we don't handle adjustments to the actual landblock reference in here
+
+                // ideally CellArray.LoadCells = false would be passed to find_cell_list to prevent it from even attempting to load an unloaded neighboring landblock
+
+                log.Debug($"{Name} ({ID:X8}) AddPhysicsObj() - {pos.ShortLoc()} resulted in {transition.SpherePath.CurPos.ShortLoc()}, discarding");
+                return SetPositionError.NoValidPosition;
             }
 
             if (!SetPositionInternal(transition))
@@ -1413,8 +1418,7 @@ namespace ACE.Server.Physics
                     LandDefs.AdjustToOutside(newPos);
 
                     // ensure walkable slope
-                    var icellid = ((ulong)transition.Instance << 32) | newPos.ObjCellID;
-                    var landcell = (LandCell)LScape.get_landcell(icellid);
+                    var landcell = (LandCell)LScape.get_landcell(newPos.ObjCellID);
 
                     Polygon walkable = null;
                     var terrainPoly = landcell.find_terrain_poly(newPos.Frame.Origin, ref walkable);
@@ -1425,11 +1429,11 @@ namespace ACE.Server.Physics
                     // compare: rabbits occasionally spawning in buildings in yaraq,
                     // vs. lich tower @ 3D31FFFF
 
-                    var sortCell = LScape.get_landcell(icellid) as SortCell;
+                    var sortCell = LScape.get_landcell(newPos.ObjCellID) as SortCell;
                     if (sortCell == null || !sortCell.has_building())
                     {
                         // set to ground pos
-                        var landblock = LScape.get_landblock(icellid);
+                        var landblock = LScape.get_landblock(newPos.ObjCellID);
                         var groundZ = landblock.GetZ(newPos.Frame.Origin) + 0.05f;
 
                         if (Math.Abs(newPos.Frame.Origin.Z - groundZ) > ScatterThreshold_Z)
@@ -1678,34 +1682,34 @@ namespace ACE.Server.Physics
                     }
                     else if ((State & PhysicsState.Sledding) != 0 && Velocity != Vector3.Zero)
                         newPos.Frame.set_vector_heading(Vector3.Normalize(Velocity));
-                }
 
-                if (GetBlockDist(Position, newPos) > 1)
-                {
-                    log.Warn($"WARNING: failed transition for {Name} from {Position} to {newPos}");
-                    return;
-                }
+                    if (GetBlockDist(Position, newPos) > 1)
+                    {
+                        log.Warn($"WARNING: failed transition for {Name} from {Position} to {newPos}");
+                        return;
+                    }
 
-                var transit = transition(Position, newPos, false);
+                    var transit = transition(Position, newPos, false);
 
 
-                // temporarily modified while debug path is examined
-                if (transit != null && transit.SpherePath.CurCell != null)
-                {
-                    CachedVelocity = Position.GetOffset(transit.SpherePath.CurPos) / (float)quantum;
+                    // temporarily modified while debug path is examined
+                    if (transit != null && transit.SpherePath.CurCell != null)
+                    {
+                        CachedVelocity = Position.GetOffset(transit.SpherePath.CurPos) / (float)quantum;
 
-                    SetPositionInternal(transit);
-                }
-                else
-                {
-                    if (IsPlayer)
-                        log.Debug($"{Name} ({ID:X8}).UpdateObjectInternal({quantum}) - failed transition from {Position} to {newPos}");
-                    else if (transit != null && transit.SpherePath.CurCell == null)
-                        log.Warn($"{Name} ({ID:X8}).UpdateObjectInternal({quantum}) - avoided CurCell=null from {Position} to {newPos}");
+                        SetPositionInternal(transit);
+                    }
+                    else
+                    {
+                        if (IsPlayer)
+                            log.Debug($"{Name} ({ID:X8}).UpdateObjectInternal({quantum}) - failed transition from {Position} to {newPos}");
+                        else if (transit != null && transit.SpherePath.CurCell == null)
+                            log.Warn($"{Name} ({ID:X8}).UpdateObjectInternal({quantum}) - avoided CurCell=null from {Position} to {newPos}");
 
-                    newPos.Frame.Origin = Position.Frame.Origin;
-                    set_initial_frame(newPos.Frame);
-                    CachedVelocity = Vector3.Zero;
+                        newPos.Frame.Origin = Position.Frame.Origin;
+                        set_initial_frame(newPos.Frame);
+                        CachedVelocity = Vector3.Zero;
+                    }
                 }
             }
             else
@@ -2053,7 +2057,7 @@ namespace ACE.Server.Physics
             sphere.Radius = AttackManager.AttackRadius + attackCone.Radius * Scale;
 
             var cellArray = new CellArray();
-            ObjCell.find_cell_list(Position, sphere, cellArray, null, CurLandblock.Instance);
+            ObjCell.find_cell_list(Position, sphere, cellArray, null);
 
             var attackInfo = AttackManager.NewAttack(attackCone.PartIdx);
 
@@ -2080,7 +2084,7 @@ namespace ACE.Server.Physics
             }
         }
 
-        public void calc_cross_cells(uint instance)
+        public void calc_cross_cells()
         {
             CellArray.SetDynamic();
 
@@ -2089,12 +2093,12 @@ namespace ACE.Server.Physics
             else
             {
                 if (PartArray != null && PartArray.GetNumCylsphere() != 0)
-                    ObjCell.find_cell_list(Position, PartArray.GetNumCylsphere(), PartArray.GetCylSphere(), CellArray, null, instance);
+                    ObjCell.find_cell_list(Position, PartArray.GetNumCylsphere(), PartArray.GetCylSphere(), CellArray, null);
                 else
                 {
                     // added sorting sphere null check
                     var sphere = PartArray != null && PartArray.Setup.SortingSphere != null ? PartArray.GetSortingSphere() : PhysicsGlobals.DummySphere;
-                    ObjCell.find_cell_list(Position, sphere, CellArray, null, instance);
+                    ObjCell.find_cell_list(Position, sphere, CellArray, null);
                 }
             }
             remove_shadows_from_cells();
@@ -2106,7 +2110,7 @@ namespace ACE.Server.Physics
             CellArray.SetStatic();
 
             if (PartArray != null && PartArray.GetNumCylsphere() != 0 && !State.HasFlag(PhysicsState.HasPhysicsBSP))
-                ObjCell.find_cell_list(Position, PartArray.GetNumCylsphere(), PartArray.GetCylSphere(), CellArray, null, CurCell?.CurLandblock?.Instance ?? 0);
+                ObjCell.find_cell_list(Position, PartArray.GetNumCylsphere(), PartArray.GetCylSphere(), CellArray, null);
             else
                 find_bbox_cell_list(CellArray);
 
@@ -2198,7 +2202,7 @@ namespace ACE.Server.Physics
             if (State.HasFlag(PhysicsState.Static))
                 return false;
 
-            var trans = Transition.MakeTransition(obj.CurLandblock.Instance);
+            var trans = Transition.MakeTransition();
             var objectInfo = get_object_info(trans, false);
             trans.InitObject(this, objectInfo.State);
 
@@ -2362,7 +2366,7 @@ namespace ACE.Server.Physics
 
             if (!DatObject && newCell != null)
             {
-                CurLandblock = LScape.get_landblock(newCell.ID, newCell.CurLandblock.Instance);
+                CurLandblock = LScape.get_landblock(newCell.ID);
                 if (CurLandblock != null)
                     CurLandblock.add_server_object(this);
             }
@@ -2670,9 +2674,8 @@ namespace ACE.Server.Physics
             }
             else if (collisions.CollidedWithEnvironment || !prev_on_walkable && TransientState.HasFlag(TransientStateFlags.OnWalkable))
             {
-                //retval = report_environment_collision(prev_has_contact);
-                report_environment_collision(prev_has_contact);
-                retval = true;
+                if (report_environment_collision(prev_has_contact))
+                    retval = true;
             }
 
             if (collisions.FramesStationaryFall <= 1)
@@ -2699,7 +2702,7 @@ namespace ACE.Server.Physics
             }
             else
             {
-                //Velocity = Vector3.Zero;  // gets objects stuck in falling state?
+                Velocity = Vector3.Zero;
                 if (collisions.FramesStationaryFall == 3)
                 {
                     TransientState &= ~TransientStateFlags.StationaryComplete;
@@ -3183,7 +3186,7 @@ namespace ACE.Server.Physics
         {
             if (PartArray == null) return;
             if (Position.ObjCellID != 0)
-                calc_cross_cells(CurLandblock?.Instance ?? 0);
+                calc_cross_cells();
             else
             {
                 if (!ExaminationObject || !State.HasFlag(PhysicsState.ParticleEmitter)) return;
@@ -3461,14 +3464,14 @@ namespace ACE.Server.Physics
             return (TransientState & TransientStateFlags.Active) != 0;
         }
 
-        public void set_current_pos(Position newPos, uint instance)
+        public void set_current_pos(Position newPos)
         {
             Position.ObjCellID = newPos.ObjCellID;
             Position.Frame = new AFrame(newPos.Frame);
 
-            if (CurCell == null || CurCell.ID != Position.ObjCellID || CurCell.CurLandblock.Instance != instance)
+            if (CurCell == null || CurCell.ID != Position.ObjCellID)
             {
-                var newCell = LScape.get_landcell(newPos.ObjCellID, instance);
+                var newCell = LScape.get_landcell(newPos.ObjCellID);
 
                 if (WeenieObj.WorldObject is Player player && player.LastContact && newCell is LandCell landCell)
                 {
@@ -3481,6 +3484,8 @@ namespace ACE.Server.Physics
                 }
                 change_cell_server(newCell);
             }
+
+            CachedVelocity = requestCachedVelocity;
         }
 
         /// <summary>
@@ -3876,20 +3881,20 @@ namespace ACE.Server.Physics
             return true;
         }
 
+        private Vector3 requestCachedVelocity;
+
         /// <summary>
         /// Sets the requested position to the AutonomousPosition
         /// received from the client
         /// </summary>
-        public void set_request_pos(Vector3 pos, Quaternion rotation, uint instance, ObjCell cell, uint blockCellID)
+        public void set_request_pos(Vector3 pos, Quaternion rotation, ObjCell cell, uint blockCellID)
         {
             RequestPos.Frame.Origin = pos;
             RequestPos.Frame.Orientation = rotation;
 
-            RequestInstance = instance;
-
             if (CurCell == null)
             {
-                CurCell = LScape.get_landcell(blockCellID, instance);
+                CurCell = LScape.get_landcell(blockCellID);
                 if (CurCell == null)
                     return;
             }
@@ -3898,6 +3903,8 @@ namespace ACE.Server.Physics
                 RequestPos.ObjCellID = RequestPos.GetCell(CurCell.ID);
             else
                 RequestPos.ObjCellID = cell.ID;
+
+            requestCachedVelocity = CachedVelocity;
         }
 
         public void set_sequence_animation(int animID, bool interrupt, int startFrame, float framerate)
@@ -4060,7 +4067,7 @@ namespace ACE.Server.Physics
 
         public Transition transition(Position oldPos, Position newPos, bool adminMove)
         {
-            var trans = Transition.MakeTransition(CurLandblock.Instance);
+            var trans = Transition.MakeTransition();
             if (trans == null) return null;
 
             var objectInfo = get_object_info(trans, adminMove);
@@ -4086,7 +4093,7 @@ namespace ACE.Server.Physics
             else if ((TransientState & TransientStateFlags.StationaryFall) != 0)
                 trans.CollisionInfo.FramesStationaryFall = 1;
 
-            var validPos = trans.FindValidPosition(CurLandblock.Instance);
+            var validPos = trans.FindValidPosition();
             trans.CleanupTransition();
             if (!validPos) return null;
             return trans;
@@ -4254,7 +4261,7 @@ namespace ACE.Server.Physics
                 success = UpdateObjectInternalServer(deltaTime, instance);
 
             if (forcePos && success)
-                set_current_pos(RequestPos, RequestInstance);
+                set_current_pos(RequestPos);
 
             // temp for players
             if ((TransientState & TransientStateFlags.Contact) != 0)
@@ -4266,7 +4273,6 @@ namespace ACE.Server.Physics
 
                 var setPosition = new SetPosition();
                 setPosition.Pos = RequestPos;
-                setPosition.Instance = RequestInstance;
                 setPosition.Flags = SetPositionFlags.SendPositionEvent | SetPositionFlags.Slide | SetPositionFlags.Placement | SetPositionFlags.Teleport;
 
                 SetPosition(setPosition);
@@ -4287,7 +4293,7 @@ namespace ACE.Server.Physics
         /// <summary>
         /// This is for full / updated movement system
         /// </summary>
-        public bool update_object_server_new(bool forcePos, uint instance) //forcePos = true
+        public bool update_object_server_new(bool forcePos, uint instance)
         {
             if (Parent != null || CurCell == null || State.HasFlag(PhysicsState.Frozen))
             {
@@ -4354,7 +4360,7 @@ namespace ACE.Server.Physics
                         track_object_collision(collideObject, prevContact);
                 }
 
-                set_current_pos(RequestPos, RequestInstance);
+                set_current_pos(RequestPos);
             }
 
             // for teleport, use SetPosition?
@@ -4364,7 +4370,6 @@ namespace ACE.Server.Physics
 
                 var setPosition = new SetPosition();
                 setPosition.Pos = RequestPos;
-                setPosition.Instance = RequestInstance;
                 setPosition.Flags = SetPositionFlags.SendPositionEvent | SetPositionFlags.Slide | SetPositionFlags.Placement | SetPositionFlags.Teleport;
 
                 SetPosition(setPosition);
