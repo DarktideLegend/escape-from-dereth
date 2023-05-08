@@ -239,6 +239,7 @@ namespace ACE.Entity
         public Position(Position pos)
         {
             LandblockId = new LandblockId(pos.LandblockId.Raw);
+            ObjCellID = pos.ObjCellID;
             Pos = pos.Pos;
             Rotation = pos.Rotation;
 
@@ -249,6 +250,8 @@ namespace ACE.Entity
         {
             LandblockId = new LandblockId(blockCellID);
 
+            ObjCellID = blockCellID;
+
             Instance = instance;
 
             if (!relativePos)
@@ -256,7 +259,7 @@ namespace ACE.Entity
                 Pos = new Vector3(newPositionX, newPositionY, newPositionZ);
                 Rotation = new Quaternion(newRotationX, newRotationY, newRotationZ, newRotationW);
 
-                if ((blockCellID & 0xFFFF) == 0)
+                if (Cell == 0)
                     SetPosition(Pos);
             }
             else
@@ -270,25 +273,27 @@ namespace ACE.Entity
         public Position(uint blockCellID, float newPositionX, float newPositionY, float newPositionZ, float newRotationX, float newRotationY, float newRotationZ, float newRotationW, uint instance)
         {
             LandblockId = new LandblockId(blockCellID);
+            ObjCellID = blockCellID;
 
             Instance = instance;
 
             Pos = new Vector3(newPositionX, newPositionY, newPositionZ);
             Rotation = new Quaternion(newRotationX, newRotationY, newRotationZ, newRotationW);
 
-            if ((blockCellID & 0xFFFF) == 0)
+            if (Cell == 0)
                 SetPosition(Pos);
         }
 
         public Position(uint blockCellID, Vector3 position, Quaternion rotation, uint instance)
         {
             LandblockId = new LandblockId(blockCellID);
+            ObjCellID = blockCellID;
 
             Pos = position;
             Rotation = rotation;
             Instance = instance;
 
-            if ((blockCellID & 0xFFFF) == 0)
+            if (Cell == 0)
                 SetPosition(Pos);
         }
 
