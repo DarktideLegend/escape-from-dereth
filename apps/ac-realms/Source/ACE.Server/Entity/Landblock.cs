@@ -185,11 +185,15 @@ namespace ACE.Server.Entity
             lastActiveTime = DateTime.UtcNow;
 
             var cellLandblock = DBObj.GetCellLandblock(Id.Raw | 0xFFFF);
-            PhysicsLandblock = new Physics.Common.Landblock(cellLandblock);
+            PhysicsLandblock = new Physics.Common.Landblock(cellLandblock, Instance);
         }
 
-        public void Init(bool reload = false)
+        public void Init(bool reload = false, EphemeralRealm ephemeralRealm = null)
+
         {
+            RealmRuleset = GetOrApplyRuleset(ephemeralRealm);
+            InnerRealmInfo = ephemeralRealm;
+
             if (!reload)
                 PhysicsLandblock.PostInit();
 
@@ -204,6 +208,22 @@ namespace ACE.Server.Entity
 
             //LoadMeshes(objects);
         }
+
+        private AppliedRuleset GetOrApplyRuleset(EphemeralRealm ephemeralRealm = null)
+        {
+            if (ephemeralRealm != null)
+                return AppliedRuleset.MakeRerolledRuleset(ephemeralRealm.RulesetTemplate);
+
+            Position.ParseInstanceID(this.Instance, out bool _istemp, out var realmid, out var _shortinstid);
+            var realm = RealmManager.GetRealm(realmid);
+            if (realm == null)
+            {
+                //Shouldn't happen
+                throw new Exception($"Error: Realm {realmid} is null when creating landblock.");
+            }
+            return AppliedRuleset.MakeRerolledRuleset(realm.RulesetTemplate);
+        }
+
 
         /// <summary>
         /// Monster Locations, Generators<para />
