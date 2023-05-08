@@ -48,11 +48,11 @@ namespace ACE.Server.Entity
             //if (landblock.IsDungeon)
             if (p.Indoors)
             {
-                var iPos = new Position();
-                iPos.Instance = p.Instance;
+                var iPos = new Position(p.ObjCellID, pos, p.Rotation, p.Instance);
                 iPos.LandblockId = p.LandblockId;
                 iPos.Pos = new Vector3(pos.X, pos.Y, pos.Z);
                 iPos.Rotation = p.Rotation;
+                iPos.ObjCellID = GetCell(iPos);
                 iPos.LandblockId = new LandblockId(GetCell(iPos));
                 return iPos;
             }
@@ -63,15 +63,17 @@ namespace ACE.Server.Entity
             var localX = pos.X % Position.BlockLength;
             var localY = pos.Y % Position.BlockLength;
 
-            var landblockID = blockX << 24 | blockY << 16 | 0xFFFF;
+            var landblockID = (uint)(blockX << 24 | blockY << 16);
 
             var position = new Position();
             position.Instance = p.Instance;
+            position.ObjCellID = landblockID;
             position.LandblockId = new LandblockId((byte)blockX, (byte)blockY);
             position.PositionX = localX;
             position.PositionY = localY;
             position.PositionZ = pos.Z;
             position.Rotation = p.Rotation;
+            position.ObjCellID = GetCell(position);
             position.LandblockId = new LandblockId(GetCell(position));
             return position;
         }
