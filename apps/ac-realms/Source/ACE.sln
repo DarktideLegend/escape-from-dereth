@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30104.148
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ACE.Server", "ACE.Server\ACE.Server.csproj", "{943276B8-1DCC-48C6-A98D-692D60F53E43}"
 EndProject
@@ -62,6 +62,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{60DC64
 		..\docker.env = ..\docker.env
 		..\Dockerfile = ..\Dockerfile
 		..\Dockerfile.arm64 = ..\Dockerfile.arm64
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{DFE29B89-85DD-444C-8AE7-2AC88E03E344}"
+	ProjectSection(SolutionItems) = preProject
+		..\Scripts\dbshell.sh = ..\Scripts\dbshell.sh
+		..\Scripts\initdb.sh = ..\Scripts\initdb.sh
+		..\Scripts\resetdb.sh = ..\Scripts\resetdb.sh
 	EndProjectSection
 EndProject
 Global
