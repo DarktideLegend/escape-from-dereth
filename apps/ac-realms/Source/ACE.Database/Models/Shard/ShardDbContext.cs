@@ -1031,6 +1031,8 @@ namespace ACE.Database.Models.Shard
 
                 entity.Property(e => e.AnglesZ).HasColumnName("angles_Z");
 
+                entity.Property(e => e.Instance).HasColumnName("instance");
+
                 entity.Property(e => e.ObjCellId).HasColumnName("obj_Cell_Id");
 
                 entity.Property(e => e.OriginX).HasColumnName("origin_X");

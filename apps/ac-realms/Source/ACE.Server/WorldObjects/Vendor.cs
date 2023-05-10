@@ -125,51 +125,82 @@ namespace ACE.Server.WorldObjects
         /// </summary>
         private void LoadInventory()
         {
-            if (inventoryloaded) return;
+            // Load Vendor Inventory from database.
+            if (inventoryloaded)
+                return;
 
-            var itemsForSale = new Dictionary<(uint weenieClassId, int paletteTemplate, double shade), uint>();
+            if (Biota.PropertiesCreateList != null)
+            {
+                foreach (var item in Biota.PropertiesCreateList.Where(x => x.DestinationType == DestinationType.Shop))
+                {
+                    WorldObject wo = WorldObjectFactory.CreateNewWorldObject(item.WeenieClassId);
 
-            foreach (var item in Biota.PropertiesCreateList.Where(x => x.DestinationType == DestinationType.Shop))
-                LoadInventoryItem(itemsForSale, item.WeenieClassId, item.Palette, item.Shade, item.StackSize);
+                    if (wo != null)
+                    {
+                        if (item.Palette > 0)
+                            wo.PaletteTemplate = item.Palette;
+                        if (item.Shade > 0)
+                            wo.Shade = item.Shade;
+                        wo.ContainerId = Guid.Full;
+                        wo.CalculateObjDesc(); // i don't like firing this but this triggers proper icons, the way vendors load inventory feels off to me in this method.
+                        DefaultItemsForSale.Add(wo.Guid, wo);
+                    }
+                }
+            }
 
-            //if (Biota.PropertiesGenerator != null && !PropertyManager.GetBool("vendor_shop_uses_generator").Item)
-            //{
-            //    foreach (var item in Biota.PropertiesGenerator.Where(x => x.WhereCreate.HasFlag(RegenLocationType.Shop)))
-            //        LoadInventoryItem(itemsForSale, item.WeenieClassId, (int?)item.PaletteId, item.Shade, item.StackSize);
-            //}
+            if (GetProperty(PropertyBool.RealmSelectorVendor) == true)
+            {
+                var weenie = DatabaseManager.World.GetCachedWeenie("realm-selector-token");
+                if (weenie == null)
+                    log.Error("Weenie not found: realm-selector-token" + Environment.NewLine + Environment.StackTrace);
+                else
+                {
+                    foreach (var realm in RealmManager.Realms.Where(x => x.StandardRules.GetProperty(RealmPropertyBool.CanBeHomeworld)))
+                    {
+                        WorldObject wo = WorldObjectFactory.CreateNewWorldObject(weenie.WeenieClassId);
+                        wo.Name = realm.Realm.Name;
+                        wo.Use = realm.StandardRules.GetProperty(RealmPropertyString.Description);
+                        wo.LongDesc = realm.StandardRules.DebugOutputString();
+                        wo.ItemType = ItemType.Service;
+                        wo.SetProperty(PropertyInt.HomeRealm, realm.Realm.Id);
+                        wo.ContainerId = Guid.Full;
+                        wo.CalculateObjDesc();
+                        DefaultItemsForSale.Add(wo.Guid, wo);
+                    }
+                }
+            }
+
+            if (GetProperty(PropertyInt.RulesetStampVendorType).HasValue)
+            {
+                var rulesetVendorType = GetProperty(PropertyInt.RulesetStampVendorType).Value;
+                if (rulesetVendorType > 0)
+                {
+                    var weenie = DatabaseManager.World.GetCachedWeenie("realm-ruleset-stamp");
+                    if (weenie == null)
+                        log.Error("Weenie not found: realm-ruleset-stamp" + Environment.NewLine + Environment.StackTrace);
+                    else
+                    {
+                        var rulesets = RealmManager.Rulesets.Where(x => x.StandardRules.GetProperty(RealmPropertyInt.RulesetStampVendorCategory) == rulesetVendorType);
+                        foreach (var ruleset in rulesets)
+                        {
+                            WorldObject wo = WorldObjectFactory.CreateNewWorldObject(weenie.WeenieClassId);
+                            wo.Name = ruleset.Realm.Name;
+                            wo.Use = ruleset.StandardRules.GetProperty(RealmPropertyString.Description);
+                            wo.LongDesc = ruleset.StandardRules.DebugOutputString();
+                            wo.SetProperty(PropertyInt.HomeRealm, ruleset.Realm.Id);
+                            wo.ContainerId = Guid.Full;
+                            wo.CalculateObjDesc();
+                            DefaultItemsForSale.Add(wo.Guid, wo);
+                        }
+                    }
+                }
+            }
 
             inventoryloaded = true;
         }
 
-        private void LoadInventoryItem(Dictionary<(uint weenieClassId, int paletteTemplate, double shade), uint> itemsForSale,
-            uint weenieClassId, int? palette, float? shade, int? stackSize)
-        {
-            //var itemProfile = (weenieClassId, palette ?? 0, shade ?? 0);
 
-            // let's skip dupes if there are any
-            //if (itemsForSale.ContainsKey(itemProfile))
-            //    return;
 
-            var wo = WorldObjectFactory.CreateNewWorldObject(weenieClassId);
-
-            if (wo == null) return;
-
-            if (palette > 0)
-                wo.PaletteTemplate = palette;
-
-            if (shade > 0)
-                wo.Shade = shade;
-
-            wo.ContainerId = Guid.Full;
-
-            wo.CalculateObjDesc();
-
-            //itemsForSale.Add(itemProfile, wo.Guid.Full);
-
-            wo.VendorShopCreateListStackSize = stackSize ?? -1;
-
-            DefaultItemsForSale.Add(wo.Guid, wo);
-        }
 
         public void AddDefaultItem(WorldObject item)
         {

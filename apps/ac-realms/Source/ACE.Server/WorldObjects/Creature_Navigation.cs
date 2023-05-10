@@ -430,7 +430,7 @@ namespace ACE.Server.WorldObjects
         {
             var newPosition = new Position(_newPosition);
 
-            newPosition.PositionZ += 0.005f * (ObjScale ?? 1.0f);
+            newPosition._pos.Z += 0.005f * (ObjScale ?? 1.0f);
 
             if (Location.Landblock != newPosition.Landblock)
             {

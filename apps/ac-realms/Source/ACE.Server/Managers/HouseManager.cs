@@ -700,10 +700,9 @@ namespace ACE.Server.Managers
         /// <param name="callback">called when the slumlord inventory is fully loaded</param>
         public static void GetHouse(uint houseGuid, Action<House> callback)
         {
-            var landblock = (ushort)((houseGuid >> 12) & 0xFFFF);
+            var landblock = (houseGuid << 4) | 0xFFFF;
 
-            var landblockId = new LandblockId((uint)(landblock << 16 | 0xFFFF));
-            var isLoaded = LandblockManager.IsLoaded(landblockId);
+            var isLoaded = LandblockManager.IsLoaded(landblock);
 
             if (!isLoaded)
             {
@@ -717,7 +716,7 @@ namespace ACE.Server.Managers
             }
 
             // landblock is loaded, return a reference to the current House object
-            var loaded = LandblockManager.GetLandblock(landblockId, false);
+            var loaded = LandblockManager.GetLandblockBase(landblock, false);
             var house = loaded.GetObject(new ObjectGuid(houseGuid)) as House;
 
             if (house != null && house.SlumLord != null)
@@ -734,7 +733,7 @@ namespace ACE.Server.Managers
                 RegisterCallback(houseBiota, callback);
             }
             else
-                log.Error($"[HOUSE] HouseManager.GetHouse({houseGuid:X8}): couldn't find house on loaded landblock");
+                log.Error($"HouseManager.GetHouse({houseGuid:X8}): couldn't find house on loaded landblock");
         }
 
         /// <summary>

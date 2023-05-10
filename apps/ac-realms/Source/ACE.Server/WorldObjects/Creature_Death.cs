@@ -764,7 +764,8 @@ namespace ACE.Server.WorldObjects
             return string.Join(", ", spells.Select(i => i.Name));
         }
 
-        public bool IsOnNoDeathXPLandblock => Location != null ? NoDeathXP_Landblocks.Contains(Location.LandblockId.Landblock) : false;
+        public bool IsOnNoDeathXPLandblock => Location != null ? NoDeathXP_Landblocks.Contains(Location.Landblock) : false;
+
 
         /// <summary>
         /// A list of landblocks the player gains no xp from creature kills

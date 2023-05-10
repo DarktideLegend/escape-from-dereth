@@ -50,39 +50,45 @@ namespace ACE.Server.WorldObjects
             SuppressGenerateEffect = true;
         }
 
-        public virtual bool? Init(Player player, PetDevice petDevice)
+        public virtual bool Init(Player player, PetDevice petDevice)
         {
-            var result = HandleCurrentActivePet(player);
+            if (player.CurrentActivePet != null)
+            {
+                if (player.CurrentActivePet is CombatPet)
+                {
+                    player.SendTransientError($"{player.CurrentActivePet.Name} is already active");
+                    return false;
+                }
 
-            if (result == null || !result.Value)
-                return result;
+                var stowPet = WeenieClassId == player.CurrentActivePet.WeenieClassId;
 
-            // get physics radius of player and pet
-            var playerRadius = player.PhysicsObj.GetPhysicsRadius();
-            var petRadius = GetPetRadius();
+                // despawn passive pet
+                player.CurrentActivePet.Destroy();
 
-            var spawnDist = playerRadius + petRadius + MinDistance;
+                if (stowPet) return false;
+            }
 
             if (IsPassivePet)
             {
-                Location = player.Location.InFrontOf(spawnDist, true);
+                // get physics radius of player and pet
+                var playerRadius = player.PhysicsObj.GetPhysicsRadius();
+                var petRadius = GetPetRadius();
 
-                TimeToRot = -1;
+                var spawnDist = playerRadius + petRadius + MinDistance;
+
+                Location = player.Location.InFrontOf(spawnDist, true);
             }
             else
             {
-                Location = player.Location.InFrontOf(spawnDist, false);
+                Location = player.Location.InFrontOf(5.0f);
             }
 
-            Location.LandblockId = new LandblockId(Location.GetCell());
+            Location.ObjCellID = Location.GetCell();
 
             Name = player.Name + "'s " + Name;
 
             PetOwner = player.Guid.Full;
             P_PetOwner = player;
-
-            // All pets don't leave corpses, this maybe should have been in data, but isn't so lets make sure its true.
-            NoCorpse = true;
 
             var success = EnterWorld();
 

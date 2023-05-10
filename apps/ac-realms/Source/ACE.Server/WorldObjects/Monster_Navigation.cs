@@ -281,18 +281,17 @@ namespace ACE.Server.WorldObjects
             // was the position successfully moved to?
             // use the physics position as the source-of-truth?
             var newPos = PhysicsObj.Position;
-
-            if (Location.LandblockId.Raw != newPos.ObjCellID)
+            if (Location.ObjCellID != newPos.ObjCellID)
             {
-                var prevBlockCell = Location.LandblockId.Raw;
-                var prevBlock = Location.LandblockId.Raw >> 16;
-                var prevCell = Location.LandblockId.Raw & 0xFFFF;
+                var prevBlockCell = Location.ObjCellID;
+                var prevBlock = Location.Landblock;
+                var prevCell = Location.Cell;
 
                 var newBlockCell = newPos.ObjCellID;
                 var newBlock = newPos.ObjCellID >> 16;
                 var newCell = newPos.ObjCellID & 0xFFFF;
 
-                Location.LandblockId = new LandblockId(newPos.ObjCellID);
+                Location.ObjCellID = newPos.ObjCellID;
 
                 if (prevBlock != newBlock)
                 {
@@ -302,15 +301,10 @@ namespace ACE.Server.WorldObjects
                     //Console.WriteLine("New position: " + newPos.Frame.Origin);
                 }
                 //else
-                    //Console.WriteLine("Moving " + Name + " to " + Location.LandblockId.Raw.ToString("X8"));
+                //Console.WriteLine("Moving " + Name + " to " + Location.LandblockId.Raw.ToString("X8"));
             }
 
-            // skip ObjCellID check when updating from physics
-            // TODO: update to newer version of ACE.Entity.Position
-            Location.PositionX = newPos.Frame.Origin.X;
-            Location.PositionY = newPos.Frame.Origin.Y;
-            Location.PositionZ = newPos.Frame.Origin.Z;
-
+            Location.Pos = newPos.Frame.Origin;
             Location.Rotation = newPos.Frame.Orientation;
 
             if (DebugMove)

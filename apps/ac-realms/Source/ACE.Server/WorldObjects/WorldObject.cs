@@ -107,7 +107,7 @@ namespace ACE.Server.WorldObjects
         protected WorldObject(Weenie weenie, ObjectGuid guid)
         {
             Weenie = weenie;
-            Biota = ACE.Entity.Adapter.WeenieConverter.ConvertToBiota(weenie, guid.Full, false, true);
+            Biota = ACE.Entity.Adapter.WeenieConverter.ConvertToBiota(weenie, guid.Full, false, weenie.CanReferenceCommonProperties);
             Guid = guid;
 
             InitializePropertyDictionaries();
@@ -189,12 +189,18 @@ namespace ACE.Server.WorldObjects
             if (PhysicsObj.CurCell != null)
                 return false;
 
+            /*if ((Location.LongObjCellID | 0xFFFF) == 0x1D9FFFF)
+            {
+                Console.WriteLine($"{Name}");
+                var debug = true;
+            }*/
+
             AdjustDungeon(Location);
 
             // exclude linkspots from spawning
             if (WeenieClassId == 10762) return true;
 
-            var cell = LScape.get_landcell(Location.Cell);
+            var cell = LScape.get_landcell(Location.LongObjCellID);
             if (cell == null)
             {
                 PhysicsObj.DestroyObject();
@@ -229,17 +235,10 @@ namespace ACE.Server.WorldObjects
 
         public void SyncLocation()
         {
-            Location.LandblockId = new LandblockId(PhysicsObj.Position.ObjCellID);
-
-            // skip ObjCellID check when updating from physics
-            // TODO: update to newer version of ACE.Entity.Position
-            Location.PositionX = PhysicsObj.Position.Frame.Origin.X;
-            Location.PositionY = PhysicsObj.Position.Frame.Origin.Y;
-            Location.PositionZ = PhysicsObj.Position.Frame.Origin.Z;
-
+            Location.ObjCellID = PhysicsObj.Position.ObjCellID;
+            Location.Pos = PhysicsObj.Position.Frame.Origin;
             Location.Rotation = PhysicsObj.Position.Frame.Orientation;
         }
-
         private void InitializePropertyDictionaries()
         {
             if (Biota.PropertiesEnchantmentRegistry == null)
@@ -752,17 +751,22 @@ namespace ACE.Server.WorldObjects
         {
             if (pos == null) return false;
 
-            var landblock = LScape.get_landblock(pos.Cell);
+            /*if ((pos.LongObjCellID | 0xFFFF) == 0x1D9FFFF)
+            {
+                var debug = true;
+            }*/
+
+            var landblock = LScape.get_landblock(pos.LongObjCellID);
             if (landblock == null || !landblock.HasDungeon) return false;
 
-            var dungeonID = pos.Cell >> 16;
+            var dungeonID = pos.LongObjCellID >> 16;
 
             var adjustCell = AdjustCell.Get(dungeonID);
             var cellID = adjustCell.GetCell(pos.Pos);
 
-            if (cellID != null && pos.Cell != cellID.Value)
+            if (cellID != null && pos.ObjCellID != cellID.Value)
             {
-                pos.LandblockId = new LandblockId(cellID.Value);
+                pos.ObjCellID = cellID.Value;
                 return true;
             }
             return false;
@@ -771,12 +775,17 @@ namespace ACE.Server.WorldObjects
         // todo: This should really be an extension method for Position, or a static method within Position, or even AdjustPos
         public static bool AdjustDungeonPos(Position pos)
         {
+            /*if ((pos.LongObjCellID | 0xFFFF) == 0x1D9FFFF)
+            {
+                var debug = true;
+            }*/
+
             if (pos == null) return false;
 
-            var landblock = LScape.get_landblock(pos.Cell);
+            var landblock = LScape.get_landblock(pos.LongObjCellID);
             if (landblock == null || !landblock.HasDungeon) return false;
 
-            var dungeonID = pos.Cell >> 16;
+            var dungeonID = pos.ObjCellID >> 16;
 
             var adjusted = AdjustPos.Adjust(dungeonID, pos);
             return adjusted;
@@ -989,8 +998,8 @@ namespace ACE.Server.WorldObjects
         /// </summary>
         public Quadrant GetRelativeDir(WorldObject target)
         {
-            var sourcePos = new Vector3(Location.PositionX, Location.PositionY, 0);
-            var targetPos = new Vector3(target.Location.PositionX, target.Location.PositionY, 0);
+            var sourcePos = new Vector3(Location.Pos.X, Location.Pos.Y, 0);
+            var targetPos = new Vector3(target.Location.Pos.X, target.Location.Pos.Y, 0);
             var targetDir = new AFrame(target.Location.Pos, target.Location.Rotation).get_vector_heading();
 
             targetDir.Z = 0;
