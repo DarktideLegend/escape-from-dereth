@@ -24,6 +24,13 @@ namespace ACE.Server.Physics.Common
             StabList = bldPortal.StabList;
         }
 
+        public EnvCell GetOtherCell(ulong landblockID)
+        {
+            var blockCellID = landblockID & 0xFFFFFFFFFFFF0000 | OtherCellId;
+
+            return (EnvCell)LScape.get_landcell(blockCellID);
+        }
+
         public EnvCell GetOtherCell(uint landblockID)
         {
             var blockCellID = landblockID & 0xFFFF0000 | OtherCellId;

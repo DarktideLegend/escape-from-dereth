@@ -32,12 +32,12 @@ namespace ACE.Server.WorldObjects
         {
         }
 
-        public override bool? Init(Player player, PetDevice petDevice)
+        public override bool Init(Player player, PetDevice petDevice)
         {
             var success = base.Init(player, petDevice);
 
-            if (success == null || !success.Value)
-                return success;
+            if (!success)
+                return false;
 
             SetCombatMode(CombatMode.Melee);
             MonsterState = State.Awake;

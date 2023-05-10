@@ -1266,7 +1266,7 @@ namespace ACE.Server.WorldObjects
             }
 
             if (summonLoc != null)
-                summonLoc.LandblockId = new LandblockId(summonLoc.GetCell());
+                summonLoc.ObjCellID = summonLoc.GetCell();
 
             var success = SummonPortal(portalId, summonLoc, spell.PortalLifetime, player);
 

@@ -658,18 +658,18 @@ namespace ACE.Server.WorldObjects
 
             MotionCommand pickupMotion;
 
-            var item_location_z = objectWereReachingToward.Location.PositionZ;
+            var item_location_z = objectWereReachingToward.Location.Pos.Z;
 
             if (!(objectWereReachingToward is Corpse))
                 item_location_z += objectWereReachingToward.Height * 0.5f;
 
-            if (item_location_z >= Location.PositionZ + (Height * 0.90))
+            if (item_location_z >= Location.Pos.Z + (Height * 0.90))
                 pickupMotion = MotionCommand.Pickup20; // Reach up
-            else if (item_location_z >= Location.PositionZ + (Height * 0.70))
+            else if (item_location_z >= Location.Pos.Z + (Height * 0.70))
                 pickupMotion = MotionCommand.Pickup15; // Reach over and up just a little bit
-            else if (item_location_z >= Location.PositionZ + (Height * 0.50))
+            else if (item_location_z >= Location.Pos.Z + (Height * 0.50))
                 pickupMotion = MotionCommand.Pickup10; // Reach over and down just a little bit
-            else if (item_location_z >= Location.PositionZ + (Height * 0.20))
+            else if (item_location_z >= Location.Pos.Z + (Height * 0.20))
                 pickupMotion = MotionCommand.Pickup5; // Bend down a little bit
             else
                 pickupMotion = MotionCommand.Pickup; // At foot height or lower
@@ -1440,7 +1440,6 @@ namespace ACE.Server.WorldObjects
 
             // use radius?
             var targetPos = Location.InFrontOf(1.1f);
-            targetPos.LandblockId = new LandblockId(targetPos.GetCell());
 
             // try slide to new position
             var transit = item.PhysicsObj.transition(item.PhysicsObj.Position, new Physics.Common.Position(targetPos), false);

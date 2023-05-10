@@ -79,7 +79,15 @@ namespace ACE.Server.WorldObjects
                     vendor.NumItemsSold++;
                 }
                 else
+                {
+                    if (item.GetProperty(PropertyInt.HomeRealm).HasValue)
+                    {
+                        var realmId = item.GetProperty(PropertyInt.HomeRealm).Value;
+                        RealmManager.SetHomeRealm(this, realmId);
+                    }
+
                     vendor.ApplyService(item, this);
+                }
             }
 
             foreach (var item in uniqueItems)

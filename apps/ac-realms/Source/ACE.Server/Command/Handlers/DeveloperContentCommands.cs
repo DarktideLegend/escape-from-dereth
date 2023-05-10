@@ -1264,7 +1264,7 @@ namespace ACE.Server.Command.Handlers.Processors
 
             uint? parentGuid = null;
 
-            var landblock = session.Player.CurrentLandblock.Id.Landblock;
+            var landblock = session.Player.CurrentLandblock.ShortId;
 
             var firstStaticGuid = 0x70000000 | (uint)landblock << 12;
 
@@ -1408,7 +1408,7 @@ namespace ACE.Server.Command.Handlers.Processors
 
             // even on flat ground, objects can sometimes fail to spawn at the player's current Z
             // Position.Z has some weird thresholds when moving around, but i guess the same logic doesn't apply when trying to spawn in...
-            wo.Location.PositionZ += 0.05f;
+            wo.Location._pos.Z += 0.05f;
 
             session.Network.EnqueueSend(new GameMessageSystemChat($"Creating new landblock instance {(isLinkChild ? "child object " : "")}@ {loc.ToLOCString()}\n{wo.WeenieClassId} - {wo.Name} ({nextStaticGuid:X8})", ChatMessageType.Broadcast));
 
@@ -1505,16 +1505,16 @@ namespace ACE.Server.Command.Handlers.Processors
 
             instance.WeenieClassId = wo.WeenieClassId;
 
-            instance.ObjCellId = wo.Location.Cell;
+            instance.ObjCellId = wo.Location.ObjCellID;
 
-            instance.OriginX = wo.Location.PositionX;
-            instance.OriginY = wo.Location.PositionY;
-            instance.OriginZ = wo.Location.PositionZ;
+            instance.OriginX = wo.Location.Pos.X;
+            instance.OriginY = wo.Location.Pos.Y;
+            instance.OriginZ = wo.Location.Pos.Z;
 
-            instance.AnglesW = wo.Location.RotationW;
-            instance.AnglesX = wo.Location.RotationX;
-            instance.AnglesY = wo.Location.RotationY;
-            instance.AnglesZ = wo.Location.RotationZ;
+            instance.AnglesW = wo.Location.Rotation.W;
+            instance.AnglesX = wo.Location.Rotation.X;
+            instance.AnglesY = wo.Location.Rotation.Y;
+            instance.AnglesZ = wo.Location.Rotation.Z;
 
             instance.IsLinkChild = isLinkChild;
 
@@ -1522,6 +1522,7 @@ namespace ACE.Server.Command.Handlers.Processors
 
             return instance;
         }
+
 
         public static uint GetNextStaticGuid(ushort landblock, List<LandblockInstance> instances)
         {
@@ -1706,14 +1707,14 @@ namespace ACE.Server.Command.Handlers.Processors
 
             var pos = session.Player.Location;
 
-            if ((pos.Cell & 0xFFFF) >= 0x100)
+            if ((pos.ObjCellID & 0xFFFF) >= 0x100)
             {
                 session.Network.EnqueueSend(new GameMessageSystemChat("You must be outdoors to create an encounter!", ChatMessageType.Broadcast));
                 return;
             }
 
-            var cellX = (int)pos.PositionX / 24;
-            var cellY = (int)pos.PositionY / 24;
+            var cellX = (int)pos.Pos.X / 24;
+            var cellY = (int)pos.Pos.Y / 24;
 
             var landblock = (ushort)pos.Landblock;
 
@@ -1771,13 +1772,13 @@ namespace ACE.Server.Command.Handlers.Processors
             var yPos = Math.Clamp(cellY * 24.0f, 0.5f, 191.5f);
 
             var newPos = new Physics.Common.Position();
-            newPos.ObjCellID = pos.Cell;
+            newPos.ObjCellID = pos.ObjCellID;
             newPos.Frame = new Physics.Animation.AFrame(new Vector3(xPos, yPos, 0), Quaternion.Identity);
             newPos.adjust_to_outside();
 
             newPos.Frame.Origin.Z = session.Player.CurrentLandblock.PhysicsLandblock.GetZ(newPos.Frame.Origin);
 
-            wo.Location = new Position(newPos.ObjCellID, newPos.Frame.Origin, newPos.Frame.Orientation, pos.Instance);
+            wo.Location = new Position(newPos.ObjCellID, newPos.Frame.Origin, newPos.Frame.Orientation, false, pos.Instance);
 
             var sortCell = Physics.Common.LScape.get_landcell(newPos.ObjCellID) as Physics.Common.SortCell;
             if (sortCell != null && sortCell.has_building())
@@ -1881,8 +1882,8 @@ namespace ACE.Server.Command.Handlers.Processors
             while (obj.Generator != null)
                 obj = obj.Generator;
 
-            var cellX = (int)obj.Location.PositionX / 24;
-            var cellY = (int)obj.Location.PositionY / 24;
+            var cellX = (int)obj.Location.Pos.X / 24;
+            var cellY = (int)obj.Location.Pos.Y / 24;
 
             var landblock = (ushort)obj.Location.Landblock;
 
@@ -2781,16 +2782,16 @@ namespace ACE.Server.Command.Handlers.Processors
                     return;
                 }
 
-                instance.AnglesX = obj.Location.RotationX;
-                instance.AnglesY = obj.Location.RotationY;
-                instance.AnglesZ = obj.Location.RotationZ;
-                instance.AnglesW = obj.Location.RotationW;
+                instance.AnglesX = obj.Location.Rotation.X;
+                instance.AnglesY = obj.Location.Rotation.Y;
+                instance.AnglesZ = obj.Location.Rotation.Z;
+                instance.AnglesW = obj.Location.Rotation.W;
             }
             else
             {
                 // compare current position with home position
                 // the nudge should be performed as an offset from home position
-                if (instance.OriginX != obj.Location.PositionX || instance.OriginY != obj.Location.PositionY || instance.OriginZ != obj.Location.PositionZ)
+                if (instance.OriginX != obj.Location.Pos.X || instance.OriginY != obj.Location.Pos.Y || instance.OriginZ != obj.Location.Pos.Z)
                 {
                     //session.Network.EnqueueSend(new GameMessageSystemChat($"Moving {obj.Name} ({obj.Guid}) to home position: {obj.Location} to {instance.ObjCellId:X8} [{instance.OriginX} {instance.OriginY} {instance.OriginZ}]", ChatMessageType.Broadcast));
 
@@ -2845,9 +2846,9 @@ namespace ACE.Server.Command.Handlers.Processors
 
             // update sql
             instance.ObjCellId = obj.Location.Cell;
-            instance.OriginX = obj.Location.PositionX;
-            instance.OriginY = obj.Location.PositionY;
-            instance.OriginZ = obj.Location.PositionZ;
+            instance.OriginX = obj.Location.Pos.X;
+            instance.OriginY = obj.Location.Pos.Y;
+            instance.OriginZ = obj.Location.Pos.Z;
 
             SyncInstances(session, landblock_id, instances);
         }
@@ -3149,7 +3150,7 @@ namespace ACE.Server.Command.Handlers.Processors
             CommandHandlerHelper.WriteOutputInfo(session, $"Wrote {path}");
         }
 
-        [CommandHandler("vloc2loc", AccessLevel.Developer, CommandHandlerFlag.None, 1, "Output a set of LOCs for a given landblock found in the VLOCS dataset", "<LandblockID>\nExample: @vloc2loc 0x0007\n         @vloc2loc 0xCE95")]
+        /*[CommandHandler("vloc2loc", AccessLevel.Developer, CommandHandlerFlag.None, 1, "Output a set of LOCs for a given landblock found in the VLOCS dataset", "<LandblockID>\nExample: @vloc2loc 0x0007\n         @vloc2loc 0xCE95")]
         public static void HandleVLOCtoLOC(Session session, params string[] parameters)
         {
             var hex = parameters[0];
@@ -3256,6 +3257,6 @@ namespace ACE.Server.Command.Handlers.Processors
             {
                 CommandHandlerHelper.WriteOutputInfo(session, $"Invalid Landblock ID: {parameters[0]}\nLandblock ID should be in the hex format such as this: @vloc2loc 0xAB94");
             }
-        }
+        }*/
     }
 }

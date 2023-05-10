@@ -1,10 +1,3 @@
-using System;
-using System.Diagnostics;
-using System.Text.RegularExpressions;
-using System.Threading;
-
-using log4net;
-
 using ACE.Common;
 using ACE.Common.Performance;
 using ACE.Database;
@@ -14,14 +7,18 @@ using ACE.Entity.Enum.Properties;
 using ACE.Entity.Models;
 using ACE.Server.Entity;
 using ACE.Server.Entity.Actions;
-using ACE.Server.WorldObjects;
 using ACE.Server.Network;
 using ACE.Server.Network.GameEvent.Events;
 using ACE.Server.Network.GameMessages.Messages;
 using ACE.Server.Network.Managers;
 using ACE.Server.Physics;
 using ACE.Server.Physics.Common;
-
+using ACE.Server.WorldObjects;
+using log4net;
+using System;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
+using System.Threading;
 using Character = ACE.Database.Models.Shard.Character;
 using Position = ACE.Entity.Position;
 

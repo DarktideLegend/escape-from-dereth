@@ -157,10 +157,8 @@ namespace ACE.Server.Managers
             lock (realmsLock)
                 ephemeralRealm = EphemeralRealm.Initialize(owner, realmTemplates);
             var iid = LandblockManager.GetFreeInstanceID(true, ephemeralRealm.RulesetTemplate.Realm.Id, (ushort)(landcell >> 16));
-
             var longcell = ((ulong)iid << 32) | landcell;
-            // this may break, GetLandblock no longer accepts ulong property type, only LandblockId 
-            var landblock = LandblockManager.GetLandblock(new ACE.Entity.LandblockId(iid), false, false, ephemeralRealm);
+            var landblock = LandblockManager.GetLandblock(longcell, false, false, ephemeralRealm);
 
             log.Info($"GetNewEphemeralLandblock created for player {owner.Name}, realm ruleset {ephemeralRealm.RulesetTemplate.Realm.Id}, longcell {longcell}.");
             return landblock;

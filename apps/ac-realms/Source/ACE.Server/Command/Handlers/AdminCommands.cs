@@ -75,6 +75,8 @@ namespace ACE.Server.Command.Handlers
             }
         }
 
+
+
         // adminui
         [CommandHandler("adminui", AccessLevel.Developer, CommandHandlerFlag.RequiresWorld, 0)]
         public static void HandleAdminui(Session session, params string[] parameters)
@@ -2432,7 +2434,6 @@ namespace ACE.Server.Command.Handlers
                 obj.Location = session.Player.Location.InFrontOf(dist);
             }
 
-            obj.Location.LandblockId = new LandblockId(obj.Location.GetCell());
 
             LastSpawnPos = obj.Location;
 
@@ -2779,7 +2780,7 @@ namespace ACE.Server.Command.Handlers
         }
 
         // fumble
-        [CommandHandler("fumble", AccessLevel.Developer, CommandHandlerFlag.RequiresWorld, 0)]
+        /*[CommandHandler("fumble", AccessLevel.Developer, CommandHandlerFlag.RequiresWorld, 0)]
         public static void HandleFumble(Session session, params string[] parameters)
         {
             // @fumble - Forces the selected target to drop everything they contain to the ground.
@@ -2871,7 +2872,7 @@ namespace ACE.Server.Command.Handlers
             {
                 session.Network.EnqueueSend(new GameMessageSystemChat($"You cannot force {wo.Name} to drop everything because it is not a player.", ChatMessageType.Broadcast));
             }
-        }
+        }*/
 
         // god
         [CommandHandler("god", AccessLevel.Sentinel, CommandHandlerFlag.RequiresWorld, 0,
@@ -4617,13 +4618,13 @@ namespace ACE.Server.Command.Handlers
 
             if (environChange.IsFog())
             {
-                session.Network.EnqueueSend(new GameMessageSystemChat($"Setting Landblock (0x{session.Player.CurrentLandblock.Id.Landblock:X4}), including direct adjacent landblocks, to EnvironChangeType.{environChange.ToString()}.", ChatMessageType.Broadcast));
-                PlayerManager.BroadcastToAuditChannel(session.Player, $"{session.Player.Name} set Landblock (0x{session.Player.CurrentLandblock.Id.Landblock:X4}), including direct adjacent landblocks, to EnvironChangeType.{environChange.ToString()}.");
+                session.Network.EnqueueSend(new GameMessageSystemChat($"Setting Landblock (0x{session.Player.CurrentLandblock.ShortId:X4}), including direct adjacent landblocks, to EnvironChangeType.{environChange.ToString()}.", ChatMessageType.Broadcast));
+                PlayerManager.BroadcastToAuditChannel(session.Player, $"{session.Player.Name} set Landblock (0x{session.Player.CurrentLandblock.ShortId:X4}), including direct adjacent landblocks, to EnvironChangeType.{environChange.ToString()}.");
             }
             else
             {
-                session.Network.EnqueueSend(new GameMessageSystemChat($"Sending EnvironChangeType.{environChange.ToString()} to all players on Landblock (0x{session.Player.CurrentLandblock.Id.Landblock:X4}), including direct adjacent landblocks.", ChatMessageType.Broadcast));
-                PlayerManager.BroadcastToAuditChannel(session.Player, $"{session.Player.Name} sent EnvironChangeType.{environChange.ToString()} to all players on Landblock (0x{session.Player.CurrentLandblock.Id.Landblock:X4}), including direct adjacent landblocks.");
+                session.Network.EnqueueSend(new GameMessageSystemChat($"Sending EnvironChangeType.{environChange.ToString()} to all players on Landblock (0x{session.Player.CurrentLandblock.ShortId:X4}), including direct adjacent landblocks.", ChatMessageType.Broadcast));
+                PlayerManager.BroadcastToAuditChannel(session.Player, $"{session.Player.Name} sent EnvironChangeType.{environChange.ToString()} to all players on Landblock (0x{session.Player.CurrentLandblock.ShortId:X4}), including direct adjacent landblocks.");
             }
 
             session.Player.CurrentLandblock?.DoEnvironChange(environChange);
