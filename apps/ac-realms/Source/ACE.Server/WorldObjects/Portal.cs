@@ -56,13 +56,9 @@ namespace ACE.Server.WorldObjects
 
             if (RelativeDestination != null && Location != null && Destination == null)
             {
-                var relativeDestination = new Position(Location);
-                relativeDestination.Pos += new Vector3(RelativeDestination.PositionX, RelativeDestination.PositionY, RelativeDestination.PositionZ);
-                relativeDestination.Rotation = new Quaternion(RelativeDestination.RotationX, relativeDestination.RotationY, relativeDestination.RotationZ, relativeDestination.RotationW);
-                relativeDestination.LandblockId = new LandblockId(relativeDestination.GetCell());
-                relativeDestination.Instance = Location.Instance;
+                var destination = new Position(Location.ObjCellID, Location.Pos + RelativeDestination.Pos, RelativeDestination.Rotation, true, Location.Instance);
 
-                UpdatePortalDestination(relativeDestination);
+                UpdatePortalDestination(destination);
             }
 
             return true;

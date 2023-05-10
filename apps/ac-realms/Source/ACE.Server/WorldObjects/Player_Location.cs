@@ -144,6 +144,63 @@ namespace ACE.Server.WorldObjects
             actionChain.EnqueueChain();
         }
 
+        public void HandleActionTeleToHideout()
+        {
+            if (PKTimerActive)
+            {
+                Session.Network.EnqueueSend(new GameEventWeenieError(Session, WeenieError.YouHaveBeenInPKBattleTooRecently));
+                return;
+            }
+
+            if (RecallsDisabled)
+            {
+                Session.Network.EnqueueSend(new GameEventWeenieError(Session, WeenieError.ExitTrainingAcademyToUseCommand));
+                return;
+            }
+
+            if (TooBusyToRecall)
+            {
+                Session.Network.EnqueueSend(new GameEventWeenieError(Session, WeenieError.YoureTooBusy));
+                return;
+            }
+
+            if (CombatMode != CombatMode.NonCombat)
+            {
+                // this should be handled by a different thing, probably a function that forces player into peacemode
+                var updateCombatMode = new GameMessagePrivateUpdatePropertyInt(this, PropertyInt.CombatMode, (int)CombatMode.NonCombat);
+                SetCombatMode(CombatMode.NonCombat);
+                Session.Network.EnqueueSend(updateCombatMode);
+            }
+
+            EnqueueBroadcast(new GameMessageSystemChat($"{Name} is recalling to the hideout.", ChatMessageType.Recall), LocalBroadcastRange, ChatMessageType.Recall);
+
+            SendMotionAsCommands(MotionCommand.HouseRecall, MotionStance.NonCombat);
+
+            var startPos = new Position(Location);
+
+            // Wait for animation
+            var actionChain = new ActionChain();
+
+            // Then do teleport
+            var animLength = DatManager.PortalDat.ReadFromDat<MotionTable>(MotionTableId).GetAnimationLength(MotionCommand.HouseRecall);
+            actionChain.AddDelaySeconds(animLength);
+            IsBusy = true;
+            actionChain.AddAction(this, () =>
+            {
+                IsBusy = false;
+                var endPos = new Position(Location);
+                if (startPos.SquaredDistanceTo(endPos) > RecallMoveThresholdSq)
+                {
+                    Session.Network.EnqueueSend(new GameEventWeenieError(Session, WeenieError.YouHaveMovedTooFar));
+                    return;
+                }
+                TeleportToHideout();
+            });
+
+            actionChain.EnqueueChain();
+        }
+
+
         /// <summary>
         /// Handles teleporting a player to the lifestone (/ls or /lifestone command)
         /// </summary>
@@ -1066,12 +1123,12 @@ namespace ACE.Server.WorldObjects
                             return false;
                         if (!homerealm.StandardRules.GetProperty(RealmPropertyBool.HideoutEnabled))
                             return false;
-                        return new ushort[] { 0x7308, 0x7309 }.Contains(newPosition.LandblockId.Landblock); //Ulgrims only, todo: add other landblocks
+                        return new ushort[] { 0x7308, 0x7309 }.Contains(newPosition.Landblock); //Ulgrims only, todo: add other landblocks
                     default:
                         return false;
                 }
             }
-            if (!destrealm.IsWhitelistedLandblock(newPosition.LandblockId.Landblock))
+            if (!destrealm.IsWhitelistedLandblock(newPosition.Landblock))
                 return false;
 
             if (isTemporaryRuleset)

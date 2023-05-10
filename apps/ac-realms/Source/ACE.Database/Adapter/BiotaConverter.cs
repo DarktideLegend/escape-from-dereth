@@ -80,6 +80,7 @@ namespace ACE.Database.Adapter
                         RotationX = record.AnglesX,
                         RotationY = record.AnglesY,
                         RotationZ = record.AnglesZ,
+                        Instance = record.Instance,
 
                     };
 
@@ -519,23 +520,14 @@ namespace ACE.Database.Adapter
                 foreach (var kvp in biota.PropertiesString)
                     result.SetProperty(kvp.Key, kvp.Value);
             }
- 
+
+
 
             if (biota.PropertiesPosition != null)
             {
                 foreach (var kvp in biota.PropertiesPosition)
                 {
-                    var entity = new BiotaPropertiesPosition { ObjectId = biota.Id, PositionType = (ushort)kvp.Key, ObjCellId = kvp.Value.ObjCellId, OriginX = kvp.Value.PositionX, OriginY = kvp.Value.PositionY, OriginZ = kvp.Value.PositionZ, AnglesW = kvp.Value.RotationW, AnglesX = kvp.Value.RotationX, AnglesY = kvp.Value.RotationY, AnglesZ = kvp.Value.RotationZ };
-
-                    // Entity Framework is unable to store NaN floats in the database and results in an error of:
-                    // ERROR 1054: Unknown column 'NaN' in 'field list'
-                    if (float.IsNaN(entity.AnglesX) || float.IsNaN(entity.AnglesY) || float.IsNaN(entity.AnglesZ) || float.IsNaN(entity.AnglesW))
-                    {
-                        entity.AnglesW = 1;
-                        entity.AnglesX = 0;
-                        entity.AnglesY = 0;
-                        entity.AnglesZ = 0;
-                    }
+                    var entity = new BiotaPropertiesPosition { ObjectId = biota.Id, PositionType = (ushort)kvp.Key, ObjCellId = kvp.Value.ObjCellId, OriginX = kvp.Value.PositionX, OriginY = kvp.Value.PositionY, OriginZ = kvp.Value.PositionZ, AnglesW = kvp.Value.RotationW, AnglesX = kvp.Value.RotationX, AnglesY = kvp.Value.RotationY, AnglesZ = kvp.Value.RotationZ, Instance = kvp.Value.Instance };
 
                     result.BiotaPropertiesPosition.Add(entity);
                 }

@@ -173,19 +173,19 @@ namespace ACE.Database.Models.Shard
 
             if (result != null)
             {
-                result.ObjCellId = position.Cell;
-                result.OriginX = position.PositionX;
-                result.OriginY = position.PositionY;
-                result.OriginZ = position.PositionZ;
-                result.AnglesW = position.RotationW;
-                result.AnglesX = position.RotationX;
-                result.AnglesY = position.RotationY;
-                result.AnglesZ = position.RotationZ;
+                result.ObjCellId = position.ObjCellID;
+                result.OriginX = position.Pos.X;
+                result.OriginY = position.Pos.Y;
+                result.OriginZ = position.Pos.Z;
+                result.AnglesW = position.Rotation.W;
+                result.AnglesX = position.Rotation.X;
+                result.AnglesY = position.Rotation.Y;
+                result.AnglesZ = position.Rotation.Z;
                 result.Instance = position.Instance;
             }
             else
             {
-                var entity = new BiotaPropertiesPosition { ObjectId = biota.Id, PositionType = (ushort)positionType, ObjCellId = position.Cell, OriginX = position.PositionX, OriginY = position.PositionY, OriginZ = position.PositionZ, AnglesW = position.RotationW, AnglesX = position.RotationX, AnglesY = position.RotationY, AnglesZ = position.RotationZ, Instance = position.Instance, Object = biota };
+                var entity = new BiotaPropertiesPosition { ObjectId = biota.Id, PositionType = (ushort)positionType, ObjCellId = position.ObjCellID, OriginX = position.Pos.X, OriginY = position.Pos.Y, OriginZ = position.Pos.Z, AnglesW = position.Rotation.W, AnglesX = position.Rotation.X, AnglesY = position.Rotation.Y, AnglesZ = position.Rotation.Z, Instance = position.Instance, Object = biota };
 
                 biota.BiotaPropertiesPosition.Add(entity);
             }

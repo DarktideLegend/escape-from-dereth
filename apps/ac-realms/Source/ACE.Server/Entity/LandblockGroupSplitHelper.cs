@@ -25,10 +25,10 @@ namespace ACE.Server.Entity
         {
             if (landblocks.Add(landblock))
             {
-                if (landblock.Id.LandblockX < xMin) xMin = landblock.Id.LandblockX;
-                if (landblock.Id.LandblockX > xMax) xMax = landblock.Id.LandblockX;
-                if (landblock.Id.LandblockY < yMin) yMin = landblock.Id.LandblockY;
-                if (landblock.Id.LandblockY > yMax) yMax = landblock.Id.LandblockY;
+                if (landblock.X < xMin) xMin = landblock.X;
+                if (landblock.X > xMax) xMax = landblock.X;
+                if (landblock.Y < yMin) yMin = landblock.Y;
+                if (landblock.Y > yMax) yMax = landblock.Y;
 
                 xCenter = xMin + ((xMax - xMin) / 2.0);
                 yCenter = yMin + ((yMax - yMin) / 2.0);
@@ -59,8 +59,8 @@ namespace ACE.Server.Entity
         public int BoundaryDistance(Landblock landblock)
         {
             return (int)Math.Max(
-                Math.Abs(xCenter - landblock.Id.LandblockX) - (width + 1) / 2.0,
-                Math.Abs(yCenter - landblock.Id.LandblockY) - (height + 1) / 2.0);
+                Math.Abs(xCenter - landblock.X) - (width + 1) / 2.0,
+                Math.Abs(yCenter - landblock.Y) - (height + 1) / 2.0);
         }
     }
 }

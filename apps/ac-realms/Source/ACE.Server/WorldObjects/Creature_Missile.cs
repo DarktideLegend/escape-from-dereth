@@ -95,11 +95,8 @@ namespace ACE.Server.WorldObjects
             proj.ProjectileTarget = target;
 
             proj.ProjectileLauncher = weapon;
-            proj.ProjectileAmmo = ammo;
 
-            proj.Location = new Position(Location.Cell, origin, orientation, Location.Instance);
-            proj.Location.Pos = origin;
-            proj.Location.Rotation = orientation;
+            proj.Location = new Position(Location.ObjCellID, origin, orientation, false, Location.Instance);
 
             SetProjectilePhysicsState(proj, target, velocity);
 
@@ -107,21 +104,15 @@ namespace ACE.Server.WorldObjects
 
             if (!success || proj.PhysicsObj == null)
             {
-                if (!proj.HitMsg)
-                {
-                    if (player != null)
-                        player.Session.Network.EnqueueSend(new GameMessageSystemChat("Your missile attack hit the environment.", ChatMessageType.Broadcast));
-                }
+                if (!proj.HitMsg && player != null)
+                    player.Session.Network.EnqueueSend(new GameMessageSystemChat("Your missile attack hit the environment.", ChatMessageType.Broadcast));
 
-                proj.Destroy();
                 return null;
             }
 
             if (!IsProjectileVisible(proj))
             {
                 proj.OnCollideEnvironment();
-
-                proj.Destroy();
                 return null;
             }
 

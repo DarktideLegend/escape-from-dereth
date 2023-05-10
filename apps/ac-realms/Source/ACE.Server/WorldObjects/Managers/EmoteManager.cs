@@ -974,32 +974,23 @@ namespace ACE.Server.WorldObjects.Managers
 
                     if (creature != null)
                     {
-                        // If the landblock is dormant, there are no players in range
-                        if (WorldObject.CurrentLandblock?.IsDormant ?? false)
-                            break;
+                        // uses relative position to home
+                        var newPos = creature.Home.Pos + new Vector3(emote.OriginX ?? 0, emote.OriginY ?? 0, emote.OriginZ ?? 0);
 
-                        // are there players within emote range?
-                        if (!WorldObject.PlayersInRange(ClientMaxAnimRange))
-                            break;
-
-                        var newPos = new Position(creature.Home);
-                        newPos.Pos += new Vector3(emote.OriginX ?? 0, emote.OriginY ?? 0, emote.OriginZ ?? 0);      // uses relative position
+                        var newRotation = creature.Home.Rotation;
 
                         // ensure valid quaternion - all 0s for example can lock up physics engine
                         if (emote.AnglesX != null && emote.AnglesY != null && emote.AnglesZ != null && emote.AnglesW != null &&
-                           (emote.AnglesX != 0    || emote.AnglesY != 0    || emote.AnglesZ != 0    || emote.AnglesW != 0) )
+                           (emote.AnglesX != 0 || emote.AnglesY != 0 || emote.AnglesZ != 0 || emote.AnglesW != 0))
                         {
                             // also relative, or absolute?
-                            newPos.Rotation *= new Quaternion(emote.AnglesX.Value, emote.AnglesY.Value, emote.AnglesZ.Value, emote.AnglesW.Value);  
+                            newRotation *= new Quaternion(emote.AnglesX.Value, emote.AnglesY.Value, emote.AnglesZ.Value, emote.AnglesW.Value);
                         }
 
-                        var newPosition = new Position(creature.Home.Cell, newPos.Pos, newPos.Rotation, creature.Location.Instance);
+                        var newPosition = new Position(creature.Home.ObjCellID, newPos, newRotation, true, creature.Location.Instance);
 
                         if (Debug)
-                            Console.WriteLine(newPos.ToLOCString());
-
-                        // get new cell
-                        newPos.LandblockId = new LandblockId(PositionExtensions.GetCell(newPos));
+                            Console.WriteLine(newPosition.ToLOCString());
 
                         // TODO: handle delay for this?
                         creature.MoveTo(newPosition, creature.GetRunRate(), true, null, emote.Extent);
@@ -1045,19 +1036,15 @@ namespace ACE.Server.WorldObjects.Managers
                         var currentPos = creature.Location;
 
                         var newPos = new Position();
-                        newPos.LandblockId = new LandblockId(emote.ObjCellId ?? currentPos.LandblockId.Raw);
 
+                        newPos.ObjCellID = emote.ObjCellId ?? currentPos.ObjCellID;
+                        newPos.Instance = creature.Location.Instance;
                         newPos.Pos = new Vector3(emote.OriginX ?? currentPos.Pos.X, emote.OriginY ?? currentPos.Pos.Y, emote.OriginZ ?? currentPos.Pos.Z);
 
                         if (emote.AnglesX == null || emote.AnglesY == null || emote.AnglesZ == null || emote.AnglesW == null)
-                            newPos.Rotation = new Quaternion(currentPos.Rotation.X, currentPos.Rotation.Y, currentPos.Rotation.Z, currentPos.Rotation.W);
+                            newPos.Rotation = currentPos.Rotation;
                         else
                             newPos.Rotation = new Quaternion(emote.AnglesX ?? 0, emote.AnglesY ?? 0, emote.AnglesZ ?? 0, emote.AnglesW ?? 1);
-
-                        //if (emote.ObjCellId != null)
-                        //newPos.LandblockId = new LandblockId(emote.ObjCellId.Value);
-
-                        newPos.LandblockId = new LandblockId(PositionExtensions.GetCell(newPos));
 
                         // TODO: handle delay for this?
                         creature.MoveTo(newPos, creature.GetRunRate(), true, null, emote.Extent);
@@ -1339,29 +1326,18 @@ namespace ACE.Server.WorldObjects.Managers
                     //(WorldObject as Player).Teleport(emote.Position);
                     break;
 
+
                 case EmoteType.TeleportTarget:
 
                     if (player != null)
                     {
                         if (emote.ObjCellId.HasValue && emote.OriginX.HasValue && emote.OriginY.HasValue && emote.OriginZ.HasValue && emote.AnglesX.HasValue && emote.AnglesY.HasValue && emote.AnglesZ.HasValue && emote.AnglesW.HasValue)
                         {
-                            if (emote.ObjCellId.Value > 0)
-                            {
-                                var destination = new Position(emote.ObjCellId.Value, emote.OriginX.Value, emote.OriginY.Value, emote.OriginZ.Value, emote.AnglesX.Value, emote.AnglesY.Value, emote.AnglesZ.Value, emote.AnglesW.Value, player.Location.Instance);
+                            var destination = new Position(emote.ObjCellId.Value, emote.OriginX.Value, emote.OriginY.Value, emote.OriginZ.Value, emote.AnglesX.Value, emote.AnglesY.Value, emote.AnglesZ.Value, emote.AnglesW.Value, player.Location.Instance);
+                            destination.SetToDefaultRealmInstance(player.Location.RealmID);
 
-                                WorldObject.AdjustDungeon(destination);
-                                WorldManager.ThreadSafeTeleport(player, destination, false);
-                            }
-                            else // position is relative to WorldObject's current location
-                            {
-                                var relativeDestination = new Position(WorldObject.Location);
-                                relativeDestination.Pos += new Vector3(emote.OriginX.Value, emote.OriginY.Value, emote.OriginZ.Value);
-                                relativeDestination.Rotation = new Quaternion(emote.AnglesX.Value, emote.AnglesY.Value, emote.AnglesZ.Value, emote.AnglesW.Value);
-                                relativeDestination.LandblockId = new LandblockId(relativeDestination.GetCell());
-
-                                WorldObject.AdjustDungeon(relativeDestination);
-                                WorldManager.ThreadSafeTeleport(player, relativeDestination, false);
-                            }
+                            WorldObject.AdjustDungeon(destination);
+                            WorldManager.ThreadSafeTeleport(player, destination, false);
                         }
                     }
                     break;

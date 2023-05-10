@@ -943,15 +943,14 @@ namespace ACE.Server.WorldObjects
                 return null;
 
             var houseGuid = houseInstance.Value;
-            var landblock = (ushort)((houseGuid >> 12) & 0xFFFF);
+            var landblock = (houseGuid << 4) | 0xFFFF;
 
-            var landblockId = new LandblockId((uint)(landblock << 16 | 0xFFFF));
-            var isLoaded = LandblockManager.IsLoaded(landblockId);
+            var isLoaded = LandblockManager.IsLoaded(landblock);
 
             if (!isLoaded)
                 return House = House.Load(houseGuid);
 
-            var loaded = LandblockManager.GetLandblock(landblockId, false);
+            var loaded = LandblockManager.GetLandblockBase(landblock, false);
             return House = loaded.GetObject(new ObjectGuid(houseGuid)) as House;
         }
 
@@ -1768,22 +1767,20 @@ namespace ACE.Server.WorldObjects
 
             return GetHouse(accountHouseOwner);
         }
-
         public House GetHouse(IPlayer player)
         {
-            if (player?.HouseInstance == null)
+            if (player.HouseInstance == null)
                 return null;
 
             // is landblock loaded?
             var houseGuid = player.HouseInstance.Value;
-            var landblock = (ushort)((houseGuid >> 12) & 0xFFFF);
+            var landblock = (houseGuid << 4) | 0xFFFF;
 
-            var landblockId = new LandblockId((uint)(landblock << 16 | 0xFFFF));
-            var isLoaded = LandblockManager.IsLoaded(landblockId);
+            var isLoaded = LandblockManager.IsLoaded(landblock);
 
             if (isLoaded)
             {
-                var loaded = LandblockManager.GetLandblock(landblockId, false);
+                var loaded = LandblockManager.GetLandblockBase(landblock, false);
                 return loaded.GetObject(new ObjectGuid(houseGuid)) as House;
             }
 
