@@ -7,3 +7,4 @@
 pnpm-lock.yaml
 /.github/ISSUE_TEMPLATE
 /apps/ac-realms
+/apps/efd-server
