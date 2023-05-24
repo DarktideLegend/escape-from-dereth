@@ -117,7 +117,7 @@
                 "{{version}}"
               ],
               "dockerImage": "efd",
-              "dockerFile": "Dockerfile",
+              "dockerFile": "apps/efd-server/Dockerfile",
               "dockerProject": "apourman"
             }
           ]
