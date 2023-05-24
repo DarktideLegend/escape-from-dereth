@@ -195,7 +195,7 @@
     // This process will still use ./Content by default, or the the config_properties_string
     // value for 'content_folder' if it exists
     // Example: [ "C:\\MyContent", "C:\\FTPRoot\\Editor1Content", "C:\\FTPRoot\\Editor2Content" ]
-    "WorldCustomizationAddedPaths": [],
+    "WorldCustomizationAddedPaths": ["/ace/Content"],
 
      // When retrieving a file list of .sql files in the AutoApplyWorldCustomizations process
      // this will cause the file search to retrieve all files recursively from each directory
