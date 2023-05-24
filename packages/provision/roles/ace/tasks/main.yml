@@ -1,0 +1,26 @@
+---
+# tasks file for ace
+
+- name: ACE - Create a directory if it does not exist
+  ansible.builtin.file:
+    path: "{{ ace_config }}"
+    group: 231072
+    owner: 231072
+    state: directory
+    mode: '0770'
+
+
+- name: ACE - Install system dependencies
+  apt:
+    pkg:
+      - megatools
+      - p7zip-full
+      - webhook
+    state: latest
+    update_cache: true
+
+- name: Install Dats
+  include_tasks: dats.yml
+
+- name: Deploy ACE Containers
+  include_tasks: containers.yml

@@ -1,0 +1,17 @@
+---
+# defaults file for swag
+
+swag_config: "/var/data/{{ server_name_prefix }}-swag"
+swag_port_http: "80"
+swag_port_https: "443"
+swag_url: ""
+swag_validation: "duckdns"
+swag_tz: "America/Los_Angeles"
+swag_container_mods: "linuxserver/mods:swag-auto-reload|linuxserver/mods:swag-dashboard"
+swag_image_version: "latest"
+swag_subdomains: "wildcard"
+swag_dnsplugin: "duckdns"
+swag_duckdnstoken: ""
+swag_network_name: "{{ server_name_prefix }}"
+swag_puid: "1000"
+swag_pgid: "1000"

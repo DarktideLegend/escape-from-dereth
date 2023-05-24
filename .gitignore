@@ -43,3 +43,4 @@ Thumbs.db
 /.vs
 /db-data-latest
 /apps/ac-realms/db-data-latest
+/packages/provision/group_vars/all/vault.yml

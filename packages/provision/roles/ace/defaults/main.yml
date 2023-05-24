@@ -1,0 +1,27 @@
+---
+# defaults file for ace
+
+ace_network_name: "{{ server_name_prefix }}"
+
+# User / Group IDs
+ace_puid: "1000"
+
+ace_pgid: "1000"
+
+# Time Zone
+ace_tz: "America/Los_Angeles"
+
+# acemulator Config.js VARIABLES
+ace_sql_auth_database_name: "ace_auth"
+ace_sql_auth_database_host: "ace-db"
+
+ace_sql_shard_database_name: "ace_shard"
+ace_sql_shard_database_host: "ace-db"
+
+ace_sql_world_database_name: "ace_world"
+ace_sql_world_database_host: "ace-db"
+
+ace_sql_initialize_database: "true"
+ace_sql_download_latest_world_release: "true"
+
+ace_noninteractive_console: "true"

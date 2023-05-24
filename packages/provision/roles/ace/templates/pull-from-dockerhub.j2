@@ -1,0 +1,5 @@
+#! /bin/sh
+cd {{ ace_config }}
+docker compose pull ace-server &&
+docker compose up -d 
+docker system prune -af

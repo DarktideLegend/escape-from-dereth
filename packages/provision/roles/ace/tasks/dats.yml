@@ -1,0 +1,15 @@
+---
+
+- name: ACE - Template download-dats script
+  template:
+    src: download-dats.j2
+    dest: /bin/download-dats
+    group: 231072
+    owner: 231072
+    mode: "0750"
+  
+- name: ACE - Download DATs if they haven't been already
+  shell: /bin/download-dats
+
+
+

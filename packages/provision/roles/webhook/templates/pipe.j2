@@ -1,0 +1,6 @@
+#!/bin/bash
+
+if [[ ! -p "{{ webhook_config }}/webhook-pipe" ]]; then
+    mkfifo "{{ webhook_config }}/webhook-pipe";
+    while true; do eval "$(cat {{ webhook_config }}/webhook-pipe)"; done
+fi

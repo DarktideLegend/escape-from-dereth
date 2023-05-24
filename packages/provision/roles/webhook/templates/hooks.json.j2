@@ -1,0 +1,27 @@
+[
+  {
+    "id": "deploy",
+    "execute-command": "pipe-command",
+    "response-message": "Pulling Docker image from Docker Hub",
+    "pass-arguments-to-command": [
+      {
+        "source": "payload",
+        "name": "repository.repo_name"
+      },
+      {
+        "source": "payload",
+        "name": "push_data.tag"
+      }
+    ],
+    "trigger-rule": {
+      "match": {
+        "type": "value",
+        "value": "{{ webhook_secret }}",
+        "parameter": {
+          "source": "url",
+          "name": "token"
+        }
+      }
+    }
+  }
+]

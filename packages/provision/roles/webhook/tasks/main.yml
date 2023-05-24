@@ -1,0 +1,59 @@
+---
+# tasks file for webhook
+
+- name: WEBHOOK - Set up config directory webhook
+  file:
+    state: directory
+    path: "{{ webhook_config }}"
+    owner: 231072
+    group: 231072
+    mode: '0770'
+
+- name: WEBHOOK - Template for hooks.json
+  template:
+    src: hooks.json.j2
+    dest: "{{ webhook_config }}/hooks.json"
+
+
+- name: WEBHOOK - Copy pipe-command  script
+  copy:
+    src: pipe-command
+    dest: /bin/pipe-command
+    mode: "0755"
+
+- name: WEBHOOK - Add pipe template
+  template:
+    src: pipe.j2
+    dest: "{{ webhook_config }}/pipe"
+    mode: "0755"
+
+- name: WEBHOOK - Run pipe script
+  shell: 
+    cmd: "nohup {{ webhook_config }}/pipe &"
+
+- name: WEBHOOK - Creates a cron entry for pipe"
+  ansible.builtin.cron:
+    name: "create webhook-pipe for reboot"
+    special_time: reboot
+    job: "{{ webhook_config }}/pipe"
+
+- name: WEBHOOK - Start webhook CI Container
+  docker_container:
+    name: "webhook"
+    image: almir/webhook
+    state: started
+    userns_mode: "host"
+    ports:
+      - "8081:9000"
+    restart_policy: "always"
+    detach: true
+    command: ["-verbose", "-hooks=/etc/webhook/hooks.json"]
+    mounts: 
+      - type: bind
+        source: "{{ webhook_config }}"
+        target: "/etc/webhook"
+    volumes:
+      - "/bin/pipe-command:/bin/pipe-command"
+    networks:
+      - name: "{{ webhook_network_name }}"
+

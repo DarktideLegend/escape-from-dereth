@@ -1,0 +1,39 @@
+version: '3'
+services:
+
+  ace-db:
+    image: mysql:{{ ace_mysql_version }}
+    container_name: ace-db
+    env_file:
+      - docker.env
+    volumes:
+      - "{{ ace_config }}/data:/var/lib/mysql"
+    ports:
+      - "3306:3306/tcp"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p{{ ace_mysql_root_password }}"]
+    networks:
+      - {{ ace_network_name }}
+
+  ace-server:
+    image: {{ ace_docker_production_image }}
+    depends_on:
+      - ace-db
+    container_name: ace-server
+    env_file:
+      - docker.env
+    volumes:
+      - "{{ ace_config }}/config:/ace/Config"
+      - "{{ ace_config }}/dats:/ace/Dats"
+      - "{{ ace_config }}/logs:/ace/Logs"
+    ports:
+      - "9000-9001:9000-9001/udp"
+    #restart: unless-stopped
+    restart: on-failure
+    networks:
+      - {{ ace_network_name }}
+      
+networks:
+  {{ ace_network_name }}:
+    external: true

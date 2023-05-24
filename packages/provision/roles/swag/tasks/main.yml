@@ -1,0 +1,67 @@
+---
+- name: Create a directory if it does not exist dns-conf
+  ansible.builtin.file:
+    path: "{{ swag_config }}"
+    state: directory
+    owner: 231072
+    group: 231072
+    mode: '0770'
+
+- name: Create a directory if it does not exist dns-conf
+  ansible.builtin.file:
+    path: "{{ swag_config }}/dns-conf"
+    state: directory
+    owner: 231072
+    group: 231072
+    mode: '0770'
+
+- name: Create a directory if it does not exist proxy-confs
+  ansible.builtin.file:
+    path: "{{ swag_config }}/nginx/proxy-confs"
+    state: directory
+    owner: 231072
+    group: 231072
+    mode: '0770'
+
+- name: SWAG - Add duckdns ini file
+  ansible.builtin.lineinfile:
+    path: "{{ swag_config }}/dns-conf/duckdns.ini"
+    line: "dns_duckdns_token={{ swag_duckdnstoken }}"
+    owner: 231072
+    group: 231072
+    create: yes
+    mode: '0770'
+
+- name: SWAG - Copy webhook conf
+  copy:
+    src: webhook.subdomain.conf
+    owner: 231072
+    group: 231072
+    dest: "{{ swag_config }}/nginx/proxy-confs/webhook.subdomain.conf"
+
+- name: SWAG - Create the swag container
+  docker_container:
+    name: "swag"
+    image: "lscr.io/linuxserver/swag:{{swag_image_version }}"
+    networks:
+      - name: "{{ swag_network_name }}"
+      
+    restart: yes
+    restart_policy: always
+    env:
+      PUID: "{{ swag_puid }}"
+      PGID: "{{ swag_pgid }}"
+      URL: "{{ swag_url }}"
+      TZ: "{{ swag_tz }}"
+      SUBDOMAINS: "{{ swag_subdomains }}"
+      VALIDATION: "{{ swag_validation }}"
+      DUCKDNSTOKEN: "{{ swag_duckdnstoken }}"
+      DOCKER_MODS: "{{ swag_container_mods}}"
+    volumes:
+      - "{{ swag_config }}:/config"
+    ports:
+      - "{{ swag_port_http }}:80"
+      - "{{ swag_port_https }}:443"
+    capabilities:
+      - NET_ADMIN
+
