@@ -54,8 +54,14 @@
         ],
         "branches": [
           "main",
-          "alpha",
-          "beta"
+          {
+            "name": "alpha",
+            "prerelease": true
+          },
+          {
+            "name": "beta",
+            "prerelease": true
+          }
         ],
         "plugins": [
               [
@@ -64,13 +70,7 @@
               "packageName": "efd-server",
               "notifications": [
                 {
-                  "branch": "main"
-                },
-                {
                   "branch": "alpha"
-                },
-                {
-                  "branch": "beta"
                 }
               ]
             }
