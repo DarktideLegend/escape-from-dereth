@@ -1,9 +1,0 @@
-{
-  "name": "Classic PvP",
-  "type": "Realm",
-  "parent": "Classic",
-  "properties": {
-    "Description": "The classic PvP Realm",
-    "IsPKOnly": true
-  }
-}
