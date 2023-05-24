@@ -44,7 +44,7 @@
     state: started
     userns_mode: "host"
     ports:
-      - "8081:9000"
+      - "127.0.0.1:8081:9000"
     restart_policy: "always"
     detach: true
     command: ["-verbose", "-hooks=/etc/webhook/hooks.json"]
