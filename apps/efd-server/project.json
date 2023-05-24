@@ -15,8 +15,14 @@
         "preset": "conventionalcommits",
         "presetConfig": {
           "types": [
-            { "type": "feat", "section": "Features" },
-            { "type": "fix", "section": "Bug Fixes" },
+            {
+              "type": "feat",
+              "section": "Features"
+            },
+            {
+              "type": "fix",
+              "section": "Bug Fixes"
+            },
             {
               "type": "refactor",
               "section": "Code Refactoring",
@@ -55,11 +61,28 @@
           ]
         },
         "releaseRules": [
-          { "type": "docs", "scope": "readme", "release": "patch" },
-          { "type": "refactor", "release": "patch" },
-          { "type": "build", "scope": "deps", "release": "patch" },
-          { "type": "revert", "release": "patch" },
-          { "type": "perf", "release": "patch" }
+          {
+            "type": "docs",
+            "scope": "readme",
+            "release": "patch"
+          },
+          {
+            "type": "refactor",
+            "release": "patch"
+          },
+          {
+            "type": "build",
+            "scope": "deps",
+            "release": "patch"
+          },
+          {
+            "type": "revert",
+            "release": "patch"
+          },
+          {
+            "type": "perf",
+            "release": "patch"
+          }
         ],
         "branches": [
           "main",
@@ -73,7 +96,7 @@
           }
         ],
         "plugins": [
-              [
+          [
             "semantic-release-discord-bot",
             {
               "packageName": "efd-server",
@@ -83,6 +106,20 @@
                 }
               ]
             }
+          ],
+          [
+            "@codedependant/semantic-release-docker",
+            {
+              "dockerTags": [
+                "{{#if prerelease.[0]}}{{prerelease.[0]}}{{else}}latest{{/if}}",
+                "{{major}}-{{#if prerelease.[0]}}{{prerelease.[0]}}{{else}}latest{{/if}}",
+                "{{major}}.{{minor}}-{{#if prerelease.[0]}}{{prerelease.[0]}}{{else}}latest{{/if}}",
+                "{{version}}"
+              ],
+              "dockerImage": "efd",
+              "dockerFile": "Dockerfile",
+              "dockerProject": "apourman"
+            }
           ]
         ],
         "tagFormat": "efd-server-v${VERSION}"
@@ -91,4 +128,3 @@
   },
   "tags": []
 }
-
