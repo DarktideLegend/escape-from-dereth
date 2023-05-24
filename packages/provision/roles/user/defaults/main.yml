@@ -1,0 +1,2 @@
+---
+created_username: "{{ server_name_prefix }}-admin"

@@ -1,0 +1,5 @@
+---
+# defaults file for webhook
+
+webhook_config: "/var/data/{{ server_name_prefix }}-webhook"
+webhook_network_name: "{{ server_name_prefix }}"

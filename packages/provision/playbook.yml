@@ -1,0 +1,11 @@
+---
+- hosts: all
+  become: true
+
+  roles:
+    - user
+    - ufw
+    - docker
+    - swag
+    - webhook
+    - ace

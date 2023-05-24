@@ -1,0 +1,3 @@
+#! /bin/sh
+
+echo "pull-from-dockerhub $1 $2 2> /tmp/dockerhub.log" > /etc/webhook/webhook-pipe 

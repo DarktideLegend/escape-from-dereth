@@ -1,0 +1,29 @@
+server_name_prefix: "{{ vault_server_name_prefix }}"
+
+# SWAG vars
+swag_duckdnstoken: "{{ vault_swag_duckdnstoken }}"
+swag_url: "{{ vault_swag_url }}"
+
+# BEGIN ace
+
+ace_config: "/var/data/{{ server_name_prefix }}-ace"
+
+# # MySQL Server VARIABLES
+ace_mysql_version: "{{ vault_ace_mysql_version }}"
+ace_mysql_root_host: "{{ vault_ace_mysql_host }}"
+ace_mysql_root_password: "{{ vault_ace_mysql_root_password }}"
+ace_mysql_user: "{{ vault_ace_mysql_user }}"
+ace_mysql_password: "{{ vault_ace_mysql_password }}"
+ace_mysql_database: "{{ vaullt_ace_mysql_database}}"
+ace_mysql_production_port: "{{ vault_ace_mysql_production_port }}"
+ace_mysql_development_port: "{{ vault_ace_mysql_development_port }}"
+
+# emulator Config.js VARIABLES
+ace_world_name: "{{ vault_ace_world_name }}"
+ace_docker_production_image: "{{ vault_ace_docker_production_image }}"
+ace_docker_development_image: "{{ vault_ace_docker_development_image }}"
+ace_dat_files_directory: "{{ vault_ace_dat_files_directory }}"
+
+# webhook
+webhook_secret: "{{ vault_webhook_secret }}"
+

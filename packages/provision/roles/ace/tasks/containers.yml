@@ -1,0 +1,42 @@
+---
+
+- name: ACE - Set up content directory
+  file:
+    state: directory
+    recurse: true
+    path: "{{ ace_config }}/dats"
+    group: 231072
+    owner: 231072
+    mode: '0740'
+
+- name: ACE - Write pull-from-dockerhub script
+  template:
+    src: pull-from-dockerhub.j2
+    dest: /bin/pull-from-dockerhub
+    group: 231072
+    owner: 231072
+    mode: "0750"
+
+- name: ACE - Write docker-compose template
+  template:
+    src: "docker-compose.j2"
+    group: 231072
+    owner: 231072
+    mode: "0740"
+    dest: "{{ ace_config }}/docker-compose.yml"
+
+- name: ACE - Render docker.env template
+  template:
+    src: "docker.env.j2"
+    group: 231072
+    owner: 231072
+    mode: "0740"
+    dest: "{{ ace_config }}/docker.env"
+
+- name: ACE - CONTAINERS - Run with inline Compose file version 2
+  command: docker compose up -d
+  args:
+    chdir: "{{ ace_config }}"
+  
+    
+   

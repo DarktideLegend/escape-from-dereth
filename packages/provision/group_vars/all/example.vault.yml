@@ -1,0 +1,28 @@
+
+  1 # GENERAL INFO vars
+  2 vault_server_name_prefix: "efd"
+  3
+  4 # SWAG vars
+  5 vault_swag_duckdnstoken: ""
+  6 vault_swag_url: "efd-server.duckdns.org"
+  7
+  8 # BEGIN ace
+  9
+ 10 # # MySQL Server VARIABLES
+ 11 vault_ace_mysql_version: "8.0.12"
+ 12 vault_ace_mysql_root_host: "%"
+ 13 vault_ace_mysql_root_password: "1999asheron2017"
+ 14 vault_ace_mysql_user: "acedockeruser"
+ 15 vault_ace_mysql_password: "2020acEmulator2017"
+ 16 vault_ace_mysql_database: "ace%"
+ 17 vault_ace_mysql_production_port: "3306"
+ 19 vault_ace_docker_production_image: "apourman/efd"
+ 20
+ 21 # # acemulator Config.js VARIABLES
+ 22 vault_ace_world_name: "acemulator"
+ 23 vault_ace_dat_files_directory: "/ace/Dats"
+ 24
+ 25 # END ace
+ 26
+ 27 # webhook
+ 28 vault_webhook_secret: ""

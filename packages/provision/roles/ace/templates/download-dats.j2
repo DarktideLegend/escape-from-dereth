@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [ -z "$(ls -A {{ ace_config }}/dats)" ]; then
+    megadl 'https://mega.nz/#!Q98n0BiR!p5IugPS8ZkQ7uX2A_LdN3Un2_wMX4gZBHowgs1Qomng'
+    7z x ac-updates.zip -o{{ ace_config }}/dats *.dat
+    rm ac-updates.zip
+fi

@@ -1,0 +1,88 @@
+---
+- name: USER - Install aptitude
+  apt:
+    name: aptitude
+    state: latest
+    update_cache: true
+
+- name: Setup passwordless sudo
+  lineinfile:
+    path: /etc/sudoers
+    state: present
+    regexp: '^%sudo'
+    line: '%sudo ALL=(ALL) NOPASSWD: ALL'
+    validate: '/usr/sbin/visudo -cf %s'
+
+- name: USER - Create a new regular user with sudo privileges
+  user:
+    name: "{{ created_username }}"
+    shell: /bin/bash
+    state: present
+    group: sudo
+    create_home: true
+
+- name: USER - Ensure group "dockremap" exists
+  ansible.builtin.group:
+    name: dockremap
+    state: present
+    gid: 231072
+
+- name: USER - Create a new dockremap user with no privileges
+  user:
+    name: "dockremap"
+    shell: /sbin/nologin
+    group: dockremap
+    state: present
+    create_home: false
+    uid: 231072
+
+- name: USER - Add dockremap suid
+  ansible.builtin.lineinfile:
+    path: /etc/subuid
+    line: dockremap:231072:65536
+
+- name: USER - Add dockremap sgid
+  ansible.builtin.lineinfile:
+    path: /etc/subgid
+    line: dockremap:231072:65536
+
+- name: USER - Set authorized key for remote user
+  ansible.posix.authorized_key:
+    user: "{{ created_username }}"
+    state: present
+    key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa_efd.pub') }}"
+
+- name: USER - Disable root login over SSH
+  lineinfile:
+    dest: /etc/ssh/sshd_config 
+    regexp: "^PermitRootLogin" 
+    line: "PermitRootLogin no" 
+    state: present
+  notify:
+    - USER - restart sshd
+
+- name: USER - Disable password login
+  lineinfile: 
+    dest: /etc/ssh/sshd_config 
+    regexp: "^PasswordAuthentication" 
+    line: "PasswordAuthentication no" 
+    state: present
+  notify:
+    - USER - restart sshd
+
+- name: USER - Update apt and install required system packages
+  apt:
+    pkg:
+      - curl
+      - vim
+      - git
+      - ufw
+      - apt-transport-https
+      - ca-certificates
+      - software-properties-common
+      - python3-pip
+      - virtualenv
+      - python3-setuptools
+      - webhook
+    state: latest
+    update_cache: true

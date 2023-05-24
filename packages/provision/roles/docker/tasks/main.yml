@@ -1,0 +1,48 @@
+---
+- name: Create a directory if it does not exist
+  ansible.builtin.file:
+    path: /var/data/
+    group: 231072
+    owner: 231072
+    state: directory
+    mode: '0750'
+
+- name: DOCKER - Add Docker GPG apt Key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: DOCKER - Add Docker Repository
+  apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu jammy stable
+    state: present
+
+- name: DOCKER - Update apt and install docker-ce
+  apt:
+    name: docker-ce
+    state: latest
+    update_cache: true
+
+- name: DOCKER - Install Docker Module for Python
+  pip:
+    name: docker
+  
+- name: DOCKER - Install requets module
+  pip:
+    name: requests==2.29
+
+- name: DOCKER - Add user namespace remapping
+  copy:
+    content: "{{ docker_remap_json | to_json }}"
+    dest: "/etc/docker/daemon.json"
+
+- name: DOCKER - Restart docker daemon
+  ansible.builtin.systemd:
+    name: docker.service
+    state: restarted
+    daemon_reload: true
+    enabled: true
+
+- name: DOCKER - Create efd network
+  docker_network:
+    name: "{{ server_name_prefix }}"
