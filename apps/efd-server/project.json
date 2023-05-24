@@ -24,7 +24,6 @@
             },
             {
               "type": "docs",
-              "scope": "readme",
               "section": "Documentation",
               "hidden": false
             },
@@ -41,6 +40,16 @@
             {
               "type": "revert",
               "section": "Revert Changes",
+              "hidden": false
+            },
+            {
+              "type": "ci",
+              "section": "Changes to the CI configuration files and scripts",
+              "hidden": false
+            },
+            {
+              "type": "chore",
+              "section": "Other changes that don't modify src or test files",
               "hidden": false
             }
           ]
