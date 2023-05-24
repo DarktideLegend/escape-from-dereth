@@ -11,6 +11,9 @@ importers:
       '@babel/preset-react':
         specifier: ^7.18.6
         version: 7.18.6(@babel/core@7.21.4)
+      '@codedependant/semantic-release-docker':
+        specifier: ^4.3.0
+        version: 4.3.0
       '@commitlint/cli':
         specifier: ^17.4.2
         version: 17.4.2
@@ -1582,6 +1585,18 @@ packages:
 
   /@bcoe/v8-coverage@0.2.3:
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
+    dev: true
+
+  /@codedependant/semantic-release-docker@4.3.0:
+    resolution: {integrity: sha512-5Vkvsu9nqPSrpEu9ss5/39oXPYp86ZmCGPqrABZkzGoNSczgz2W6RTGB7KsHwFWJmE9kfq1kRoFt17wRnSIbRQ==}
+    dependencies:
+      '@semantic-release/error': 3.0.0
+      debug: 4.3.4(supports-color@8.1.1)
+      execa: 4.1.0
+      handlebars: 4.7.7
+      semver: 7.5.0
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /@colors/colors@1.5.0:
