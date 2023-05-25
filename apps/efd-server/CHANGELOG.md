@@ -1,3 +1,10 @@
+## [1.1.0-alpha.3](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.2...efd-server-v1.1.0-alpha.3) (2023-05-25)
+
+
+### Bug Fixes
+
+* **efd-server:** 🐛 update realm transition game message logic ([81f57d1](https://github.com/DarktideLegend/escape-from-dereth/commit/81f57d19d64569f9d1d9f3b37fbed07483f80015))
+
 ## [1.1.0-alpha.2](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.1...efd-server-v1.1.0-alpha.2) (2023-05-25)
 
 
