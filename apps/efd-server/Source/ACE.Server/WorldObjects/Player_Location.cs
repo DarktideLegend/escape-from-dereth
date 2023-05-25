@@ -808,11 +808,11 @@ namespace ACE.Server.WorldObjects
         {
             get
             {
-                int intid = GetProperty(PropertyInt.HomeRealm) ?? 0;
+                int intid = GetProperty(PropertyInt.HomeRealm) ?? 4;
                 if ((intid < 0) || (uint)intid > 0x7FFF)
                 {
                     log.Error("Player " + Name + " HomeRealm out of range.");
-                    return 0;
+                    return 4;
                 }
                 return (ushort)intid;
             }
@@ -844,7 +844,7 @@ namespace ACE.Server.WorldObjects
         {
             var homerealm = RealmManager.GetRealm(HomeRealm);
             if (homerealm == null)
-                homerealm = RealmManager.GetRealm(0);
+                homerealm = RealmManager.GetRealm(4);
 
             var iid = homerealm.GetDefaultInstanceID(this);
             var pos = new Position(Home) { Instance = iid };
