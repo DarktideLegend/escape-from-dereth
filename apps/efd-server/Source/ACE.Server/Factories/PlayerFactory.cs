@@ -377,11 +377,14 @@ namespace ACE.Server.Factories
             if (spellFreeRide != null && spellFreeRide.Name != "")
                 instantiation = new Position(spellFreeRide.PositionObjCellId.Value, spellFreeRide.PositionOriginX.Value, spellFreeRide.PositionOriginY.Value, spellFreeRide.PositionOriginZ.Value, spellFreeRide.PositionAnglesX.Value, spellFreeRide.PositionAnglesY.Value, spellFreeRide.PositionAnglesZ.Value, spellFreeRide.PositionAnglesW.Value, 0);
             */
-            player.Location = new Position(0x8903012E, 87.738312f, -47.704556f, .005f, 0.0f, 0.0f, -0.926821f, 0.375504f, accountId);
-            player.Instantiation = new Position(player.Location);
-            player.Sanctuary = new Position(player.Location);
 
-            player.SetProperty(PropertyBool.RecallsDisabled, true);
+            // set home realm for new players to ModernPVP
+            var realm = RealmManager.GetRealm((ushort)4);
+            player.SetProperty(PropertyInt.HomeRealm, realm.Realm.Id);
+            player.Location = player.HideoutLocation;
+            var homeRealmStarterLocation = realm.DefaultStartingLocation(player);
+            player.Instantiation = homeRealmStarterLocation;
+            player.Sanctuary = homeRealmStarterLocation;
 
             /*
             if (PropertyManager.GetBool("pk_server").Item)
