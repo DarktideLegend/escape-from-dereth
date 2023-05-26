@@ -2,7 +2,7 @@ version: '3'
 services:
 
   ace-db:
-    image: mysql:8.0.12
+    image: mysql:8.0.22
     container_name: ace-db
     env_file:
       - docker.env
