@@ -9,6 +9,7 @@ using ACE.Entity.Models;
 using ACE.Server.Entity;
 using ACE.Server.Entity.Actions;
 using ACE.Server.Managers;
+using ACE.Server.Network.GameEvent.Events;
 using ACE.Server.Network.GameMessages.Messages;
 
 namespace ACE.Server.WorldObjects
@@ -28,6 +29,15 @@ namespace ACE.Server.WorldObjects
                 return GetProperty(PropertyBool.ChestRegenOnClose) ?? false;
             }
             set { if (!value) RemoveProperty(PropertyBool.ChestRegenOnClose); else SetProperty(PropertyBool.ChestRegenOnClose, value); }
+        }
+
+        /// <summary>
+        /// This is used for things like Dirty Old Crate
+        /// </summary>
+        public bool ChestClearedWhenClosed
+        {
+            get => GetProperty(PropertyBool.ChestClearedWhenClosed) ?? false;
+            set { if (!value) RemoveProperty(PropertyBool.ChestClearedWhenClosed); else SetProperty(PropertyBool.ChestClearedWhenClosed, value); }
         }
 
         /// <summary>
@@ -203,12 +213,32 @@ namespace ACE.Server.WorldObjects
                 Reset(ResetTimestamp);
         }
 
+        public override void FinishClose(Player player)
+        {
+            base.FinishClose(player);
+
+            if (ChestClearedWhenClosed && InitCreate > 0)
+            {
+                var removeQueueTotal = 0;
+                foreach (var generator in GeneratorProfiles)
+                    removeQueueTotal += generator.RemoveQueue.Count;
+
+                if ((CurrentCreate - removeQueueTotal) == 0)
+                    FadeOutAndDestroy(); // Chest's complete generated inventory count has been wiped out
+                    //Destroy(); // Chest's complete generated inventory count has been wiped out
+            }
+        }
+
         public void Reset(double? resetTimestamp)
         {
             if (resetTimestamp != ResetTimestamp)
                 return;     // already cleared by previous reset
 
             // TODO: if 'ResetInterval' style, do we want to ensure a minimum amount of time for the last viewer?
+
+            // should only be an edge case with reload-landblock
+            if (CurrentLandblock == null)
+                return;
 
             var player = CurrentLandblock.GetObject(Viewer) as Player;
 
@@ -277,12 +307,18 @@ namespace ACE.Server.WorldObjects
 
         protected override float DoOnOpenMotionChanges()
         {
-            return ExecuteMotion(motionOpen);
+            if (MotionTableId != 0)
+                return ExecuteMotion(motionOpen);
+            else
+                return 0;
         }
 
         protected override float DoOnCloseMotionChanges()
         {
-            return ExecuteMotion(motionClosed);
+            if (MotionTableId != 0)
+                return ExecuteMotion(motionClosed);
+            else
+                return 0;
         }
 
         public string LockCode

@@ -16,6 +16,19 @@ namespace ACE.Server.WorldObjects
             set => base.Name = value.TrimStart('+');
         }
 
+        public string GetNameWithSuffix()
+        {
+            if (!IsOlthoiPlayer)
+                return Name;
+            else
+            {
+                if (NoOlthoiTalk)
+                    return Name + "^";
+                else
+                    return Name + "&";
+            }
+        }
+
         // ========================================
         // ========= Admin Tier Properties ========
         // ========================================
@@ -61,6 +74,9 @@ namespace ACE.Server.WorldObjects
             get => (Character != null && Character.IsPlussed) || (Session != null && ConfigManager.Config.Server.Accounts.OverrideCharacterPermissions && Session.AccessLevel > AccessLevel.Advocate);
         }
 
+        public bool IsOlthoiPlayer { get; set; }
+
+
         public string GodState
         {
             get => GetProperty(PropertyString.GodState);
@@ -71,6 +87,9 @@ namespace ACE.Server.WorldObjects
         // ========== Account Properties ==========
         // ========================================
 
+        /// <summary>
+        /// Flag indicates if an account is at least 15 days old
+        /// </summary>
         public bool Account15Days
         {
             get => GetProperty(PropertyBool.Account15Days) ?? false;
@@ -268,7 +287,13 @@ namespace ACE.Server.WorldObjects
             set { if (!value) RemoveProperty(PropertyBool.SafeSpellComponents); else SetProperty(PropertyBool.SafeSpellComponents, value); }
         }
 
-        public bool IsOlthoiPlayer()
+        public bool LoginAtLifestone
+        {
+            get => GetProperty(PropertyBool.LoginAtLifestone) ?? false;
+            set { if (!value) RemoveProperty(PropertyBool.LoginAtLifestone); else SetProperty(PropertyBool.LoginAtLifestone, value); }
+        }
+
+        /*public bool IsOlthoiPlayer()
         {
             switch (WeenieClassId)
             {
@@ -279,7 +304,7 @@ namespace ACE.Server.WorldObjects
                     return true;
             }
             return false;
-        }
+        }*/
 
         /// <summary>
         /// The timestamp when the player last generated a rare
@@ -1267,6 +1292,24 @@ namespace ACE.Server.WorldObjects
             set { if (!value.HasValue) RemoveProperty(PropertyInstanceId.CurrentAppraisalTarget); else SetProperty(PropertyInstanceId.CurrentAppraisalTarget, value.Value); }
         }
 
+        public double? LastPortalTeleportTimestamp
+        {
+            get => GetProperty(PropertyFloat.LastPortalTeleportTimestamp);
+            set { if (!value.HasValue) RemoveProperty(PropertyFloat.LastPortalTeleportTimestamp); else SetProperty(PropertyFloat.LastPortalTeleportTimestamp, value.Value); }
+        }
+
+        public bool OlthoiPk
+        {
+            get => GetProperty(PropertyBool.OlthoiPk) ?? false;
+            set { if (!value) RemoveProperty(PropertyBool.OlthoiPk); else SetProperty(PropertyBool.OlthoiPk, value); }
+        }
+
+        public bool NoOlthoiTalk
+        {
+            get => GetProperty(PropertyBool.NoOlthoiTalk) ?? false;
+            set { if (!value) RemoveProperty(PropertyBool.NoOlthoiTalk); else SetProperty(PropertyBool.NoOlthoiTalk, value); }
+        }
+
         /// <summary>
         /// Returns player's augmentation resistance for damage type
         /// </summary>
@@ -1296,6 +1339,18 @@ namespace ACE.Server.WorldObjects
                     return AugmentationResistanceLightning;
             }
             return 0;
+        }
+
+        public int ImbueAttempts
+        {
+            get => GetProperty(PropertyInt.ImbueAttempts) ?? 0;
+            set { if (value == 0) RemoveProperty(PropertyInt.ImbueAttempts); else SetProperty(PropertyInt.ImbueAttempts, value); }
+        }
+
+        public int ImbueSuccesses
+        {
+            get => GetProperty(PropertyInt.ImbueSuccesses) ?? 0;
+            set { if (value == 0) RemoveProperty(PropertyInt.ImbueSuccesses); else SetProperty(PropertyInt.ImbueSuccesses, value); }
         }
     }
 }

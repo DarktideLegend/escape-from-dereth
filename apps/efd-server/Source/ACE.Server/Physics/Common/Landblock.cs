@@ -565,6 +565,15 @@ namespace ACE.Server.Physics.Common
             DynObjsInitDone = false;
         }
 
+        /// <summary>
+        /// Release shadow objects pointing to cells in this landblock
+        /// </summary>
+        public void release_shadow_objs()
+        {
+            foreach (var cell in LandCells.Values)
+                cell.release_shadow_objs();
+        }
+
         public void release_visible_cells()
         {
             // legacy method
@@ -584,6 +593,16 @@ namespace ACE.Server.Physics.Common
                 // return cached value
                 if (isDungeon != null)
                     return isDungeon.Value;
+
+                // hack for NW island
+                // did a worldwide analysis for adding watercells into the formula,
+                // but they are inconsistently defined for some of the edges of map unfortunately
+                if (BlockCoord.X < 64 && BlockCoord.Y > 1976)
+                {
+                    //Console.WriteLine($"Allowing {ID:X8}");
+                    isDungeon = false;
+                    return isDungeon.Value;
+                }
 
                 // a dungeon landblock is determined by:
                 // - all heights being 0

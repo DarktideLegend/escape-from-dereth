@@ -157,6 +157,9 @@ namespace ACE.Server.Physics
             UpdateTime = PhysicsTimer.CurrentTime;
             UpdateTimes = new int[UpdateTimeLength];
             PhysicsTimer_CurrentTime = PhysicsTimer.CurrentTime;
+
+            // todo: only allocate these for server objects
+            // get rid of 'DatObject', use the existing WeenieObj == null
             WeenieObj = new WeenieObject();
             ObjMaint = new ObjectMaint(this);
 
@@ -1318,6 +1321,21 @@ namespace ACE.Server.Physics
             {
                 // send initial CO as ethereal
                 WeenieObj.WorldObject.SetProperty(PropertyBool.Ethereal, true);
+            }
+
+            if (entering_world && transition.SpherePath.CurPos.Landblock != pos.Landblock)
+            {
+                // AdjustToOutside and find_cell_list can inconsistently result in 2 different cells for edges
+                // if something directly on a landblock edge has resulted in a different landblock from find_cell_list, discard completely
+
+                // this can also (more legitimately) happen even if the object isn't directly on landblock edge, but is near it
+                // an object trying to spawn on a hillside near a landblock edge might get pushed slightly during spawning,
+                // resulting in a successful spawn in a neighboring landblock. we don't handle adjustments to the actual landblock reference in here
+
+                // ideally CellArray.LoadCells = false would be passed to find_cell_list to prevent it from even attempting to load an unloaded neighboring landblock
+
+                log.Debug($"{Name} ({ID:X8}) AddPhysicsObj() - {pos.ShortLoc()} resulted in {transition.SpherePath.CurPos.ShortLoc()}, discarding");
+                return SetPositionError.NoValidPosition;
             }
 
             if (!SetPositionInternal(transition))
@@ -3479,6 +3497,8 @@ namespace ACE.Server.Physics
                 }
                 change_cell_server(newCell);
             }
+
+            CachedVelocity = requestCachedVelocity;
         }
 
         /// <summary>
@@ -3874,6 +3894,8 @@ namespace ACE.Server.Physics
             return true;
         }
 
+        private Vector3 requestCachedVelocity;
+
         /// <summary>
         /// Sets the requested position to the AutonomousPosition
         /// received from the client
@@ -3896,6 +3918,8 @@ namespace ACE.Server.Physics
                 RequestPos.ObjCellID = RequestPos.GetCell(CurCell.ID, instance);
             else
                 RequestPos.ObjCellID = cell.ID;
+
+            requestCachedVelocity = CachedVelocity;
         }
 
         public void set_sequence_animation(int animID, bool interrupt, int startFrame, float framerate)

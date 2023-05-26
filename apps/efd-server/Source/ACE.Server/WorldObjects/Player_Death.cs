@@ -84,7 +84,9 @@ namespace ACE.Server.WorldObjects
                 // instead, we get all of the players in the lifestone landblock + adjacent landblocks,
                 // and possibly limit that to some radius around the landblock?
                 var lifestoneBlock = LandblockManager.GetLandblock(new LandblockId(Sanctuary.LandblockShort << 16 | 0xFFFF), Sanctuary.Instance, null, true);
-                lifestoneBlock.EnqueueBroadcast(excludePlayers, true, Sanctuary, LocalBroadcastRangeSq, broadcastMsg);
+
+                // We enqueue the work onto the target landblock to ensure thread-safety. It's highly likely the lifestoneBlock is far away, and part of a different landblock group (and thus different thread).
+                lifestoneBlock.EnqueueAction(new ActionEventDelegate(() => lifestoneBlock.EnqueueBroadcast(excludePlayers, true, Sanctuary, LocalBroadcastRangeSq, broadcastMsg)));
             }
 
             return deathMessage;
@@ -144,12 +146,16 @@ namespace ACE.Server.WorldObjects
         }
 
 
+        public bool IsInDeathProcess;
+
         /// <summary>
         /// Broadcasts the player death animation, updates vitae, and sends network messages for player death
         /// Queues the action to call TeleportOnDeath and enter portal space soon
         /// </summary>
         protected override void Die(DamageHistoryInfo lastDamager, DamageHistoryInfo topDamager)
         {
+            IsInDeathProcess = true;
+
             if (topDamager?.Guid == Guid && IsPKType)
             {
                 var topDamagerOther = DamageHistory.GetTopDamager(false);
@@ -247,7 +253,8 @@ namespace ACE.Server.WorldObjects
                 SetLifestoneProtection();
 
                 var teleportChain = new ActionChain();
-                teleportChain.AddDelaySeconds(3.0f);
+                if (!IsLoggingOut) // If we're in the process of logging out, we skip the delay
+                    teleportChain.AddDelaySeconds(3.0f);
                 teleportChain.AddAction(this, () =>
                 {
                     // currently happens while in portal space
@@ -269,6 +276,11 @@ namespace ACE.Server.WorldObjects
                     DamageHistory.Reset();
 
                     OnHealthUpdate();
+
+                    IsInDeathProcess = false;
+
+                    if (IsLoggingOut)
+                        LogOut_Final(true);
                 });
 
                 teleportChain.EnqueueChain();
@@ -315,7 +327,7 @@ namespace ACE.Server.WorldObjects
 
             if (step < SuicideMessages.Count)
             {
-                EnqueueBroadcast(new GameMessageCreatureMessage(SuicideMessages[step], Name, Guid.Full, ChatMessageType.Speech), LocalBroadcastRange);
+                EnqueueBroadcast(new GameMessageHearSpeech(SuicideMessages[step], GetNameWithSuffix(), Guid.Full, ChatMessageType.Speech), LocalBroadcastRange);
 
                 var suicideChain = new ActionChain();
                 suicideChain.AddDelaySeconds(3.0f);
@@ -474,7 +486,7 @@ namespace ACE.Server.WorldObjects
             var inventory = GetAllPossessions();
 
             // exclude pyreals from randomized death item calculation
-            inventory = inventory.Where(i => !i.Name.Equals("Pyreal")).ToList();
+            inventory = inventory.Where(i => i.WeenieClassId != coinStackWcid).ToList();
 
             // exclude wielded items if < level 35
             if (!canDropWielded)
@@ -494,7 +506,7 @@ namespace ACE.Server.WorldObjects
             if (numCoinsDropped > 0)
             {
                 // add pyreals to dropped items
-                var pyreals = SpendCurrency(Vendor.CoinStackWCID, (uint)numCoinsDropped);
+                var pyreals = SpendCurrency(coinStackWcid, (uint)numCoinsDropped);
                 dropItems.AddRange(pyreals);
                 //Console.WriteLine($"Dropping {numCoinsDropped} pyreals");
             }
@@ -932,6 +944,9 @@ namespace ACE.Server.WorldObjects
 
         public void SetMinimumTimeSincePK()
         {
+            if (IsOlthoiPlayer)
+                return;
+
             if (PlayerKillerStatus == PlayerKillerStatus.NPK && MinimumTimeSincePk == null)
                 return;
 
