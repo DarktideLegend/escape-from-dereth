@@ -14,6 +14,7 @@ using ACE.Entity.Enum;
 using ACE.Entity.Enum.Properties;
 using ACE.Entity.Models;
 using ACE.Server.Entity;
+using ACE.Server.Factories;
 using ACE.Server.Managers;
 using ACE.Server.Network;
 using ACE.Server.WorldObjects;
@@ -136,7 +137,7 @@ namespace ACE.Server.Command.Handlers
                     // ensure this is a valid MaxVital
                     if (vital.Key != PropertyAttribute2nd.MaxHealth && vital.Key != PropertyAttribute2nd.MaxStamina && vital.Key != PropertyAttribute2nd.MaxMana)
                     {
-                        Console.WriteLine($"{player.Name} has unknown vita {vital.Key}{fixStr}");
+                        Console.WriteLine($"{player.Name} has unknown vital {vital.Key}{fixStr}");
                         foundIssues = true;
 
                         if (fix)
@@ -348,11 +349,11 @@ namespace ACE.Server.Command.Handlers
             using (var ctx = new ShardDbContext())
             {
                 // 4 possible skill credits from quests
-                // - ChasingOswaldDone
+                // - OswaldManualCompleted
                 // - ArantahKill1 (no 'turned in' stamp, only if given figurine?)
                 // - LumAugSkillQuest (stamped either 1 or 2 times)
 
-                oswaldSkillCredit = ctx.CharacterPropertiesQuestRegistry.Where(i => i.QuestName.Equals("ChasingOswaldDone")).Select(i => i.CharacterId).ToHashSet();
+                oswaldSkillCredit = ctx.CharacterPropertiesQuestRegistry.Where(i => i.QuestName.Equals("OswaldManualCompleted")).Select(i => i.CharacterId).ToHashSet();
                 ralireaSkillCredit = ctx.CharacterPropertiesQuestRegistry.Where(i => i.QuestName.Equals("ArantahKill1")).Select(i => i.CharacterId).ToHashSet();
                 lumAugSkillCredits = ctx.CharacterPropertiesQuestRegistry.Where(i => i.QuestName.Equals("LumAugSkillQuest")).ToDictionary(i => i.CharacterId, i => i.NumTimesCompleted);
             }
@@ -363,16 +364,39 @@ namespace ACE.Server.Command.Handlers
                 if (player.Account == null || player.Account.AccessLevel == (uint)AccessLevel.Admin)
                     continue;
 
-                // player starts with 52 skill credits
-                var startCredits = 52;
+                if (!player.Heritage.HasValue)
+                {
+                    Console.WriteLine($"{player.Name} (0x{player.Guid}) does not have a Heritage, skipping!");
+                    continue;
+                }
 
-                // skills that cannot be untrained: arcane lore, jump, loyalty, magic defense, run, salvaging
-                // all of these have '0' cost to train, except for arcane lore, which has 4 (seems to be an outlier?)
-                startCredits += 4;
+                var heritage = (uint)player.Heritage.Value;
+                var heritageGroup = DatManager.PortalDat.CharGen.HeritageGroups[heritage];
+                var adjustedSkillCosts = heritageGroup.Skills.ToDictionary(s => (Skill)s.SkillNum, s => s);
+
+                var startCredits = (int)heritageGroup.SkillCredits;
 
                 var levelCredits = GetAdditionalCredits(player.Level ?? 1);
 
-                var totalCredits = startCredits + levelCredits;
+                var questCredits = 0;
+
+                // 4 possible skill credits from quests
+
+                // - OswaldManualCompleted
+                if (oswaldSkillCredit.Contains(player.Guid.Full))
+                    questCredits++;
+
+                // - ArantahKill1 (no 'turned in' stamp, only if given figurine?)
+                if (ralireaSkillCredit.Contains(player.Guid.Full))
+                    questCredits++;
+
+                // - LumAugSkillQuest (stamped either 1 or 2 times)
+                if (lumAugSkillCredits.TryGetValue(player.Guid.Full, out var lumSkillCredits))
+                    questCredits += lumSkillCredits;
+
+                var totalCredits = startCredits + levelCredits + questCredits;
+
+                //Console.WriteLine($"{player.Name} (0x{player.Guid}) Heritage: {heritage}, Level: {player.Level}, Base Credits: {startCredits}, Additional Level Credits: {levelCredits}, Quest Credits: {questCredits}, Total Skill Credits: {totalCredits}");
 
                 var used = 0;
 
@@ -386,13 +410,18 @@ namespace ACE.Server.Command.Handlers
 
                     if (!DatManager.PortalDat.SkillTable.SkillBaseHash.TryGetValue((uint)skill.Key, out var skillInfo))
                     {
-                        Console.WriteLine($"{player.Name}.HandleVerifySkillCredits({skill.Key}): unknown skill");
+                        Console.WriteLine($"{player.Name}:0x{player.Guid}.HandleVerifySkillCredits({skill.Key}): unknown skill");
                         continue;
                     }
 
-                    //Console.WriteLine($"{(Skill)skill.Type} trained cost: {skillInfo.TrainedCost}, spec cost: {skillInfo.SpecializedCost}");
+                    adjustedSkillCosts.TryGetValue(skill.Key, out var adjustedCost);
 
-                    used += skillInfo.TrainedCost;
+                    var trainedCost = adjustedCost?.NormalCost ?? skillInfo.TrainedCost;
+                    var specializedCost = adjustedCost?.PrimaryCost ?? skillInfo.SpecializedCost;
+
+                    //Console.WriteLine($"{(Skill)skill.Type} trained cost: {skillInfo.TrainedCost}, spec cost: {skillInfo.SpecializedCost}, adjusted trained cost: {trainedCost}, adjusted spec cost: {specializedCost}");
+
+                    used += trainedCost;
 
                     if (sac == SkillAdvancementClass.Specialized)
                     {
@@ -407,27 +436,14 @@ namespace ACE.Server.Command.Handlers
                                 continue;
                         }
 
-                        used += skillInfo.UpgradeCostFromTrainedToSpecialized;
+                        used += specializedCost - trainedCost;
 
-                        specCreditsSpent += skillInfo.SpecializedCost;
+                        specCreditsSpent += specializedCost;
                     }
                 }
 
-                // 2 possible skill credits from quests
-                // - ChasingOswaldDone
-                if (oswaldSkillCredit.Contains(player.Guid.Full))
-                    totalCredits++;
-
-                // - ArantahKill1 (no 'turned in' stamp, only if given figurine?)
-                if (ralireaSkillCredit.Contains(player.Guid.Full))
-                    totalCredits++;
-
-                // - LumAugSkillQuest (stamped either 1 or 2 times)
-                if (lumAugSkillCredits.TryGetValue(player.Guid.Full, out var lumSkillCredits))
-                    totalCredits += lumSkillCredits;
-
                 var targetCredits = totalCredits - used;
-                var targetMsg = $"{player.Name} should have {targetCredits} available skill credits";
+                var targetMsg = $"{player.Name} (0x{player.Guid}) should have {targetCredits} available skill credits";
 
                 if (targetCredits < 0)
                 {
@@ -448,7 +464,7 @@ namespace ACE.Server.Command.Handlers
                     // if the player has already spent more skill credits than they should have,
                     // unfortunately this situation requires a partial reset..
 
-                    Console.WriteLine($"{player.Name} has spent {specCreditsSpent} skill credits on specalization, {specCreditsSpent - 70} over the limit of 70. To fix this situation, specialized skill reset will need to be applied{fixStr}");
+                    Console.WriteLine($"{player.Name} (0x{player.Guid}) has spent {specCreditsSpent} skill credits on specialization, {specCreditsSpent - 70} over the limit of 70. To fix this situation, specialized skill reset will need to be applied{fixStr}");
                     foundIssues = true;
 
                     if (fix)
@@ -467,6 +483,20 @@ namespace ACE.Server.Command.Handlers
                     if (fix)
                     {
                         player.SetProperty(PropertyInt.AvailableSkillCredits, targetCredits);
+                        player.SaveBiotaToDatabase();
+                    }
+                }
+
+                var totalSkillCredits = player.GetProperty(PropertyInt.TotalSkillCredits) ?? 0;
+
+                if (totalSkillCredits != totalCredits)
+                {
+                    Console.WriteLine($"{player.Name} (0x{player.Guid}) should have {totalCredits} total skill credits, but they have {totalSkillCredits}{fixStr}");
+                    foundIssues = true;
+
+                    if (fix)
+                    {
+                        player.SetProperty(PropertyInt.TotalSkillCredits, totalCredits);
                         player.SaveBiotaToDatabase();
                     }
                 }
@@ -579,6 +609,9 @@ namespace ACE.Server.Command.Handlers
             player.SetProperty(PropertyInt.AvailableSkillCredits, targetCredits);
 
             player.SetProperty(PropertyBool.UntrainedSkills, true);
+
+            player.SetProperty(PropertyBool.FreeSkillResetRenewed, true);
+            player.SetProperty(PropertyBool.SkillTemplesTimerReset, true);
 
             player.SaveBiotaToDatabase();
         }
@@ -1292,6 +1325,316 @@ namespace ACE.Server.Command.Handlers
                 }
             }
             return Math.Min(armorLevel, maxArmorLevel);
+        }
+
+        [CommandHandler("verify-clothing-wield-level", AccessLevel.Admin, CommandHandlerFlag.ConsoleInvoke, "Verifies and optionally fixes any t7/t8 clothing that is missing a wield level requirement")]
+        public static void HandleVerifyClothingWieldLevel(Session session, params string[] parameters)
+        {
+            var fix = parameters.Length > 0 && parameters[0].Equals("fix");
+            var fixStr = fix ? " -- fixed" : "";
+            var foundIssues = false;
+
+            using (var ctx = new ShardDbContext())
+            {
+                ctx.Database.SetCommandTimeout(TimeSpan.FromMinutes(5));
+
+                // get all shard clothing
+                var _clothing = ctx.Biota.Where(i => i.WeenieType == (int)WeenieType.Clothing).ToList();
+
+                // get all shard armor levels
+                var armorLevels = ctx.BiotaPropertiesInt.Where(i => i.Type == (ushort)PropertyInt.ArmorLevel).ToDictionary(i => i.ObjectId, i => i.Value);
+
+                // filter clothing to actual clothing
+                var clothing = new Dictionary<uint, Database.Models.Shard.Biota>();
+                foreach (var item in _clothing)
+                {
+                    if (!armorLevels.TryGetValue(item.Id, out var armorLevel) || armorLevel == 0)
+                    {
+                        clothing.Add(item.Id, item);
+                        //Console.WriteLine($"{item.Id:X8} - {(Factories.Enum.WeenieClassName)item.WeenieClassId}");
+                    }
+                }
+
+                // get shard spells
+                var _spells = ctx.BiotaPropertiesSpellBook.Where(i => clothing.ContainsKey(i.ObjectId)).ToList();
+
+                // filter clothing to those with epics/legendaries
+                var highTierClothing = new Dictionary<uint, int>();
+
+                foreach (var s in _spells)
+                {
+                    var cantripLevel = 0;
+
+                    if (LootTables.EpicCantrips.Contains(s.Spell))
+                        cantripLevel = 3;
+                    else if (LootTables.LegendaryCantrips.Contains(s.Spell))
+                        cantripLevel = 4;
+
+                    if (cantripLevel == 0)
+                        continue;
+
+                    if (highTierClothing.ContainsKey(s.ObjectId))
+                        highTierClothing[s.ObjectId] = Math.Max(highTierClothing[s.ObjectId], cantripLevel);
+                    else
+                        highTierClothing[s.ObjectId] = cantripLevel;
+                }
+
+                // get wield level for these items
+                var wieldLevels = ctx.BiotaPropertiesInt.Where(i => i.Type == (ushort)PropertyInt.WieldDifficulty && highTierClothing.ContainsKey(i.ObjectId)).Select(i => i.ObjectId).ToHashSet();
+
+                foreach (var kvp in highTierClothing)
+                {
+                    var objectId = kvp.Key;
+                    var maxCantripLevel = kvp.Value;
+
+                    if (wieldLevels.Contains(objectId))
+                        continue;
+
+                    if (!foundIssues)
+                    {
+                        Console.WriteLine($"Missing wield difficulty:");
+                        foundIssues = true;
+                    }
+
+                    if (fix)
+                    {
+                        var wieldLevel = 150;
+
+                        if (maxCantripLevel > 3)
+                        {
+                            var rng = ThreadSafeRandom.Next(0.0f, 1.0f);
+                            if (rng < 0.9f)
+                                wieldLevel = 180;
+                        }
+
+                        ctx.Database.ExecuteSqlRaw($"insert into biota_properties_int set object_Id={objectId}, `type`={(ushort)PropertyInt.WieldRequirements}, value={(int)WieldRequirement.Level};");
+                        ctx.Database.ExecuteSqlRaw($"insert into biota_properties_int set object_Id={objectId}, `type`={(ushort)PropertyInt.WieldSkillType}, value=1;");
+                        ctx.Database.ExecuteSqlRaw($"insert into biota_properties_int set object_Id={objectId}, `type`={(ushort)PropertyInt.WieldDifficulty}, value={wieldLevel};");
+                    }
+
+                    var item = clothing[objectId];
+
+                    Console.WriteLine($"{item.Id:X8} - {(Factories.Enum.WeenieClassName)item.WeenieClassId} - {maxCantripLevel}{fixStr}");
+                }
+
+                if (!fix && foundIssues)
+                    Console.WriteLine($"Dry run completed. Type 'verify-clothing-wield-level fix' to fix any issues.");
+
+                if (!foundIssues)
+                    Console.WriteLine($"Verified wield levels for {highTierClothing.Count:N0} pieces of t7 / t8 clothing");
+            }
+        }
+
+        [CommandHandler("verify-legendary-wield-level", AccessLevel.Admin, CommandHandlerFlag.ConsoleInvoke, "Verifies and optionally fixes any items with legendary cantrips that have less than 180 wield level requirement")]
+        public static void HandleVerifyLegendaryWieldLevel(Session session, params string[] parameters)
+        {
+            var fix = parameters.Length > 0 && parameters[0].Equals("fix");
+            var fixStr = fix ? " -- fixed" : "";
+            var foundIssues = false;
+
+            using (var ctx = new ShardDbContext())
+            {
+                ctx.Database.SetCommandTimeout(TimeSpan.FromMinutes(5));
+
+                // get all biota spellbooks
+                var spellbook = ctx.BiotaPropertiesSpellBook.Where(i => i.Probability == 2.0f).ToList();
+
+                var legendaryItems = new HashSet<uint>();
+
+                foreach (var spell in spellbook)
+                {
+                    if (LootTables.LegendaryCantrips.Contains(spell.Spell))
+                        legendaryItems.Add(spell.ObjectId);
+                }
+
+                // get wield requirements for these items
+                var query = from wieldReq in ctx.BiotaPropertiesInt
+                            join wieldDiff in ctx.BiotaPropertiesInt on wieldReq.ObjectId equals wieldDiff.ObjectId
+                            where wieldReq.Type.Equals((int)PropertyInt.WieldRequirements) && wieldReq.Value.Equals((int)WieldRequirement.Level) && wieldDiff.Type.Equals((int)PropertyInt.WieldDifficulty) && legendaryItems.Contains(wieldReq.ObjectId)
+                            select new
+                            {
+                                WieldReq = wieldReq,
+                                WieldDiff = wieldDiff
+                            };
+
+                var wieldReq1 = query.ToList();
+
+                query = from wieldReq in ctx.BiotaPropertiesInt
+                            join wieldDiff in ctx.BiotaPropertiesInt on wieldReq.ObjectId equals wieldDiff.ObjectId
+                            where wieldReq.Type.Equals((int)PropertyInt.WieldRequirements2) && wieldReq.Value.Equals((int)WieldRequirement.Level) && wieldDiff.Type.Equals((int)PropertyInt.WieldDifficulty2) && legendaryItems.Contains(wieldReq.ObjectId)
+                            select new
+                            {
+                                WieldReq = wieldReq,
+                                WieldDiff = wieldDiff
+                            };
+
+                var wieldReq2 = query.ToList();
+
+                var verified = new HashSet<uint>();
+                var updated = new HashSet<uint>();
+
+                var hasLevelReq1 = new HashSet<uint>();
+                var hasLevelReq2 = new HashSet<uint>();
+
+                var updates = new List<string>();
+
+                foreach (var wieldReq in wieldReq1)
+                {
+                    hasLevelReq1.Add(wieldReq.WieldReq.ObjectId);
+
+                    if (wieldReq.WieldDiff.Value < 180)
+                    {
+                        foundIssues = true;
+                        updates.Add($"UPDATE biota_properties_int SET value=180 WHERE object_Id=0x{wieldReq.WieldDiff.ObjectId:X8} AND type={(int)PropertyInt.WieldDifficulty};");
+                    }
+                    else
+                        verified.Add(wieldReq.WieldDiff.ObjectId);
+                }
+
+                foreach (var wieldReq in wieldReq2)
+                {
+                    hasLevelReq2.Add(wieldReq.WieldReq.ObjectId);
+
+                    if (wieldReq.WieldDiff.Value < 180)
+                    {
+                        foundIssues = true;
+                        updates.Add($"UPDATE biota_properties_int SET value=180 WHERE object_Id=0x{wieldReq.WieldDiff.ObjectId:X8} AND type={(int)PropertyInt.WieldDifficulty2};");
+                    }
+                    else
+                        verified.Add(wieldReq.WieldDiff.ObjectId);
+                }
+
+                /*var hasLevelReq = hasLevelReq1.Union(hasLevelReq2).ToList();
+
+                if (hasLevelReq.Count != legendaryItems.Count)
+                {
+                    foundIssues = true;
+                    var noReqs = legendaryItems.Except(hasLevelReq).ToList();
+
+                    foreach (var noReq in noReqs)
+                    {
+                        if (!hasLevelReq1.Contains(noReq))
+                        {
+                            updates.Add($"INSERT INTO biota_properties_int SET object_Id=0x{noReq:X8}, `type`={(int)PropertyInt.WieldRequirements}, value={(int)WieldRequirement.Level};");
+                            updates.Add($"INSERT INTO biota_properties_int SET object_Id=0x{noReq:X8}, `type`={(int)PropertyInt.WieldSkillType}, value=1;");
+                            updates.Add($"INSERT INTO biota_properties_int SET object_Id=0x{noReq:X8}, `type`={(int)PropertyInt.WieldDifficulty}, value=180;");
+                        }
+                        else
+                        {
+                            updates.Add($"INSERT INTO biota_properties_int SET object_Id=0x{noReq:X8}, `type`={(int)PropertyInt.WieldRequirements2}, value={(int)WieldRequirement.Level};");
+                            updates.Add($"INSERT INTO biota_properties_int SET object_Id=0x{noReq:X8}, `type`={(int)PropertyInt.WieldSkillType2}, value=1;");
+                            updates.Add($"INSERT INTO biota_properties_int SET object_Id=0x{noReq:X8}, `type`={(int)PropertyInt.WieldDifficulty2}, value=180;");
+                        }
+                    }
+                }*/
+
+                var numIssues = legendaryItems.Count - verified.Count;
+
+                if (numIssues > 0)
+                    Console.WriteLine($"Found issues for {numIssues:N0} of {legendaryItems.Count:N0} legendary items");
+
+                if (!fix && foundIssues)
+                    Console.WriteLine($"Dry run completed. Type 'verify-legendary-wield-level fix' to fix any issues.");
+
+                if (fix)
+                {
+                    foreach (var update in updates)
+                    {
+                        Console.WriteLine(update);
+                        ctx.Database.ExecuteSqlRaw(update);
+                    }
+                }
+
+                if (!foundIssues)
+                    Console.WriteLine($"Verified wield levels for {legendaryItems.Count:N0} legendary items");
+            }
+        }
+
+        [CommandHandler("verify-shield-rating", AccessLevel.Admin, CommandHandlerFlag.ConsoleInvoke, "Verifies and optionally fixes any lootgen shields with incorrectly assigned CD/CDR")]
+        public static void HandleRemoveShieldRatings(Session session, params string[] parameters)
+        {
+            var fix = parameters.Length > 0 && parameters[0].Equals("fix");
+            var fixStr = fix ? " -- fixed" : "";
+            var foundIssues = false;
+
+            using (var ctx = new ShardDbContext())
+            {
+                ctx.Database.SetCommandTimeout(TimeSpan.FromMinutes(5));
+
+                // get items with GearCritDamage
+                var critDamage = ctx.BiotaPropertiesInt.Where(i => i.Type == (ushort)PropertyInt.GearCritDamage).ToDictionary(i => i.ObjectId, i => i.Value);
+
+                // get items with GearCritDamageResist
+                var critDamageResist = ctx.BiotaPropertiesInt.Where(i => i.Type == (ushort)PropertyInt.GearCritDamageResist).ToDictionary(i => i.ObjectId, i => i.Value);
+
+                // get lootgen shields
+                var query = from biota in ctx.Biota
+                            join workmanship in ctx.BiotaPropertiesInt on biota.Id equals workmanship.ObjectId
+                            join combatUse in ctx.BiotaPropertiesInt on biota.Id equals combatUse.ObjectId
+                            join name in ctx.BiotaPropertiesString on biota.Id equals name.ObjectId
+                            where workmanship.Type == (ushort)PropertyInt.ItemWorkmanship && combatUse.Type == (ushort)PropertyInt.CombatUse && combatUse.Value == (int)CombatUse.Shield && name.Type == (ushort)PropertyString.Name
+                            select new
+                            {
+                                Biota = biota,
+                                Name = name
+                            };
+
+                var results = query.ToDictionary(i => i.Biota.Id, i => i);
+
+                // generate list of remove fields
+                var critDamageRemove = new Dictionary<uint, int>();
+                var critDamageResistRemove = new Dictionary<uint, int>();
+
+                foreach (var result in results.Keys)
+                {
+                    if (critDamage.TryGetValue(result, out var critDamageResult))
+                        critDamageRemove.Add(result, critDamageResult);
+
+                    if (critDamageResist.TryGetValue(result, out var critDamageResistResult))
+                        critDamageResistRemove.Add(result, critDamageResistResult);
+                }
+
+                var numIssues = critDamageRemove.Count + critDamageResistRemove.Count;
+
+                var sqlLines = new List<string>();
+
+                if (numIssues > 0)
+                {
+                    foundIssues = true;
+
+                    Console.WriteLine($"Found {numIssues:N0} bugged shields:");
+
+                    foreach (var critDamageValue in critDamageRemove)
+                    {
+                        var shield = results[critDamageValue.Key];
+
+                        Console.WriteLine($"{shield.Biota.Id:X8} - {shield.Name.Value} (CD: {critDamageValue.Value}){fixStr}");
+
+                        sqlLines.Add($"delete from biota_properties_int where object_Id=0x{shield.Biota.Id:X8} and `type`={(int)PropertyInt.GearCritDamage};");
+                    }
+
+                    foreach (var critDamageResistValue in critDamageResistRemove)
+                    {
+                        var shield = results[critDamageResistValue.Key];
+
+                        Console.WriteLine($"{shield.Biota.Id:X8} - {shield.Name.Value} (CDR: {critDamageResistValue.Value}){fixStr}");
+
+                        sqlLines.Add($"delete from biota_properties_int where object_Id=0x{shield.Biota.Id:X8} and `type`={(int)PropertyInt.GearCritDamageResist};");
+                    }
+                }
+
+                if (!fix && foundIssues)
+                    Console.WriteLine($"Dry run completed. Type 'verify-shield-rating fix' to fix any issues.");
+
+                if (fix)
+                {
+                    foreach (var sqlLine in sqlLines)
+                        ctx.Database.ExecuteSqlRaw(sqlLine);
+                }
+
+                if (!foundIssues)
+                    Console.WriteLine($"Verified {results.Count:N0} shields");
+            }
         }
     }
 }

@@ -282,7 +282,7 @@ namespace ACE.Server.Command.Handlers.Processors
 
             var json_folder = $"{di.FullName}{sep}json{sep}recipes{sep}";
 
-            var prefix = recipeId + " - ";
+            var prefix = recipeId.PadLeft(5, '0') + " - ";
 
             if (recipeId.Equals("all", StringComparison.OrdinalIgnoreCase))
                 prefix = "";
@@ -406,7 +406,7 @@ namespace ACE.Server.Command.Handlers.Processors
 
             var sql_folder = $"{di.FullName}{sep}sql{sep}weenies{sep}";
 
-            var prefix = wcid + " ";
+            var prefix = wcid.PadLeft(5, '0') + " ";
 
             if (wcid.Equals("all", StringComparison.OrdinalIgnoreCase))
                 prefix = "";
@@ -434,7 +434,7 @@ namespace ACE.Server.Command.Handlers.Processors
 
             var sql_folder = $"{di.FullName}{sep}sql{sep}recipes{sep}";
 
-            var prefix = recipeId + " ";
+            var prefix = recipeId.PadLeft(5, '0') + " ";
 
             if (recipeId.Equals("all", StringComparison.OrdinalIgnoreCase))
                 prefix = "";
@@ -1223,13 +1223,15 @@ namespace ACE.Server.Command.Handlers.Processors
         {
             var sqlCommands = File.ReadAllText(sqlFile);
 
+            sqlCommands = sqlCommands.Replace("\r\n", "\n");
+
             // not sure why ExecuteSqlCommand doesn't parse this correctly..
             var idx = sqlCommands.IndexOf($"/* Lifestoned Changelog:");
             if (idx != -1)
                 sqlCommands = sqlCommands.Substring(0, idx);
 
             using (var ctx = new WorldDbContext())
-                ctx.Database.ExecuteSqlCommand(sqlCommands);
+                ctx.Database.ExecuteSqlRaw(sqlCommands);
         }
 
         /// <summary>
@@ -1240,7 +1242,7 @@ namespace ACE.Server.Command.Handlers.Processors
             var sqlCommands = File.ReadAllText(sqlFile);
 
             using (var ctx = new ShardDbContext())
-                ctx.Database.ExecuteSqlCommand(sqlCommands);
+                ctx.Database.ExecuteSqlRaw(sqlCommands);
         }
 
         public static LandblockInstanceWriter LandblockInstanceWriter;
@@ -1453,24 +1455,35 @@ namespace ACE.Server.Command.Handlers.Processors
 
             var sqlFilename = $"{folder.FullName}{sep}{landblock:X4}.sql";
 
-            var fileWriter = new StreamWriter(sqlFilename);
-
-            if (LandblockInstanceWriter == null)
+            if (instances.Count > 0)
             {
-                LandblockInstanceWriter = new LandblockInstanceWriter();
-                LandblockInstanceWriter.WeenieNames = DatabaseManager.World.GetAllWeenieNames();
+                var fileWriter = new StreamWriter(sqlFilename);
+
+                if (LandblockInstanceWriter == null)
+                {
+                    LandblockInstanceWriter = new LandblockInstanceWriter();
+                    LandblockInstanceWriter.WeenieNames = DatabaseManager.World.GetAllWeenieNames();
+                }
+
+                LandblockInstanceWriter.CreateSQLDELETEStatement(instances, fileWriter);
+
+                fileWriter.WriteLine();
+
+                LandblockInstanceWriter.CreateSQLINSERTStatement(instances, fileWriter);
+
+                fileWriter.Close();
+
+                // import into db
+                ImportSQL(sqlFilename);
             }
+            else
+            {
+                // handle special case: deleting the last instance from landblock
+                File.Delete(sqlFilename);
 
-            LandblockInstanceWriter.CreateSQLDELETEStatement(instances, fileWriter);
-
-            fileWriter.WriteLine();
-
-            LandblockInstanceWriter.CreateSQLINSERTStatement(instances, fileWriter);
-
-            fileWriter.Close();
-
-            // import into db
-            ImportSQL(sqlFilename);
+                using (var ctx = new WorldDbContext())
+                    ctx.Database.ExecuteSqlRaw($"DELETE FROM landblock_instance WHERE landblock={landblock};");
+            }
 
             // clear landblock instances for this landblock (again)
             DatabaseManager.World.ClearCachedInstancesByLandblock(landblock, 0);
@@ -1582,7 +1595,8 @@ namespace ACE.Server.Command.Handlers.Processors
 
                 // require confirmation for parent objects
                 var msg = $"Are you sure you want to delete this parent object, and {numChilds} child object{(numChilds != 1 ? "s" : "")}?";
-                session.Player.ConfirmationManager.EnqueueSend(new Confirmation_Custom(session.Player.Guid, () => RemoveInstance(session, true)), msg);
+                if (!session.Player.ConfirmationManager.EnqueueSend(new Confirmation_Custom(session.Player.Guid, () => RemoveInstance(session, true)), msg))
+                    session.Player.SendWeenieError(WeenieError.ConfirmationInProgress);
                 return;
             }
 
@@ -1664,6 +1678,8 @@ namespace ACE.Server.Command.Handlers.Processors
                 RemoveChild(session, subLink, instances);
         }
 
+        public static EncounterSQLWriter LandblockEncounterWriter;
+
         [CommandHandler("addenc", AccessLevel.Developer, CommandHandlerFlag.RequiresWorld, 1, "Spawns a new wcid or classname in the current outdoor cell as an encounter", "<wcid or classname>")]
         public static void HandleAddEncounter(Session session, params string[] parameters)
         {
@@ -1698,6 +1714,21 @@ namespace ACE.Server.Command.Handlers.Processors
             var cellX = (int)pos.PositionX / 24;
             var cellY = (int)pos.PositionY / 24;
 
+            var landblock = (ushort)pos.Landblock;
+
+            // clear any cached encounters for this landblock
+            DatabaseManager.World.ClearCachedEncountersByLandblock(landblock);
+
+            // get existing encounters for this landblock
+            var encounters = DatabaseManager.World.GetCachedEncountersByLandblock(landblock);
+
+            // check for existing encounter
+            if (encounters.Any(i => i.CellX == cellX && i.CellY == cellY))
+            {
+                session.Network.EnqueueSend(new GameMessageSystemChat("This cell already contains an encounter!", ChatMessageType.Broadcast));
+                return;
+            }
+
             // spawn encounter
             var wo = SpawnEncounter(weenie, cellX, cellY, pos, session);
 
@@ -1705,30 +1736,18 @@ namespace ACE.Server.Command.Handlers.Processors
 
             session.Network.EnqueueSend(new GameMessageSystemChat($"Creating new encounter @ landblock {pos.Landblock:X4}, cellX={cellX}, cellY={cellY}\n{wo.WeenieClassId} - {wo.Name}", ChatMessageType.Broadcast));
 
-            var timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            // add a new encounter (verifications?)
+            var encounter = new Encounter();
+            encounter.Landblock = (int)pos.Landblock;
+            encounter.CellX = cellX;
+            encounter.CellY = cellY;
+            encounter.WeenieClassId = weenie.ClassId;
+            encounter.LastModified = DateTime.Now;
 
-            var sql = $"INSERT INTO encounter set landblock=0x{pos.Landblock:X4}, weenie_Class_Id={weenie.ClassId} , cell_X={cellX}, cell_Y={cellY}, last_Modified='{timestamp}';";
+            encounters.Add(encounter);
 
-            Console.WriteLine(sql);
-
-            // serialize to .sql file
-            var contentFolder = VerifyContentFolder(session, false);
-
-            var sep = Path.DirectorySeparatorChar;
-            var folder = new DirectoryInfo($"{contentFolder.FullName}{sep}sql{sep}encounters{sep}");
-
-            if (!folder.Exists)
-                folder.Create();
-
-            var sql_filename = $"{pos.Landblock:X4}.sql";
-
-            using (var file = File.Open($"{folder.FullName}{sep}{sql_filename}", FileMode.OpenOrCreate))
-            {
-                file.Seek(0, SeekOrigin.End);
-
-                using (var stream = new StreamWriter(file))
-                    stream.WriteLine(sql);
-            }
+            // write encounters to sql file / load into db
+            SyncEncounters(session, landblock, encounters);
             */
         }
 
@@ -1738,7 +1757,13 @@ namespace ACE.Server.Command.Handlers.Processors
 
             if (wo == null)
             {
-                Console.WriteLine($"Failed to create encounter weenie");
+                session.Network.EnqueueSend(new GameMessageSystemChat($"Failed to create encounter weenie", ChatMessageType.Broadcast));
+                return null;
+            }
+
+            if (!wo.IsGenerator)
+            {
+                session.Network.EnqueueSend(new GameMessageSystemChat($"Encounter must be a Generator", ChatMessageType.Broadcast));
                 return null;
             }
 
@@ -1757,7 +1782,7 @@ namespace ACE.Server.Command.Handlers.Processors
             var sortCell = Physics.Common.LScape.get_landcell(newPos.ObjCellID, pos.Instance) as Physics.Common.SortCell;
             if (sortCell != null && sortCell.has_building())
             {
-                Console.WriteLine($"Failed to create encounter near building cell");
+                session.Network.EnqueueSend(new GameMessageSystemChat($"Failed to create encounter near building cell", ChatMessageType.Broadcast));
                 return null;
             }
 
@@ -1783,9 +1808,129 @@ namespace ACE.Server.Command.Handlers.Processors
                 }
             }
 
-            wo.EnterWorld();
+            var success = wo.EnterWorld();
 
+            if (!success)
+            {
+                session.Network.EnqueueSend(new GameMessageSystemChat($"Failed to spawn encounter", ChatMessageType.Broadcast));
+                return null;
+            }
             return wo;
+        }
+
+        /// <summary>
+        /// Serializes encounters to XXYY.sql file,
+        /// import into database, and clears the cached encounters
+        /// </summary>
+        public static void SyncEncounters(Session session, ushort landblock, List<Encounter> encounters)
+        {
+            // serialize to .sql file
+            var contentFolder = VerifyContentFolder(session, false);
+
+            var sep = Path.DirectorySeparatorChar;
+            var folder = new DirectoryInfo($"{contentFolder.FullName}{sep}sql{sep}encounters{sep}");
+
+            if (!folder.Exists)
+                folder.Create();
+
+            var sqlFilename = $"{folder.FullName}{sep}{landblock:X4}.sql";
+
+            if (encounters.Count > 0)
+            {
+                var fileWriter = new StreamWriter(sqlFilename);
+
+                if (LandblockEncounterWriter == null)
+                {
+                    LandblockEncounterWriter = new EncounterSQLWriter();
+                    LandblockEncounterWriter.WeenieNames = DatabaseManager.World.GetAllWeenieNames();
+                }
+
+                LandblockEncounterWriter.CreateSQLDELETEStatement(encounters, fileWriter);
+
+                fileWriter.WriteLine();
+
+                LandblockEncounterWriter.CreateSQLINSERTStatement(encounters, fileWriter);
+
+                fileWriter.Close();
+
+                // import into db
+                ImportSQL(sqlFilename);
+            }
+            else
+            {
+                // handle special case: deleting the last encounter from landblock
+                File.Delete(sqlFilename);
+
+                using (var ctx = new WorldDbContext())
+                    ctx.Database.ExecuteSqlRaw($"DELETE FROM encounter WHERE landblock={landblock};");
+            }
+
+            // clear the encounters for this landblock (again)
+            DatabaseManager.World.ClearCachedEncountersByLandblock(landblock);
+        }
+
+        [CommandHandler("removeenc", AccessLevel.Developer, CommandHandlerFlag.RequiresWorld, "Removes the last appraised object from the encounters table")]
+        public static void HandleRemoveEnc(Session session, params string[] parameters)
+        {
+            var obj = CommandHandlerHelper.GetLastAppraisedObject(session);
+
+            if (obj == null)
+                return;
+
+            // find root generator
+            while (obj.Generator != null)
+                obj = obj.Generator;
+
+            var cellX = (int)obj.Location.PositionX / 24;
+            var cellY = (int)obj.Location.PositionY / 24;
+
+            var landblock = (ushort)obj.Location.LandblockShort;
+
+            // clear any cached encounters for this landblock
+            DatabaseManager.World.ClearCachedEncountersByLandblock(landblock);
+
+            // get existing encounters for this landblock
+            var encounters = DatabaseManager.World.GetCachedEncountersByLandblock(landblock);
+
+            // check for existing encounter
+            var encounter = encounters.FirstOrDefault(i => i.CellX == cellX && i.CellY == cellY && i.WeenieClassId == obj.WeenieClassId);
+
+            if (encounter == null)
+            {
+                session.Network.EnqueueSend(new GameMessageSystemChat($"Couldn't find encounter for {obj.WeenieClassId} - {obj.Name}", ChatMessageType.Broadcast));
+                return;
+            }
+
+            session.Network.EnqueueSend(new GameMessageSystemChat($"Removing encounter @ landblock {obj.Location.LandblockShort:X4}, cellX={cellX}, cellY={cellY}\n{obj.WeenieClassId} - {obj.Name}", ChatMessageType.Broadcast));
+
+            encounters.Remove(encounter);
+
+            SyncEncounters(session, landblock, encounters);
+
+            // this is needed for any generators that don't have GeneratorDestructionType
+            DestroyAll(obj);
+        }
+
+        /// <summary>
+        /// Destroys a parent generator, and all of its child objects
+        /// </summary>
+        private static void DestroyAll(WorldObject wo)
+        {
+            wo.Destroy();
+
+            if (wo.GeneratorProfiles == null)
+                return;
+
+            foreach (var profile in wo.GeneratorProfiles)
+            {
+                foreach (var kvp in profile.Spawned)
+                {
+                    var child = kvp.Value.TryGetWorldObject();
+
+                    if (child != null)
+                        DestroyAll(child);
+                }
+            }
         }
 
         [CommandHandler("export-json", AccessLevel.Developer, CommandHandlerFlag.None, 1, "Exports content from database to JSON file", "<wcid>")]
@@ -2073,6 +2218,7 @@ namespace ACE.Server.Command.Handlers.Processors
                 WeenieSQLWriter.SpellNames = DatabaseManager.World.GetAllSpellNames();
                 WeenieSQLWriter.TreasureDeath = DatabaseManager.World.GetAllTreasureDeath();
                 WeenieSQLWriter.TreasureWielded = DatabaseManager.World.GetAllTreasureWielded();
+                WeenieSQLWriter.PacketOpCodes = PacketOpCodeNames.Values;
             }
 
             var sql_filename = WeenieSQLWriter.GetDefaultFileName(weenie);
@@ -2339,6 +2485,8 @@ namespace ACE.Server.Command.Handlers.Processors
                     mode = CacheType.Weenie;
                 if (parameters[0].Contains("realm", StringComparison.OrdinalIgnoreCase))
                     mode = CacheType.Realm;
+                if (parameters[0].Contains("wield", StringComparison.OrdinalIgnoreCase))
+                    mode = CacheType.WieldedTreasure;
             }
 
             if (mode.HasFlag(CacheType.Landblock))
@@ -2368,21 +2516,29 @@ namespace ACE.Server.Command.Handlers.Processors
 
             if (mode.HasFlag(CacheType.Realm))
             {
-                CommandHandlerHelper.WriteOutputInfo(session, "Clearing realm cache");
+                CommandHandlerHelper.WriteOutputInfo(session, " Clearing realm cache");
                 DatabaseManager.World.ClearRealmCache();
+            }
+
+            if (mode.HasFlag(CacheType.WieldedTreasure))
+            {
+               
+                CommandHandlerHelper.WriteOutputInfo(session, "Clearing wielded treasure cache");
+                DatabaseManager.World.ClearWieldedTreasureCache();
             }
         }
 
         [Flags]
         public enum CacheType
         {
-            None      = 0x0,
-            Landblock = 0x1,
-            Recipe    = 0x2,
-            Spell     = 0x4,
-            Weenie    = 0x8,
-            Realm     = 0x16,
-            All       = 0xFFFF
+            None            = 0x0,
+            Landblock       = 0x1,
+            Recipe          = 0x2,
+            Spell           = 0x4,
+            Weenie          = 0x8,
+            WieldedTreasure = 0x10,
+            Realm           = 0x16,
+            All             = 0xFFFF
         };
 
         public static FileType GetFileType(string filename)
@@ -2779,9 +2935,11 @@ namespace ACE.Server.Command.Handlers.Processors
 
             var replaceChars = new Dictionary<string, string>()
             {
+                { " ", "_" },
                 { "-", "_" },
                 { "!", "" },
                 { "#", "" },
+                { "?", "" },
             };
 
             using (var ctx = new WorldDbContext())
@@ -2819,6 +2977,115 @@ namespace ACE.Server.Command.Handlers.Processors
             File.WriteAllLines(path, lines);
 
             CommandHandlerHelper.WriteOutputInfo(session, $"Wrote {path}");
+        }
+
+        [CommandHandler("vloc2loc", AccessLevel.Developer, CommandHandlerFlag.None, 1, "Output a set of LOCs for a given landblock found in the VLOCS dataset", "<LandblockID>\nExample: @vloc2loc 0x0007\n         @vloc2loc 0xCE95")]
+        public static void HandleVLOCtoLOC(Session session, params string[] parameters)
+        {
+            var hex = parameters[0];
+
+            if (hex.StartsWith("0x", StringComparison.CurrentCultureIgnoreCase)
+             || hex.StartsWith("&H", StringComparison.CurrentCultureIgnoreCase))
+            {
+                hex = hex[2..];
+            }
+
+            if (uint.TryParse(hex, NumberStyles.HexNumber, CultureInfo.CurrentCulture, out var lbid))
+            {
+                DirectoryInfo di = VerifyContentFolder(session);
+                if (!di.Exists) return;
+
+                var sep = Path.DirectorySeparatorChar;
+
+                var vloc_folder = $"{di.FullName}{sep}vlocs{sep}";
+
+                di = new DirectoryInfo(vloc_folder);
+
+                var vlocDB = vloc_folder + "vlocDB.txt";
+
+                var vlocs = di.Exists ? new FileInfo(vlocDB).Exists ? File.ReadLines(vlocDB).ToArray() : null : null;
+
+                if (vlocs == null)
+                {
+                    CommandHandlerHelper.WriteOutputInfo(session, $"Unable to read VLOC database file located here: {vlocDB}");
+                    return;
+                }
+
+                // Name,ObjectClass,LandCell,X,Y
+                // Master MacTavish,37,-114359889,97.14075000286103,-63.93749958674113
+
+                if (vlocs.Length == 0 || !vlocs[0].Equals("Name,ObjectClass,LandCell,X,Y"))
+                {
+                    CommandHandlerHelper.WriteOutputInfo(session, $"{vlocDB} does not appear to be a valid VLOC database file.");
+                    return;
+                }
+
+                var vlocFile = vloc_folder + $"{lbid:X4}.txt";
+
+                var vi = new FileInfo(vlocFile);
+                if (vi.Exists)
+                    vi.Delete();
+
+                for (var i = 1; i < vlocs.Length; i++)
+                {
+                    var split = vlocs[i].Split(",");
+
+                    var name = split[0].Trim();
+                    var objectClass = split[1].Trim();
+                    var strLandCell = split[2].Trim();
+                    var strX = split[3].Trim();
+                    var strY = split[4].Trim();
+
+                    if (!int.TryParse(strLandCell, out var landCell))
+                    {
+                        CommandHandlerHelper.WriteOutputInfo(session, $"Unable to parse LandCell ({strLandCell}) value from line {i} in vlocDB: {vlocs[i]}");
+                        continue;
+                    }
+                    var objCellId = (uint)landCell;
+                    if (!float.TryParse(strX, out var x))
+                    {
+                        CommandHandlerHelper.WriteOutputInfo(session, $"Unable to parse X ({strX}) value from line {i} in vlocDB: {vlocs[i]}");
+                        continue;
+                    }    
+                    if (!float.TryParse(strY, out var y))
+                    {
+                        CommandHandlerHelper.WriteOutputInfo(session, $"Unable to parse Y ({strY}) value from line {i} in vlocDB: {vlocs[i]}");
+                        continue;
+                    }    
+
+                    if ((objCellId >> 16) != lbid) continue;
+
+                    try
+                    {
+                        var pos = new Position(new Vector2(x, y));
+                        pos.AdjustMapCoords();
+                        pos.Translate(objCellId);
+                        pos.FindZ();
+
+                        using (StreamWriter sw = File.AppendText(vlocFile))
+                        {
+                            sw.WriteLine($"{name} - @teleloc {pos.ToLOCString()}");
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        using (StreamWriter sw = File.AppendText(vlocFile))
+                        {
+                            sw.WriteLine($"Unable to parse {name} - 0x{objCellId:X8} {strX}, {strY}");
+                        }
+                    }
+                }
+
+                vi = new FileInfo(vlocFile);
+                if (vi.Exists)
+                    CommandHandlerHelper.WriteOutputInfo(session, $"Successfully wrote VLOCs for 0x{lbid:X4} to {vlocFile}");
+                else
+                    CommandHandlerHelper.WriteOutputInfo(session, $"No VLOCs able to be written for 0x{lbid:X4}");
+            }
+            else
+            {
+                CommandHandlerHelper.WriteOutputInfo(session, $"Invalid Landblock ID: {parameters[0]}\nLandblock ID should be in the hex format such as this: @vloc2loc 0xAB94");
+            }
         }
     }
 }

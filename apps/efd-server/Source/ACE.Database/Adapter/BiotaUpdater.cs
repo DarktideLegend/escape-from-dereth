@@ -128,11 +128,12 @@ namespace ACE.Database.Adapter
 
             if (sourceBiota.PropertiesSpellBook != null)
             {
+                // Optimization to help characters with very large spell books and avoid full iterations inside the foreach
+                var existingValues = targetBiota.BiotaPropertiesSpellBook.ToDictionary(r => r.Spell, r => r);
+
                 foreach (var kvp in sourceBiota.PropertiesSpellBook)
                 {
-                    BiotaPropertiesSpellBook existingValue = targetBiota.BiotaPropertiesSpellBook.FirstOrDefault(r => r.Spell == (ushort)kvp.Key);
-
-                    if (existingValue == null)
+                    if (!existingValues.TryGetValue(kvp.Key, out var existingValue))
                     {
                         existingValue = new BiotaPropertiesSpellBook { ObjectId = sourceBiota.Id };
 
@@ -731,7 +732,7 @@ namespace ACE.Database.Adapter
             existingValue.Type = value.Type;
             existingValue.Delay = value.Delay;
             existingValue.Extent = value.Extent;
-            existingValue.Motion = (int?)value.Motion;
+            existingValue.Motion = (uint?)value.Motion;
             existingValue.Message = value.Message;
             existingValue.TestString = value.TestString;
             existingValue.Min = value.Min;
