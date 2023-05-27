@@ -1,3 +1,21 @@
+## [1.1.0-alpha.4](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.3...efd-server-v1.1.0-alpha.4) (2023-05-27)
+
+
+### Features
+
+* **efd-server:** ✨ new character onboarding ([f52c483](https://github.com/DarktideLegend/escape-from-dereth/commit/f52c4832d0e016101d1d3986866818bd5d479cbe))
+
+
+### Build System Dependencies
+
+* **efd-server:** 📦️ update mysql to version 8.0.22 ([0376d6a](https://github.com/DarktideLegend/escape-from-dereth/commit/0376d6ac50366e5c9dd3d86596203a01b3868fa8))
+
+
+### Code Refactoring
+
+* **efd-realms:** ♻️ merge with latest acrealms-ace-merge ([f37fd69](https://github.com/DarktideLegend/escape-from-dereth/commit/f37fd697d52e6f0044183f5e110826f971dd92cc))
+* **efd-server:** ♻️ use PlayerFactoryEx for DuelRealmHelpers ([3c2753d](https://github.com/DarktideLegend/escape-from-dereth/commit/3c2753d210aa5dc0b1ff4eaaee4ecca06a60c1e1))
+
 ## [1.1.0-alpha.3](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.2...efd-server-v1.1.0-alpha.3) (2023-05-25)
 
 
