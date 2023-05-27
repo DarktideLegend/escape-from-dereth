@@ -146,6 +146,9 @@ namespace ACE.Server.Network.Handlers
                 return;
             }
 
+            PlayerFactoryEx.LevelUpPlayer(player);
+            PlayerFactoryEx.SpendAllXp(player, false);
+
             DatabaseManager.Shard.IsCharacterNameAvailable(characterCreateInfo.Name, isAvailable =>
             {
                 if (!isAvailable)
