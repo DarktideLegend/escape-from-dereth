@@ -2,15 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
+using ACE.Database;
 using ACE.Database.Models.Shard;
 using ACE.DatLoader;
 using ACE.Entity;
 using ACE.Entity.Enum;
 using ACE.Entity.Enum.Properties;
 using ACE.Entity.Models;
+using ACE.Server.Entity;
+using ACE.Server.Entity.Actions;
 using ACE.Server.Factories.Enum;
 using ACE.Server.Managers;
+using ACE.Server.Network.GameMessages.Messages;
+using ACE.Server.Realms;
 using ACE.Server.WorldObjects;
 
 namespace ACE.Server.Factories
@@ -119,8 +123,75 @@ namespace ACE.Server.Factories
 
             return player;
         }
+        public static void GiveDuelGear(Player player)
+        {
+            var gear = new List<string>()
+            {
+                "realm-duel-gear-1",
+                "realm-duel-gear-2",
+                "realm-duel-gear-3",
+                "realm-duel-gear-4",
+                "realm-duel-gear-5",
+                "realm-duel-gear-6"
+            }.Select(DatabaseManager.World.GetCachedWeenie)
+            .Where(w => w != null)
+            .Select(w => WorldObjectFactory.CreateNewWorldObject(w, null))
+            .ToList();
 
-        private static void LevelUpPlayer(Player player)
+            foreach (var item in gear)
+            {
+                player.TryCreateInInventoryWithNetworking(item);
+            }
+        }
+
+        public static void TeachAugmentations(Player player)
+        {
+            foreach(var augtype in RealmConstants.DuelAugmentations)
+            {
+                AugmentationDevice.DoAugmentation(player, augtype, null, false, false);
+                player.SaveBiotaToDatabase();
+            }
+        }
+
+        public static void DisableSpellComponentRequirement(Player player)
+        {
+            player.SpellComponentsRequired = false;
+            player.EnqueueBroadcast(new GameMessagePublicUpdatePropertyBool(player, PropertyBool.SpellComponentsRequired, player.SpellComponentsRequired));
+            player.Session.Network.EnqueueSend(new GameMessageSystemChat("You can now cast spells without components.", ChatMessageType.Broadcast));
+        }
+
+        public static void SpendAllXp(Player player, bool sendNetworkUpdate = true)
+        {
+            player.SpendAllXp(sendNetworkUpdate);
+            player.Health.Current = player.Health.MaxValue;
+            player.Stamina.Current = player.Stamina.MaxValue;
+            player.Mana.Current = player.Mana.MaxValue;
+        }
+
+        public static void LearnAllNonAdminSpells(Player player)
+        {
+            player.Session.Network.EnqueueSend(new GameMessageSystemChat($"Teaching all spells. There may be some lag for a few seconds.", ChatMessageType.System));
+
+            var actionChain = new ActionChain();
+            actionChain.AddDelaySeconds(1.0f);
+            actionChain.AddAction(player, () =>
+            {
+                var spellTable = DatLoader.DatManager.PortalDat.SpellTable;
+
+                foreach (var spellID in Player.AllNonAdminSpellTable)
+                {
+                    if (!spellTable.Spells.ContainsKey(spellID))
+                    {
+                        continue;
+                    }
+                    var spell = new Spell(spellID, false);
+                    player.LearnSpellWithNetworking(spell.Id, false);
+                }
+            });
+            actionChain.EnqueueChain();
+        }
+
+        public static void LevelUpPlayer(Player player)
         {
             player.AvailableExperience += 191226310247;
             player.TotalExperience += 191226310247;
@@ -168,7 +239,7 @@ namespace ACE.Server.Factories
             // todo: Optionally add other augs
         }
 
-        private static void LoadDefaultSpellBars(Player player)
+        public static void LoadDefaultSpellBars(Player player)
         {
             // Recall Spells
             uint barNumber = 0;
@@ -397,7 +468,7 @@ namespace ACE.Server.Factories
             player.Character.AddSpellToBar(barNumber, indexInBar++, 4406, player.CharacterDatabaseLock); // "Incantation of Hermetic Void","Decreases a magic casting implement's mana conversion bonus by 80%."
         }
 
-        private static void LoadSkillSpecificDefaultSpellBar(Player player)
+        public static void LoadSkillSpecificDefaultSpellBar(Player player)
         {
             if (player.Skills.ContainsKey(Skill.WarMagic) && player.Skills[Skill.WarMagic].AdvancementClass == SkillAdvancementClass.Specialized)
             {
@@ -599,15 +670,6 @@ namespace ACE.Server.Factories
             return player;
         }
 
-        public static void SpendAllXp(Player player)
-        {
-            player.SpendAllXp(false);
-
-            player.Health.Current = player.Health.MaxValue;
-            player.Stamina.Current = player.Stamina.MaxValue;
-            player.Mana.Current = player.Mana.MaxValue;
-        }
-
         public static readonly HashSet<uint> CommonSpellComponents = new HashSet<uint> { 691, 689, 686, 688, 687, 690, 8897, 7299, 37155, 20631 };
 
         private static readonly HashSet<uint> NobleRelic = new HashSet<uint> { 33584, 33585, 33586, 33587, 33588 };
@@ -705,7 +767,7 @@ namespace ACE.Server.Factories
             }
         }
 
-        private static void AddAllSpells(Player player)
+        public static void AddAllSpells(Player player)
         {
             for (uint spellLevel = 1; spellLevel <= 8; spellLevel++)
             {
