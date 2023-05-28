@@ -1,0 +1,9 @@
+{
+  "name": "full-loot",
+  "type": "Ruleset",
+  "properties": {
+    "Description": "Player death is full loot in this area!",
+    "RulesetStampVendorCategory": 2,
+    "IsFullLootOnDeath": true
+  }
+}
