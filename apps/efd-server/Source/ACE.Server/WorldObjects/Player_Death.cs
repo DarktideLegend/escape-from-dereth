@@ -475,28 +475,30 @@ namespace ACE.Server.WorldObjects
             if (corpse.IsOnNoDropLandblock || IsPKLiteDeath(corpse.KillerId))
                 return new List<WorldObject>();
 
-            var numItemsDropped = GetNumItemsDropped(corpse);
-
-            var numCoinsDropped = GetNumCoinsDropped();
-
-            var level = Level ?? 1;
-            var canDropWielded = level >= 35;
+            var fullLoot = RealmRuleset.GetProperty(RealmPropertyBool.IsFullLootOnDeath);
 
             // get all items in inventory
             var inventory = GetAllPossessions();
-
-            // exclude pyreals from randomized death item calculation
-            inventory = inventory.Where(i => i.WeenieClassId != coinStackWcid).ToList();
-
-            // exclude wielded items if < level 35
-            if (!canDropWielded)
-                inventory = inventory.Where(i => i.CurrentWieldedLocation == null).ToList();
 
             // exclude bonded items
             inventory = inventory.Where(i => (i.GetProperty(PropertyInt.Bonded) ?? 0) == 0).ToList();
 
             // handle items with BondedStatus.Destroy
             var destroyedItems = HandleDestroyBonded();
+
+            var numItemsDropped = fullLoot ? inventory.Count : GetNumItemsDropped(corpse);
+
+            var numCoinsDropped = fullLoot ? CoinValue ?? 0 : GetNumCoinsDropped();
+
+            var level = Level ?? 1;
+            var canDropWielded = level >= 35;
+
+            // exclude wielded items if < level 35
+            if (!canDropWielded)
+                inventory = inventory.Where(i => i.CurrentWieldedLocation == null).ToList();
+
+            // exclude pyreals from randomized death item calculation
+            inventory = inventory.Where(i => i.WeenieClassId != coinStackWcid).ToList();
 
             // construct the list of death items
             var sorted = new DeathItems(inventory);
@@ -511,44 +513,85 @@ namespace ACE.Server.WorldObjects
                 //Console.WriteLine($"Dropping {numCoinsDropped} pyreals");
             }
 
-            // Remove the items from inventory
-            for (var i = 0; i < numItemsDropped && i < sorted.Inventory.Count; i++)
+            if (fullLoot)
             {
-                var deathItem = sorted.Inventory[i];
-
-                // split stack if needed
-                if ((deathItem.WorldObject.StackSize ?? 1) > 1)
+                foreach(var item in inventory)
                 {
-                    var stack = FindObject(deathItem.WorldObject.Guid, SearchLocations.MyInventory | SearchLocations.MyEquippedItems, out var foundInContainer, out var rootContainer, out _);
-
-                    if (stack != null)
+                    if ((item.StackSize ?? 1) > 1)
                     {
-                        AdjustStack(stack, -1, foundInContainer, rootContainer);
-                        Session.Network.EnqueueSend(new GameMessageSetStackSize(stack));
+                        var stack = FindObject(item.Guid, SearchLocations.MyInventory | SearchLocations.MyEquippedItems, out var foundInContainer, out var rootContainer, out _);
 
-                        var dropItem = WorldObjectFactory.CreateNewWorldObject(deathItem.WorldObject.WeenieClassId);
-                        dropItem.SetStackSize(1);
+                        if (stack != null)
+                        {
+                            AdjustStack(stack, -1, foundInContainer, rootContainer);
+                            Session.Network.EnqueueSend(new GameMessageSetStackSize(stack));
 
-                        //Console.WriteLine("Dropping " + deathItem.WorldObject.Name + " (stack)");
-                        dropItems.Add(dropItem);
+                            var dropItem = WorldObjectFactory.CreateNewWorldObject(item.WeenieClassId);
+                            dropItem.SetStackSize(1);
+
+                            //Console.WriteLine("Dropping " + deathItem.WorldObject.Name + " (stack)");
+                            dropItems.Add(dropItem);
+                        }
+                        else
+                        {
+                            log.WarnFormat("Couldn't find death item stack 0x{0:X8}:{1} for player {2}", item.Guid.Full, item.Name, Name);
+                        }
                     }
                     else
                     {
-                        log.WarnFormat("Couldn't find death item stack 0x{0:X8}:{1} for player {2}", deathItem.WorldObject.Guid.Full, deathItem.WorldObject.Name, Name);
+                        if (TryRemoveFromInventoryWithNetworking(item.Guid, out _, RemoveFromInventoryAction.ToCorpseOnDeath) || TryDequipObjectWithNetworking(item.Guid, out _, DequipObjectAction.ToCorpseOnDeath))
+                        {
+                            //Console.WriteLine("Dropping " + deathItem.WorldObject.Name);
+                            dropItems.Add(item);
+                        }
+                        else
+                        {
+                            log.WarnFormat("Couldn't find death item 0x{0:X8}:{1} for player {2}", item.Guid.Full, item.Name, Name);
+                        }
                     }
                 }
-                else
+            } else
+            {
+                // Remove the items from inventory
+                for (var i = 0; i < numItemsDropped && i < sorted.Inventory.Count; i++)
                 {
-                    if (TryRemoveFromInventoryWithNetworking(deathItem.WorldObject.Guid, out _, RemoveFromInventoryAction.ToCorpseOnDeath) || TryDequipObjectWithNetworking(deathItem.WorldObject.Guid, out _, DequipObjectAction.ToCorpseOnDeath))
+                    var deathItem = sorted.Inventory[i];
+
+                    // split stack if needed
+                    if ((deathItem.WorldObject.StackSize ?? 1) > 1)
                     {
-                        //Console.WriteLine("Dropping " + deathItem.WorldObject.Name);
-                        dropItems.Add(deathItem.WorldObject);
+                        var stack = FindObject(deathItem.WorldObject.Guid, SearchLocations.MyInventory | SearchLocations.MyEquippedItems, out var foundInContainer, out var rootContainer, out _);
+
+                        if (stack != null)
+                        {
+                            AdjustStack(stack, -1, foundInContainer, rootContainer);
+                            Session.Network.EnqueueSend(new GameMessageSetStackSize(stack));
+
+                            var dropItem = WorldObjectFactory.CreateNewWorldObject(deathItem.WorldObject.WeenieClassId);
+                            dropItem.SetStackSize(1);
+
+                            //Console.WriteLine("Dropping " + deathItem.WorldObject.Name + " (stack)");
+                            dropItems.Add(dropItem);
+                        }
+                        else
+                        {
+                            log.WarnFormat("Couldn't find death item stack 0x{0:X8}:{1} for player {2}", deathItem.WorldObject.Guid.Full, deathItem.WorldObject.Name, Name);
+                        }
                     }
                     else
                     {
-                        log.WarnFormat("Couldn't find death item 0x{0:X8}:{1} for player {2}", deathItem.WorldObject.Guid.Full, deathItem.WorldObject.Name, Name);
+                        if (TryRemoveFromInventoryWithNetworking(deathItem.WorldObject.Guid, out _, RemoveFromInventoryAction.ToCorpseOnDeath) || TryDequipObjectWithNetworking(deathItem.WorldObject.Guid, out _, DequipObjectAction.ToCorpseOnDeath))
+                        {
+                            //Console.WriteLine("Dropping " + deathItem.WorldObject.Name);
+                            dropItems.Add(deathItem.WorldObject);
+                        }
+                        else
+                        {
+                            log.WarnFormat("Couldn't find death item 0x{0:X8}:{1} for player {2}", deathItem.WorldObject.Guid.Full, deathItem.WorldObject.Name, Name);
+                        }
                     }
                 }
+
             }
 
             // handle items with BondedStatus.Slippery: always drop on death
