@@ -1,3 +1,11 @@
+## [1.1.0-alpha.5](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.4...efd-server-v1.1.0-alpha.5) (2023-05-28)
+
+
+### Bug Fixes
+
+* **efd-server:** 🐛 add isPkOnly realm helper ([1e4bfb6](https://github.com/DarktideLegend/escape-from-dereth/commit/1e4bfb6e4bcee5288326e03540d51d9140b59b0d))
+* **efd-server:** 🐛 summon portal requires summoner ([00b22d6](https://github.com/DarktideLegend/escape-from-dereth/commit/00b22d648815d61573f8dc133301db97de80da79))
+
 ## [1.1.0-alpha.4](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.3...efd-server-v1.1.0-alpha.4) (2023-05-27)
 
 
