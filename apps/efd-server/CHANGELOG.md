@@ -1,3 +1,15 @@
+## [1.1.0-alpha.6](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.5...efd-server-v1.1.0-alpha.6) (2023-05-28)
+
+
+### Features
+
+* **efd-server:** ✨ add full-loot ruleset ([821acfa](https://github.com/DarktideLegend/escape-from-dereth/commit/821acfa4093883ca6d52dbf9039e7522b0eeac8d))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ full loot corpses spawn in ephemeral realm ([2575a29](https://github.com/DarktideLegend/escape-from-dereth/commit/2575a299bee46c1f294a183d0ed5ccf6b2318842))
+
 ## [1.1.0-alpha.5](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.4...efd-server-v1.1.0-alpha.5) (2023-05-28)
 
 
