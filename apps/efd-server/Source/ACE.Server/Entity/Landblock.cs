@@ -853,6 +853,7 @@ namespace ACE.Server.Entity
             var hasNoCreatures = realm.StandardRules.GetProperty(ACE.Entity.Enum.Properties.RealmPropertyBool.HasNoCreatures);
             var hasNoDoors = realm.StandardRules.GetProperty(ACE.Entity.Enum.Properties.RealmPropertyBool.HasNoDoors);
             var hasNoPortals = realm.StandardRules.GetProperty(ACE.Entity.Enum.Properties.RealmPropertyBool.HasNoPortals);
+            var hasNoLifestones = realm.StandardRules.GetProperty(ACE.Entity.Enum.Properties.RealmPropertyBool.HasNoLifestones);
 
             if (hasNoCreatures && !(wo is Player) && wo is Creature)
                 return false;
@@ -861,6 +862,9 @@ namespace ACE.Server.Entity
                 return false;
 
             if (hasNoPortals && wo is Portal)
+                return false;
+
+            if (hasNoLifestones && wo is Lifestone)
                 return false;
 
             if (LandblockManager.CurrentlyTickingLandblockGroupsMultiThreaded)

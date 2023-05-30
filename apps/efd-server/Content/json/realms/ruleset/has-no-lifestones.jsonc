@@ -1,0 +1,9 @@
+{
+  "name": "has-no-lifestones",
+  "type": "Ruleset",
+  "properties": {
+    "Description": "No lifestones exist in this area!",
+    "RulesetStampVendorCategory": 2,
+    "HasNoLifestones": true
+  }
+}
