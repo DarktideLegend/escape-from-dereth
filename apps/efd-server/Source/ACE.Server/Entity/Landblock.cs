@@ -851,11 +851,13 @@ namespace ACE.Server.Entity
         {
             var realm = RealmManager.GetRealm(wo.Location.RealmID);
             var hasNoCreatures = realm.StandardRules.GetProperty(ACE.Entity.Enum.Properties.RealmPropertyBool.HasNoCreatures);
+            var hasNoDoors = realm.StandardRules.GetProperty(ACE.Entity.Enum.Properties.RealmPropertyBool.HasNoDoors);
 
             if (hasNoCreatures && !(wo is Player) && wo is Creature)
-            {
                 return false;
-            }
+
+            if (hasNoDoors && wo is Door) 
+                return false;
 
             if (LandblockManager.CurrentlyTickingLandblockGroupsMultiThreaded)
             {

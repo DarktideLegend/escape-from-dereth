@@ -1,5 +1,5 @@
 {
-  "name": "full-loot-on-death",
+  "name": "is-full-loot-on-death",
   "type": "Ruleset",
   "properties": {
     "Description": "Player death is full loot in this area!",

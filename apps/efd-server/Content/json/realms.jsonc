@@ -20,6 +20,7 @@
   "No Movement Fizzles": 1013,
   "Increased Movement Fizzles": 1014,
   "Reduced Projectile Accuracy": 1015,
-  "full-loot-on-death": 1016,
-  "has-no-creatures": 1017
+  "is-full-loot-on-death": 1016,
+  "has-no-creatures": 1017,
+  "has-no-doors": 1018
 }
