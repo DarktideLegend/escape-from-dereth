@@ -113,7 +113,7 @@ namespace ACE.Server.Managers
         private static void PreloadLandblock(uint landblock, PreloadedLandblocks preloadLandblock)
         {
             //Preload landblocks not supported on AC Realms (for now)
-            return; 
+            return;
         }
 
         private static readonly uint[] apartmentLandblocks =
@@ -363,6 +363,14 @@ namespace ACE.Server.Managers
         /// <param name="loadAdjacents">If TRUE, ensures all of the adjacent landblocks for this WorldObject are loaded</param>
         public static bool AddObject(WorldObject worldObject, bool loadAdjacents = false)
         {
+            var realm = RealmManager.GetRealm(worldObject.Location.RealmID);
+            var hasNoCreatures = realm.StandardRules.GetProperty(ACE.Entity.Enum.Properties.RealmPropertyBool.HasNoCreatures);
+
+            if(hasNoCreatures && !(worldObject is Player) && worldObject is Creature)
+            {
+                return false;
+            }
+
             var block = GetLandblock(worldObject.Location.LandblockId, worldObject.Location.Instance, null, loadAdjacents);
 
             return block.AddWorldObject(worldObject);
@@ -411,7 +419,7 @@ namespace ACE.Server.Managers
             }
 
             Landblock landblock;
-            
+
             lock (landblockMutex)
             {
                 bool setAdjacents = false;
@@ -419,7 +427,7 @@ namespace ACE.Server.Managers
                 var landblockIdClean = new LandblockId(landblockId.Raw | 0xFFFF);
 
                 landblock = LandblockDictFetch(landblockIdClean.Raw, instance);
-                
+
                 if (landblock == null)
                 {
                     // load up this landblock
@@ -625,7 +633,7 @@ namespace ACE.Server.Managers
                             LandblockDictCommit(landblock.Id.Raw, landblock.Instance, null);
 
                             // remove from landblock group
-                            for (int i = landblockGroups.Count - 1; i >= 0 ; i--)
+                            for (int i = landblockGroups.Count - 1; i >= 0; i--)
                             {
                                 if (landblockGroups[i].Remove(landblock))
                                 {

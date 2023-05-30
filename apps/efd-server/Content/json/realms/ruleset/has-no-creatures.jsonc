@@ -1,0 +1,10 @@
+
+{
+  "name": "has-no-creatures",
+  "type": "Ruleset",
+  "properties": {
+    "Description": "No creatures exist in this area!",
+    "RulesetStampVendorCategory": 2,
+    "HasNoCreatures": true
+  }
+}
