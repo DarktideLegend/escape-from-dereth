@@ -850,6 +850,11 @@ namespace ACE.Server.Entity
         private bool AddWorldObjectInternal(WorldObject wo)
         {
             var realm = RealmManager.GetRealm(wo.Location.RealmID);
+            var isPlayerOnly = realm.StandardRules.GetProperty(ACE.Entity.Enum.Properties.RealmPropertyBool.IsPlayerOnly);
+
+            if (isPlayerOnly && !(wo is Player)) 
+                return false;
+
             var hasNoCreatures = realm.StandardRules.GetProperty(ACE.Entity.Enum.Properties.RealmPropertyBool.HasNoCreatures);
             var hasNoDoors = realm.StandardRules.GetProperty(ACE.Entity.Enum.Properties.RealmPropertyBool.HasNoDoors);
             var hasNoPortals = realm.StandardRules.GetProperty(ACE.Entity.Enum.Properties.RealmPropertyBool.HasNoPortals);

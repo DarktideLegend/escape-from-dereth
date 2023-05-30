@@ -54,8 +54,10 @@ namespace ACE.Entity.Enum.Properties
         HasNoPortals,
 
         [RealmPropertyBool(false)]
-        HasNoLifestones
+        HasNoLifestones,
 
+        [RealmPropertyBool(false)]
+        IsPlayerOnly
     }
 
 
