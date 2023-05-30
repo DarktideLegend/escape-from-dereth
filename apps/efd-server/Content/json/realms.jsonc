@@ -24,5 +24,6 @@
   "has-no-creatures": 1017,
   "has-no-doors": 1018,
   "has-no-portals": 1019,
-  "has-no-lifestones": 1020
+  "has-no-lifestones": 1020,
+  "is-player-only": 1021
 }
