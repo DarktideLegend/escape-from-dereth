@@ -22,5 +22,6 @@
   "Reduced Projectile Accuracy": 1015,
   "is-full-loot-on-death": 1016,
   "has-no-creatures": 1017,
-  "has-no-doors": 1018
+  "has-no-doors": 1018,
+  "has-no-portals": 1019
 }
