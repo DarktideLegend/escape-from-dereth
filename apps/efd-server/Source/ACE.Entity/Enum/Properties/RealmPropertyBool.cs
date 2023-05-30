@@ -45,8 +45,12 @@ namespace ACE.Entity.Enum.Properties
         IsFullLootOnDeath,
 
         [RealmPropertyBool(false)]
-        HasNoCreatures
+        HasNoCreatures,
+
+        [RealmPropertyBool(false)]
+        HasNoDoors
         
+
     }
 
 
