@@ -363,13 +363,6 @@ namespace ACE.Server.Managers
         /// <param name="loadAdjacents">If TRUE, ensures all of the adjacent landblocks for this WorldObject are loaded</param>
         public static bool AddObject(WorldObject worldObject, bool loadAdjacents = false)
         {
-            var realm = RealmManager.GetRealm(worldObject.Location.RealmID);
-            var hasNoCreatures = realm.StandardRules.GetProperty(ACE.Entity.Enum.Properties.RealmPropertyBool.HasNoCreatures);
-
-            if(hasNoCreatures && !(worldObject is Player) && worldObject is Creature)
-            {
-                return false;
-            }
 
             var block = GetLandblock(worldObject.Location.LandblockId, worldObject.Location.Instance, null, loadAdjacents);
 
