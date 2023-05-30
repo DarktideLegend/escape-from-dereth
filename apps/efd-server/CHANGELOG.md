@@ -1,3 +1,10 @@
+## [1.1.0-alpha.7](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.6...efd-server-v1.1.0-alpha.7) (2023-05-30)
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ full on death set to false by default ([9b5669a](https://github.com/DarktideLegend/escape-from-dereth/commit/9b5669abffd3206c7643730b939638825fee9b8f))
+
 ## [1.1.0-alpha.6](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.5...efd-server-v1.1.0-alpha.6) (2023-05-28)
 
 
