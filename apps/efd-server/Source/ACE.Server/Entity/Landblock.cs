@@ -838,6 +838,7 @@ namespace ACE.Server.Entity
                 return false;
             }
 
+
             return AddWorldObjectInternal(wo);
         }
 
@@ -848,6 +849,14 @@ namespace ACE.Server.Entity
 
         private bool AddWorldObjectInternal(WorldObject wo)
         {
+            var realm = RealmManager.GetRealm(wo.Location.RealmID);
+            var hasNoCreatures = realm.StandardRules.GetProperty(ACE.Entity.Enum.Properties.RealmPropertyBool.HasNoCreatures);
+
+            if (hasNoCreatures && !(wo is Player) && wo is Creature)
+            {
+                return false;
+            }
+
             if (LandblockManager.CurrentlyTickingLandblockGroupsMultiThreaded)
             {
                 if (CurrentLandblockGroup != null && CurrentLandblockGroup != LandblockManager.CurrentMultiThreadedTickingLandblockGroup.Value)
