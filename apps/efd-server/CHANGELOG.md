@@ -1,3 +1,10 @@
+## [1.1.0-alpha.8](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.7...efd-server-v1.1.0-alpha.8) (2023-05-30)
+
+
+### Features
+
+* **efd-server:** ✨ add has-no-creatures ruleset ([3b9a78a](https://github.com/DarktideLegend/escape-from-dereth/commit/3b9a78af41bd3661f66afe212b614495baedca8c))
+
 ## [1.1.0-alpha.7](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.6...efd-server-v1.1.0-alpha.7) (2023-05-30)
 
 
