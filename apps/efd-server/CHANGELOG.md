@@ -1,3 +1,18 @@
+## [1.1.0-alpha.9](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.8...efd-server-v1.1.0-alpha.9) (2023-05-30)
+
+
+### Features
+
+* **efd-server:** ✨ add has-no-doors-ruleset ([ea58bb8](https://github.com/DarktideLegend/escape-from-dereth/commit/ea58bb8089f23b2b0b75dc8aed53fc0c6b3bf3f6))
+* **efd-server:** ✨ add has-no-lifestones ruleset ([c226a7f](https://github.com/DarktideLegend/escape-from-dereth/commit/c226a7feb2db2d0751ab94fbd7e7df1293fd01a2))
+* **efd-server:** ✨ add has-no-portals ruleset ([782a61d](https://github.com/DarktideLegend/escape-from-dereth/commit/782a61d7f024c962b5e3b431fdd9773a9a1db7f1))
+* **efd-server:** ✨ add is-player-only ruleset ([8ef0656](https://github.com/DarktideLegend/escape-from-dereth/commit/8ef065653a4e40afb62dcccc57b93707d081e7c6))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ filter world objects from rulesets ([63bfd22](https://github.com/DarktideLegend/escape-from-dereth/commit/63bfd22c85c9f1e518c1fd0a69953307b931106a))
+
 ## [1.1.0-alpha.8](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.7...efd-server-v1.1.0-alpha.8) (2023-05-30)
 
 
