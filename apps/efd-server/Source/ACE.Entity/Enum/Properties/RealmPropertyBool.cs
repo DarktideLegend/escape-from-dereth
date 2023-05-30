@@ -42,10 +42,10 @@ namespace ACE.Entity.Enum.Properties
         SpellCastingPKDoubleCollisionCheck,
 
         [RealmPropertyBool(false)]
-        IsFullLootOnDeath
+        IsFullLootOnDeath,
 
-        //[RealmPropertyBool(true)]
-        //HasCreatures
+        [RealmPropertyBool(false)]
+        HasNoCreatures
         
     }
 
