@@ -1,0 +1,9 @@
+{
+  "name": "is-player-only",
+  "type": "Ruleset",
+  "properties": {
+    "Description": "Only players spawn in this area!",
+    "RulesetStampVendorCategory": 2,
+    "IsPlayerOnly": true
+  }
+}
