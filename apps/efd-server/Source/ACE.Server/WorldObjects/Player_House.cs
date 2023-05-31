@@ -1404,7 +1404,7 @@ namespace ACE.Server.WorldObjects
             {
                 var rootHouse = house.RootHouse;
 
-                if (!rootHouse.OnProperty(this))
+                if (rootHouse == null || !rootHouse.OnProperty(this))
                     continue;
 
                 if (rootHouse.HouseOwner != null && !rootHouse.HasPermission(this, false))
