@@ -50,9 +50,9 @@ namespace ACE.Server.Realms
             }
             else
             {
-                var starterTown = TownManager.GetRandomTownPosition();
-                starterTown.Instance = GetDefaultInstanceID(player);
-                return starterTown;
+                var starterTown = TownManager.GetRandomTown();
+                starterTown.position.Instance = GetDefaultInstanceID(player);
+                return starterTown.position;
             }
         }
 
