@@ -9,6 +9,7 @@ using ACE.Entity.Enum.Properties;
 using ACE.Entity.Models;
 using ACE.Server.Entity;
 using ACE.Server.Entity.Actions;
+using ACE.Server.EscapeFromDereth.Towns;
 using ACE.Server.Factories;
 using ACE.Server.Managers;
 using ACE.Server.Network.Enum;
@@ -97,7 +98,10 @@ namespace ACE.Server.WorldObjects
 
             GagsTick();
 
+            HandleTownManagerTick();
+
             PhysicsObj.ObjMaint.DestroyObjects();
+
 
             // Check if we're due for our periodic SavePlayer
             if (LastRequestedDatabaseSave == DateTime.MinValue)
@@ -115,6 +119,17 @@ namespace ACE.Server.WorldObjects
             }
 
             base.Heartbeat(currentUnixTime);
+        }
+
+        private void HandleTownManagerTick()
+        {
+            if (!CurrentLandblock.IsDungeon)
+            {
+                var closestTown = TownManager.GetClosestTownFromPlayer(this);
+                log.Info(closestTown.name);
+                log.Info(closestTown.position.DistanceTo(Location));
+            }
+
         }
 
         public static float MaxSpeed = 50;
