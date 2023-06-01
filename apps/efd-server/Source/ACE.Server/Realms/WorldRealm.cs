@@ -1,6 +1,7 @@
 using ACE.Entity;
 using ACE.Entity.Enum.Properties;
 using ACE.Entity.Models;
+using ACE.Server.EscapeFromDereth.Towns;
 using ACE.Server.Managers;
 using ACE.Server.WorldObjects;
 using System;
@@ -49,8 +50,9 @@ namespace ACE.Server.Realms
             }
             else
             {
-                //Holtburg
-                return new Position(0xA9B40019, 84f, 7.1f, 94.005005f, 0f, 0f, -0.078459f, 0.996917f, GetDefaultInstanceID(player));
+                var starterTown = TownManager.GetRandomTownPosition();
+                starterTown.Instance = GetDefaultInstanceID(player);
+                return starterTown;
             }
         }
 

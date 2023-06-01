@@ -3,7 +3,6 @@
   "type": "Realm",
   "parent": "Modern Realm (PvP)",
   "properties": {
-    "Description": "A post-apocalyptic harsh existence! This server does not hold your hand!",
-    "HideoutEnabled": false
+    "Description": "A post-apocalyptic harsh existence! This server does not hold your hand!"
   }
 }

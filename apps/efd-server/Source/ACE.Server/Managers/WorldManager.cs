@@ -220,7 +220,7 @@ namespace ACE.Server.Managers
             {
                 var homerealm = RealmManager.GetRealm(session.Player.HomeRealm);
                 if (homerealm == null)
-                    homerealm = RealmManager.GetRealm(4);
+                    homerealm = RealmManager.GetRealm(6);
                 var pos = new Position(session.Player.Location);
                 pos.SetToDefaultRealmInstance(homerealm.Realm.Id);
 
@@ -231,7 +231,7 @@ namespace ACE.Server.Managers
             {
                 var homerealm = RealmManager.GetRealm(session.Player.HomeRealm);
                 if (homerealm == null)
-                    homerealm = RealmManager.GetRealm(4);
+                    homerealm = RealmManager.GetRealm(6);
                 var exitloc = session.Player.GetPosition(ACE.Entity.Enum.Properties.PositionType.EphemeralRealmExitTo);
                 if (exitloc != null)
                 {

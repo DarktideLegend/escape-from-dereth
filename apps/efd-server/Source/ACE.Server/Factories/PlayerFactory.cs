@@ -393,11 +393,11 @@ namespace ACE.Server.Factories
             if (!player.IsOlthoiPlayer)
             {
 
-                // set home realm for new players to ModernPVP
-                var realm = RealmManager.GetRealm((ushort)4);
+                // set home realm for new players to Escape from Dereth
+                var realm = RealmManager.GetRealm((ushort)6);
                 player.SetProperty(PropertyInt.HomeRealm, realm.Realm.Id);
-                player.Location = player.HideoutLocation;
                 var homeRealmStarterLocation = realm.DefaultStartingLocation(player);
+                player.Location = homeRealmStarterLocation;
                 player.Instantiation = homeRealmStarterLocation;
                 player.Sanctuary = homeRealmStarterLocation;
 
