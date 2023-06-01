@@ -880,7 +880,7 @@ namespace ACE.Server.WorldObjects
         {
             var homerealm = RealmManager.GetRealm(HomeRealm);
             if (homerealm == null)
-                homerealm = RealmManager.GetRealm(4);
+                homerealm = RealmManager.GetRealm(6);
 
             var iid = homerealm.GetDefaultInstanceID(this);
             var pos = new Position(Home) { Instance = iid };
