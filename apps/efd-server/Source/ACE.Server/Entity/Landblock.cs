@@ -850,25 +850,29 @@ namespace ACE.Server.Entity
         private bool AddWorldObjectInternal(WorldObject wo)
         {
             var realm = RealmManager.GetRealm(wo.Location.RealmID);
-            var isPlayerOnly = realm.StandardRules.GetProperty(ACE.Entity.Enum.Properties.RealmPropertyBool.IsPlayerOnly);
 
+            var isEfdContentOnly = realm.StandardRules.GetProperty(RealmPropertyBool.IsEfdContentOnly);
+            var hasEfdContent = wo.GetProperty(PropertyBool.IsEfdContent) ?? false;
+            if (isEfdContentOnly && !(wo is Player) && !hasEfdContent) 
+                return false;
+
+            var isPlayerOnly = realm.StandardRules.GetProperty(ACE.Entity.Enum.Properties.RealmPropertyBool.IsPlayerOnly);
             if (isPlayerOnly && !(wo is Player)) 
                 return false;
 
             var hasNoCreatures = realm.StandardRules.GetProperty(ACE.Entity.Enum.Properties.RealmPropertyBool.HasNoCreatures);
-            var hasNoDoors = realm.StandardRules.GetProperty(ACE.Entity.Enum.Properties.RealmPropertyBool.HasNoDoors);
-            var hasNoPortals = realm.StandardRules.GetProperty(ACE.Entity.Enum.Properties.RealmPropertyBool.HasNoPortals);
-            var hasNoLifestones = realm.StandardRules.GetProperty(ACE.Entity.Enum.Properties.RealmPropertyBool.HasNoLifestones);
-
             if (hasNoCreatures && !(wo is Player) && wo is Creature)
                 return false;
 
+            var hasNoDoors = realm.StandardRules.GetProperty(ACE.Entity.Enum.Properties.RealmPropertyBool.HasNoDoors);
             if (hasNoDoors && wo is Door) 
                 return false;
 
+            var hasNoPortals = realm.StandardRules.GetProperty(ACE.Entity.Enum.Properties.RealmPropertyBool.HasNoPortals);
             if (hasNoPortals && wo is Portal)
                 return false;
 
+            var hasNoLifestones = realm.StandardRules.GetProperty(ACE.Entity.Enum.Properties.RealmPropertyBool.HasNoLifestones);
             if (hasNoLifestones && wo is Lifestone)
                 return false;
 
