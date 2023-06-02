@@ -1,6 +1,8 @@
+using ACE.Common;
 using ACE.Entity;
 using ACE.Server.EscapeFromDereth.Common;
 using ACE.Server.WorldObjects;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -12,7 +14,7 @@ namespace ACE.Server.EscapeFromDereth.Towns
 {
     public class TownManager
     {
-        private static Random randomizer = new Random();
+        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private static ImmutableList<Town> Towns = ImmutableList.Create(
             new Town("Arwic", EFDHelpers.slocToPosition("0xC6A90013 [51.633736 68.552765 42.005001] -0.080479 0.000000 0.000000 0.996756 0")), // Arwic
@@ -21,8 +23,8 @@ namespace ACE.Server.EscapeFromDereth.Towns
 
         public class Town
         {
-            public string name;
-            public Position position;
+            public readonly string name;
+            public readonly Position position;
             public Town(string name, Position position) {
                 this.name = name;
                 this.position = position;
@@ -31,14 +33,14 @@ namespace ACE.Server.EscapeFromDereth.Towns
 
         public static Town GetRandomTown()
         {
-            return Towns[randomizer.Next(Towns.Count)];
+            return Towns[ThreadSafeRandom.Next(0, Towns.Count - 1)];
         }
 
-        public static Town GetClosestTownFromPlayer(Player player)
+        public static Town GetClosestTownFromWorldObject(WorldObject wo)
         {
             return Towns.Aggregate((previous, next) =>
             {
-                if (previous.position.DistanceTo(player.Location) <= next.position.DistanceTo(player.Location))
+                if (previous.position.DistanceTo(wo.Location) <= next.position.DistanceTo(wo.Location))
                     return previous;
                 else
                     return next;

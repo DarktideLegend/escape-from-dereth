@@ -98,8 +98,6 @@ namespace ACE.Server.WorldObjects
 
             GagsTick();
 
-            HandleTownManagerTick();
-
             PhysicsObj.ObjMaint.DestroyObjects();
 
 
@@ -120,18 +118,7 @@ namespace ACE.Server.WorldObjects
 
             base.Heartbeat(currentUnixTime);
         }
-
-        private void HandleTownManagerTick()
-        {
-            if (!CurrentLandblock.IsDungeon)
-            {
-                var closestTown = TownManager.GetClosestTownFromPlayer(this);
-                log.Info(closestTown.name);
-                log.Info(closestTown.position.DistanceTo(Location));
-            }
-
-        }
-
+        
         public static float MaxSpeed = 50;
         public static float MaxSpeedSq = MaxSpeed * MaxSpeed;
 
@@ -460,7 +447,7 @@ namespace ACE.Server.WorldObjects
                         if (curCell != null)
                         {
                             //if (PhysicsObj.CurCell == null || curCell.ID != PhysicsObj.CurCell.ID)
-                                //PhysicsObj.change_cell_server(curCell);
+                            //PhysicsObj.change_cell_server(curCell);
 
                             PhysicsObj.set_request_pos(newPosition.Pos, newPosition.Rotation, curCell, Location.LandblockId.Raw, newPosition.Instance);
                             if (FastTick)
