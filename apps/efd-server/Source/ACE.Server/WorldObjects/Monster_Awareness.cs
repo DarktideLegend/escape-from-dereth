@@ -401,7 +401,9 @@ namespace ACE.Server.WorldObjects
             {
                 if (_visualAwarenessRangeSq == null)
                 {
-                    var visualAwarenessRange = (float)((VisualAwarenessRange ?? VisualAwarenessRange_Default) * PropertyManager.GetDouble("mob_awareness_range").Item);
+                    var mobAwarenessMultiplier = RealmRuleset.GetProperty(RealmPropertyFloat.CreatureMobAwarenessMultiplier);
+                    var visualAwarenessRange = (float)((VisualAwarenessRange ??
+                        VisualAwarenessRange_Default) * PropertyManager.GetDouble("mob_awareness_range").Item * mobAwarenessMultiplier);
 
                     _visualAwarenessRangeSq = visualAwarenessRange * visualAwarenessRange;
                 }
