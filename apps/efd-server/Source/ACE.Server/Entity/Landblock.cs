@@ -853,7 +853,12 @@ namespace ACE.Server.Entity
 
             var isEfdContentOnly = realm.StandardRules.GetProperty(RealmPropertyBool.IsEfdContentOnly);
             var hasEfdContent = wo.GetProperty(PropertyBool.IsEfdContent) ?? false;
-            if (isEfdContentOnly && !(wo is Player) && !hasEfdContent) 
+            var isMonster = wo is Creature && (wo as Creature).IsMonster;
+            var isPlayer = wo is Player;
+            var isCorpse = wo is Corpse;
+            var isGenerator = wo.IsGenerator;
+
+            if (isEfdContentOnly && !isPlayer && !isMonster && !isGenerator && !isCorpse && !hasEfdContent) 
                 return false;
 
             var isPlayerOnly = realm.StandardRules.GetProperty(ACE.Entity.Enum.Properties.RealmPropertyBool.IsPlayerOnly);
