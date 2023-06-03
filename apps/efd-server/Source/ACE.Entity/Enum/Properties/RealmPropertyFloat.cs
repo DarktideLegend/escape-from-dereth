@@ -46,6 +46,9 @@ namespace ACE.Entity.Enum.Properties
         [RealmPropertyFloat(1f, 0.01f, 100f)]
         CreatureMobAwarenessMultiplier,
 
+        [RealmPropertyFloat(0.25f, 0.01f, 1f)]
+        TownDistanceMultiplier,
+
         /*Below is not implemented*/
         [RealmPropertyFloat(1f, 0.01f, 100f)]
         PlayerDamageGlobalMultiplier,

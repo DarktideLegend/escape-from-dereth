@@ -24,8 +24,8 @@ namespace ACE.Server.Factories
         /// <summary>
         /// A new biota be created taking all of its values from weenie.
         /// </summary>
-        public static WorldObject CreateWorldObject(Weenie weenie, ObjectGuid guid, AppliedRuleset ruleset = null)
-        {
+        public static WorldObject CreateWorldObject(Weenie weenie, ObjectGuid guid, AppliedRuleset ruleset = null, Position location = null)
+        { 
             if (ruleset == null)
                 ruleset = RealmManager.DefaultRuleset;
 
@@ -52,7 +52,7 @@ namespace ACE.Server.Factories
                 case WeenieType.Cow:
                     return new Cow(weenie, guid, ruleset);
                 case WeenieType.Creature:
-                    return new Creature(weenie, guid, ruleset);
+                    return new Creature(weenie, guid, ruleset, location);
                 case WeenieType.Container:
                     return new Container(weenie, guid);
                 case WeenieType.Scroll:
@@ -297,9 +297,8 @@ namespace ACE.Server.Factories
                 var biota = biotas.FirstOrDefault(b => b.Id == instance.Guid);
                 if (biota == null)
                 {
-                    worldObject = CreateWorldObject(weenie, guid, ruleset);
-
-                    worldObject.Location = new Position(instance.ObjCellId, instance.OriginX, instance.OriginY, instance.OriginZ, instance.AnglesX, instance.AnglesY, instance.AnglesZ, instance.AnglesW, iid);
+                    var location = new Position(instance.ObjCellId, instance.OriginX, instance.OriginY, instance.OriginZ, instance.AnglesX, instance.AnglesY, instance.AnglesZ, instance.AnglesW, iid);
+                    worldObject = CreateWorldObject(weenie, guid, ruleset, location);
                 }
                 else
                 {
@@ -350,9 +349,9 @@ namespace ACE.Server.Factories
         /// <summary>
         /// This will create a new WorldObject with a new GUID.
         /// </summary>
-        public static WorldObject CreateNewWorldObject(Weenie weenie, AppliedRuleset ruleset)
+        public static WorldObject CreateNewWorldObject(Weenie weenie, AppliedRuleset ruleset, Position location = null)
         {
-            var worldObject = CreateWorldObject(weenie, GuidManager.NewDynamicGuid(), ruleset);
+            var worldObject = CreateWorldObject(weenie, GuidManager.NewDynamicGuid(), ruleset, location);
 
             return worldObject;
         }
@@ -361,14 +360,14 @@ namespace ACE.Server.Factories
         /// This will create a new WorldObject with a new GUID.
         /// It will return null if weenieClassId was not found.
         /// </summary>
-        public static WorldObject CreateNewWorldObject(uint weenieClassId, AppliedRuleset ruleset = null)
+        public static WorldObject CreateNewWorldObject(uint weenieClassId, AppliedRuleset ruleset = null, Position location = null)
         {
             var weenie = DatabaseManager.World.GetCachedWeenie(weenieClassId);
 
             if (weenie == null)
                 return null;
 
-            return CreateNewWorldObject(weenie, ruleset);
+            return CreateNewWorldObject(weenie, ruleset, location);
         }
 
         /// <summary>

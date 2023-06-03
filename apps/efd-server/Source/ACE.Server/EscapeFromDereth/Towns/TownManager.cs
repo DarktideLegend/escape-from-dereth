@@ -90,11 +90,11 @@ namespace ACE.Server.EscapeFromDereth.Towns
             return TownsList[ThreadSafeRandom.Next(0, TownsList.Count - 1)];
         }
 
-        public static Town GetClosestTownFromWorldObject(WorldObject wo)
+        public static Town GetClosestTownFromPosition(Position position)
         {
             return TownsList.Aggregate((previous, next) =>
             {
-                if (previous.position.DistanceTo(wo.Location) <= next.position.DistanceTo(wo.Location))
+                if (previous.position.DistanceTo(position) <= next.position.DistanceTo(position))
                     return previous;
                 else
                     return next;
