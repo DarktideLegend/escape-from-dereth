@@ -858,28 +858,52 @@ namespace ACE.Server.Entity
             var isCorpse = wo is Corpse;
             var isGenerator = wo.IsGenerator;
 
-            if (isEfdContentOnly && !isPlayer && !isMonster && !isGenerator && !isCorpse && !hasEfdContent) 
+            if (isEfdContentOnly && !isPlayer && !isMonster && !isGenerator && !isCorpse && !hasEfdContent)
+            {
+
+                wo.Destroy();
                 return false;
+            }
 
             var isPlayerOnly = realm.StandardRules.GetProperty(ACE.Entity.Enum.Properties.RealmPropertyBool.IsPlayerOnly);
             if (isPlayerOnly && !(wo is Player)) 
+            {
+
+                wo.Destroy();
                 return false;
+            }
 
             var hasNoCreatures = realm.StandardRules.GetProperty(ACE.Entity.Enum.Properties.RealmPropertyBool.HasNoCreatures);
             if (hasNoCreatures && !(wo is Player) && wo is Creature)
+            {
+
+                wo.Destroy();
                 return false;
+            }
 
             var hasNoDoors = realm.StandardRules.GetProperty(ACE.Entity.Enum.Properties.RealmPropertyBool.HasNoDoors);
             if (hasNoDoors && wo is Door) 
+            {
+
+                wo.Destroy();
                 return false;
+            }
 
             var hasNoPortals = realm.StandardRules.GetProperty(ACE.Entity.Enum.Properties.RealmPropertyBool.HasNoPortals);
             if (hasNoPortals && wo is Portal)
+            {
+
+                wo.Destroy();
                 return false;
+            }
 
             var hasNoLifestones = realm.StandardRules.GetProperty(ACE.Entity.Enum.Properties.RealmPropertyBool.HasNoLifestones);
             if (hasNoLifestones && wo is Lifestone)
+            {
+
+                wo.Destroy();
                 return false;
+            }
 
             if (LandblockManager.CurrentlyTickingLandblockGroupsMultiThreaded)
             {
