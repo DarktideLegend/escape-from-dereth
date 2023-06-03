@@ -1,3 +1,30 @@
+## [1.1.0-alpha.10](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.9...efd-server-v1.1.0-alpha.10) (2023-06-03)
+
+
+### Features
+
+* **efd-server:** ✨ add ability to open/close whitelested towns to players ([eade1eb](https://github.com/DarktideLegend/escape-from-dereth/commit/eade1ebc310b1746304c9293aa6851378ff22066))
+* **efd-server:** ✨ add CreatureMobAwarenessMultiplier realm property ([e815069](https://github.com/DarktideLegend/escape-from-dereth/commit/e81506961d029725241086c236830fec6702c1f7))
+* **efd-server:** ✨ add escape from dereth realm ([1945aa7](https://github.com/DarktideLegend/escape-from-dereth/commit/1945aa716a6703409ab1a219c7d95e5e316dbfb0))
+* **efd-server:** ✨ add is-efd-content-only ruleset ([ce5da71](https://github.com/DarktideLegend/escape-from-dereth/commit/ce5da7125bf5d6e0c46d06ee936cc4fd31bb52eb))
+* **efd-server:** ✨ add town distance multiplier ([3510742](https://github.com/DarktideLegend/escape-from-dereth/commit/35107423965a055dd8639fdd0f187a4550d04cb9))
+* **efd-server:** ✨ add TownManager ([1cb7fdb](https://github.com/DarktideLegend/escape-from-dereth/commit/1cb7fdbaa6ac2fd53e648ccd6f49fea8e70ca348))
+
+
+### Bug Fixes
+
+* **efd-server:** 🐛 destroy world objects that don't pass realm ruleset filters ([b3e92f8](https://github.com/DarktideLegend/escape-from-dereth/commit/b3e92f892dfd431a71cb5280c914d5a0ed9298cc))
+* **efd-server:** 🐛 temporary fix for housing ([ff9c834](https://github.com/DarktideLegend/escape-from-dereth/commit/ff9c8340d7f2af0b80f77cc0b80e7bfb1fb71638))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ add slocToPosition helper method ([9c88d59](https://github.com/DarktideLegend/escape-from-dereth/commit/9c88d5923f2996731acacd0e2b03f2d5b473ee5f))
+* **efd-server:** ♻️ added TownManagerTick to player heartbeat ([aaee7bc](https://github.com/DarktideLegend/escape-from-dereth/commit/aaee7bccdbbe17eb0ccbda91fb04eb54126f5605))
+* **efd-server:** ♻️ allow generators to pass EFD filter ([fe1e76e](https://github.com/DarktideLegend/escape-from-dereth/commit/fe1e76ef29a58765354e057a6a9875a8541c3e52))
+* **efd-server:** ♻️ update town restrictions logic ([766d32e](https://github.com/DarktideLegend/escape-from-dereth/commit/766d32e5020c8565d40eae79e2e725c7a12f23f2))
+* **efd-server:** ♻️ world objects should interact with TownManager ([d641f8c](https://github.com/DarktideLegend/escape-from-dereth/commit/d641f8cc45156d1932d784ffd95f79199877a8f1))
+
 ## [1.1.0-alpha.9](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.8...efd-server-v1.1.0-alpha.9) (2023-05-30)
 
 
