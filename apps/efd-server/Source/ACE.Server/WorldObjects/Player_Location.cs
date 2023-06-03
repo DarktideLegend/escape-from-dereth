@@ -17,6 +17,7 @@ using ACE.Server.Network.GameEvent.Events;
 using ACE.Server.Network.GameMessages.Messages;
 using ACE.Server.Managers;
 using ACE.Server.Realms;
+using ACE.Server.EscapeFromDereth.Towns;
 
 namespace ACE.Server.WorldObjects
 {
@@ -1058,6 +1059,12 @@ namespace ACE.Server.WorldObjects
             // notify current landblock of player activity
             if (CurrentLandblock != null)
                 CurrentLandblock?.SetActive();
+
+            if (!CurrentLandblock.IsDungeon && TownManager.Towns.TryGetValue(CurrentLandblock.Id.Landblock, out var town) && town.isClosed) 
+            {
+                WorldManager.ThreadSafeTeleport(this, town.bootLocation, false);
+            }
+
         }
 
         public static readonly float RunFactor = 1.5f;
