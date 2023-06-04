@@ -41,8 +41,9 @@ namespace ACE.Server.Factories
             var isCorpse = objWeenieType == WeenieType.Corpse;
             var isVendor = objWeenieType == WeenieType.Vendor;
             var isPortal = objWeenieType == WeenieType.Portal;
+            var isGeneric = objWeenieType == WeenieType.Generic;
 
-            if (isEfdContentOnly && !hasEfdContent && !isCreature && !isCorpse && !isVendor)
+            if (isEfdContentOnly && !hasEfdContent && !isCreature && !isCorpse && !isVendor && !isGeneric)
             {
                 return null;
             }
