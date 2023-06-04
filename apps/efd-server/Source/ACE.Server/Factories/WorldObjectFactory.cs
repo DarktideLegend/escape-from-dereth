@@ -14,6 +14,7 @@ using ACE.Server.WorldObjects;
 using Biota = ACE.Database.Models.Shard.Biota;
 using LandblockInstance = ACE.Database.Models.World.LandblockInstance;
 using ACE.Server.Realms;
+using ACE.Entity.Enum.Properties;
 
 namespace ACE.Server.Factories
 {
@@ -34,6 +35,18 @@ namespace ACE.Server.Factories
 
             var objWeenieType = weenie.WeenieType;
 
+            var isEfdContentOnly = ruleset.GetProperty(RealmPropertyBool.IsEfdContentOnly);
+            var hasEfdContent = weenie.GetProperty(PropertyBool.IsEfdContent) ?? false;
+            var isCreature = objWeenieType == WeenieType.Creature;
+            var isCorpse = objWeenieType == WeenieType.Corpse;
+            var isVendor = objWeenieType == WeenieType.Vendor;
+            var isPortal = objWeenieType == WeenieType.Portal;
+
+            if (isEfdContentOnly && !hasEfdContent && !isCreature && !isCorpse && !isVendor)
+            {
+                return null;
+            }
+
             switch (objWeenieType)
             {
                 case WeenieType.Undef:
@@ -42,8 +55,12 @@ namespace ACE.Server.Factories
                 case WeenieType.LifeStone:
                     return new Lifestone(weenie, guid);
                 case WeenieType.Door:
+                    if (ruleset.GetProperty(RealmPropertyBool.HasNoDoors))
+                        return null;
                     return new Door(weenie, guid);
                 case WeenieType.Portal:
+                    if (ruleset.GetProperty(RealmPropertyBool.HasNoPortals))
+                        return null;
                     return new Portal(weenie, guid);
                 case WeenieType.Book:
                     return new Book(weenie, guid);
@@ -52,6 +69,8 @@ namespace ACE.Server.Factories
                 case WeenieType.Cow:
                     return new Cow(weenie, guid, ruleset);
                 case WeenieType.Creature:
+                    if (ruleset.GetProperty(RealmPropertyBool.HasNoCreatures))
+                        return null;
                     return new Creature(weenie, guid, ruleset, location);
                 case WeenieType.Container:
                     return new Container(weenie, guid);
@@ -297,8 +316,11 @@ namespace ACE.Server.Factories
                 var biota = biotas.FirstOrDefault(b => b.Id == instance.Guid);
                 if (biota == null)
                 {
+
                     var location = new Position(instance.ObjCellId, instance.OriginX, instance.OriginY, instance.OriginZ, instance.AnglesX, instance.AnglesY, instance.AnglesZ, instance.AnglesW, iid);
                     worldObject = CreateWorldObject(weenie, guid, ruleset, location);
+                    if (worldObject != null)
+                        worldObject.Location = location;
                 }
                 else
                 {
