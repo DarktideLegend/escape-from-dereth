@@ -1,3 +1,10 @@
+## [1.1.0-alpha.12](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.11...efd-server-v1.1.0-alpha.12) (2023-06-04)
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ world objects can now be blacklisted and overridable ([9b2ec89](https://github.com/DarktideLegend/escape-from-dereth/commit/9b2ec89a27537c5acf47f97a2287d25d13f15ac8))
+
 ## [1.1.0-alpha.11](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.10...efd-server-v1.1.0-alpha.11) (2023-06-04)
 
 
