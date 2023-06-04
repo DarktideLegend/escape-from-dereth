@@ -1,9 +1,0 @@
-{
-  "name": "is-efd-content-only",
-  "type": "Ruleset",
-  "properties": {
-    "Description": "Only Escape from Dereth content exists in this area!",
-    "RulesetStampVendorCategory": 2,
-    "IsEfdContentOnly": true
-  }
-}

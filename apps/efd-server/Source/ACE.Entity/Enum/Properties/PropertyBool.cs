@@ -210,7 +210,7 @@ namespace ACE.Entity.Enum.Properties
 
         /// EFD
         [ServerOnly]
-        IsEfdContent                     = 42003
+        IsCustomContent                     = 42003
     }
 
     public static class PropertyBoolExtensions

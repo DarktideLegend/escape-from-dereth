@@ -59,8 +59,12 @@ namespace ACE.Entity.Enum.Properties
         [RealmPropertyBool(false)]
         IsPlayerOnly,
 
+        /// <summary>
+        /// When blacklisting types of world objects from being created in a realm (portals, doors),
+        /// a custom weenie with this property set to true will bypass the blacklist filter
+        /// </summary>
         [RealmPropertyBool(false)]
-        IsEfdContentOnly
+        IsOverridable
     }
 
 

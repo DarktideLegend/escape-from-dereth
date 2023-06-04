@@ -35,18 +35,9 @@ namespace ACE.Server.Factories
 
             var objWeenieType = weenie.WeenieType;
 
-            var isEfdContentOnly = ruleset.GetProperty(RealmPropertyBool.IsEfdContentOnly);
-            var hasEfdContent = weenie.GetProperty(PropertyBool.IsEfdContent) ?? false;
-            var isCreature = objWeenieType == WeenieType.Creature;
-            var isCorpse = objWeenieType == WeenieType.Corpse;
-            var isVendor = objWeenieType == WeenieType.Vendor;
-            var isPortal = objWeenieType == WeenieType.Portal;
-            var isGeneric = objWeenieType == WeenieType.Generic;
-
-            if (isEfdContentOnly && !hasEfdContent && !isCreature && !isCorpse && !isVendor && !isGeneric)
-            {
-                return null;
-            }
+            var isOverridable = ruleset.GetProperty(RealmPropertyBool.IsOverridable);
+            var hasCustomContent = weenie.GetProperty(PropertyBool.IsCustomContent) ?? false;
+            var shouldOverride = hasCustomContent && isOverridable;
 
             switch (objWeenieType)
             {
@@ -54,13 +45,15 @@ namespace ACE.Server.Factories
                     log.Warn($"CreateWorldObject: {weenie.GetName()} (0x{guid}:{weenie.WeenieClassId}) - WeenieType is Undef, Object cannot be created.");
                     return null;
                 case WeenieType.LifeStone:
+                    if (ruleset.GetProperty(RealmPropertyBool.HasNoLifestones) && !shouldOverride)
+                        return null;
                     return new Lifestone(weenie, guid);
                 case WeenieType.Door:
-                    if (ruleset.GetProperty(RealmPropertyBool.HasNoDoors))
+                    if (ruleset.GetProperty(RealmPropertyBool.HasNoDoors) && !shouldOverride)
                         return null;
                     return new Door(weenie, guid);
                 case WeenieType.Portal:
-                    if (ruleset.GetProperty(RealmPropertyBool.HasNoPortals))
+                    if (ruleset.GetProperty(RealmPropertyBool.HasNoPortals) && !shouldOverride)
                         return null;
                     return new Portal(weenie, guid);
                 case WeenieType.Book:
@@ -70,7 +63,7 @@ namespace ACE.Server.Factories
                 case WeenieType.Cow:
                     return new Cow(weenie, guid, ruleset);
                 case WeenieType.Creature:
-                    if (ruleset.GetProperty(RealmPropertyBool.HasNoCreatures))
+                    if (ruleset.GetProperty(RealmPropertyBool.HasNoCreatures) && !shouldOverride)
                         return null;
                     return new Creature(weenie, guid, ruleset, location);
                 case WeenieType.Container:
