@@ -243,6 +243,18 @@ namespace ACE.Server.WorldObjects
                 }
             }
 
+            if (WeenieClassId == 600001) // to hideout
+            {
+                player.HandleActionTeleToHideout();
+                return new ActivationResult(false);
+            }
+
+            if (WeenieClassId == 600002) // to home realm
+            {
+                player.TeleportToHomeRealm();
+                return new ActivationResult(false);
+            }
+
             if (QuestRestriction != null && !player.IgnorePortalRestrictions)
             {
                 var hasQuest = player.QuestManager.HasQuest(QuestRestriction);

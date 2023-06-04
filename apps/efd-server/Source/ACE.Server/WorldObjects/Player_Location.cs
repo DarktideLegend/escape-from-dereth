@@ -177,30 +177,7 @@ namespace ACE.Server.WorldObjects
 
             EnqueueBroadcast(new GameMessageSystemChat($"{Name} is recalling to the hideout.", ChatMessageType.Recall), LocalBroadcastRange, ChatMessageType.Recall);
 
-            SendMotionAsCommands(MotionCommand.HouseRecall, MotionStance.NonCombat);
-
-            var startPos = new Position(Location);
-
-            // Wait for animation
-            var actionChain = new ActionChain();
-
-            // Then do teleport
-            var animLength = DatManager.PortalDat.ReadFromDat<MotionTable>(MotionTableId).GetAnimationLength(MotionCommand.HouseRecall);
-            actionChain.AddDelaySeconds(animLength);
-            IsBusy = true;
-            actionChain.AddAction(this, () =>
-            {
-                IsBusy = false;
-                var endPos = new Position(Location);
-                if (startPos.SquaredDistanceTo(endPos) > RecallMoveThresholdSq)
-                {
-                    Session.Network.EnqueueSend(new GameEventWeenieError(Session, WeenieError.YouHaveMovedTooFar));
-                    return;
-                }
-                TeleportToHideout();
-            });
-
-            actionChain.EnqueueChain();
+            TeleportToHideout();
         }
 
         /// <summary>
@@ -800,6 +777,10 @@ namespace ACE.Server.WorldObjects
             var prevrealm = RealmManager.GetRealm(prevRealmId);
             var newRealm = RealmManager.GetRealm(newRealmId);
 
+            // if we are transitioning to Hideout, stamp our current location with an offset 
+            if (newRealmId == 0x7FFF)
+                SetPosition(PositionType.HomeRealmExitTo, new Position(Location.InFrontOf(-5f, true)));
+
             if (newLocation.IsEphemeralRealm && !Location.IsEphemeralRealm)
             {
                 SetPosition(PositionType.EphemeralRealmExitTo, new Position(Location));
@@ -845,11 +826,11 @@ namespace ACE.Server.WorldObjects
         {
             get
             {
-                int intid = GetProperty(PropertyInt.HomeRealm) ?? 4;
+                int intid = GetProperty(PropertyInt.HomeRealm) ?? 6;
                 if ((intid < 0) || (uint)intid > 0x7FFF)
                 {
                     log.Error("Player " + Name + " HomeRealm out of range.");
-                    return 4;
+                    return 6;
                 }
                 return (ushort)intid;
             }
@@ -884,7 +865,8 @@ namespace ACE.Server.WorldObjects
                 homerealm = RealmManager.GetRealm(6);
 
             var iid = homerealm.GetDefaultInstanceID(this);
-            var pos = new Position(Home) { Instance = iid };
+            var homeRealmExitTo = GetPosition(PositionType.HomeRealmExitTo) ?? Home;
+            var pos = new Position(homeRealmExitTo) { Instance = iid };
             Teleport(pos);
         }
 
