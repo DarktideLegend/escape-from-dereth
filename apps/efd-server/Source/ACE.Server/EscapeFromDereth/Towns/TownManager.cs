@@ -1,7 +1,9 @@
 using ACE.Common;
 using ACE.Entity;
+using ACE.Entity.Enum.Properties;
 using ACE.Server.Entity;
 using ACE.Server.EscapeFromDereth.Common;
+using ACE.Server.Realms;
 using ACE.Server.WorldObjects;
 using log4net;
 using System;
@@ -99,6 +101,19 @@ namespace ACE.Server.EscapeFromDereth.Towns
                 else
                     return next;
             });
+        }
+
+        public static float GetTownDistanceMultiplier(AppliedRuleset ruleset, Position location)
+        {
+            var town = GetClosestTownFromPosition(location);
+            var distance = Math.Sqrt(town.position.DistanceTo(location));
+
+            var distanceMultiplier = 1f;
+            var townDistanceMultiplier = ruleset.GetProperty(RealmPropertyFloat.TownDistanceMultiplier);
+            if (townDistanceMultiplier < 1)
+                distanceMultiplier = (float)(distance * townDistanceMultiplier);
+
+            return distanceMultiplier;
         }
     }
 }

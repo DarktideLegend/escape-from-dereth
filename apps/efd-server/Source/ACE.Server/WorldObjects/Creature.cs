@@ -71,15 +71,11 @@ namespace ACE.Server.WorldObjects
         private void RealmMutate(AppliedRuleset ruleset, Position location = null)
         {
 
+            var distanceMultiplier = 1f;
 
-            var distanceMultiplier = 0.25f;
             if (location != null)
             {
-                var town = TownManager.GetClosestTownFromPosition(location);
-                var distance = Math.Sqrt(town.position.DistanceTo(location));
-
-                var townDistanceMultiplier = ruleset.GetProperty(RealmPropertyFloat.TownDistanceMultiplier);
-                distanceMultiplier = (float)(distance * townDistanceMultiplier);
+                distanceMultiplier = TownManager.GetTownDistanceMultiplier(ruleset, location);
             }
 
             if (WeenieType == WeenieType.Creature)
