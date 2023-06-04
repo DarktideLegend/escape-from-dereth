@@ -1,3 +1,18 @@
+## [1.1.0-alpha.11](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.10...efd-server-v1.1.0-alpha.11) (2023-06-04)
+
+
+### Bug Fixes
+
+* **efd-server:** 🐛 PK status must be set for new chars ([e9477e8](https://github.com/DarktideLegend/escape-from-dereth/commit/e9477e8f1015d27366ed476a0444a043c74bf25e))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ add generators to filter ([22de7e9](https://github.com/DarktideLegend/escape-from-dereth/commit/22de7e9e3af1bd106688a7c169e805131d082da0))
+* **efd-server:** ♻️ update distance multiplier ([f9a1e3f](https://github.com/DarktideLegend/escape-from-dereth/commit/f9a1e3f7c96b4b522ee4ecffbd24e2a0dd233148))
+* **efd-server:** ♻️ update mob awareness ([f6522da](https://github.com/DarktideLegend/escape-from-dereth/commit/f6522da30bf544a0d788b8324bc4924ffadf2955))
+* **efd-server:** ♻️ update world object filtering ([71e1136](https://github.com/DarktideLegend/escape-from-dereth/commit/71e1136a6d5d49000aa5fc00d7dff510d4964583))
+
 ## [1.1.0-alpha.10](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.9...efd-server-v1.1.0-alpha.10) (2023-06-03)
 
 
