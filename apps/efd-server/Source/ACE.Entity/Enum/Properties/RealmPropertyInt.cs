@@ -12,6 +12,9 @@ namespace ACE.Entity.Enum.Properties
         [RealmPropertyInt(0, 0, 0xFFFF)]
         RulesetStampVendorCategory,
 
+        [RealmPropertyInt(1, int.MinValue, int.MaxValue)]
+        CreatureMobAwarenessMultiplier,
+
         [RealmPropertyInt(0, int.MinValue, int.MaxValue)]
         CreatureStrengthAdded,
 
