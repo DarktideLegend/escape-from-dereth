@@ -26,7 +26,7 @@ namespace ACE.Server.Factories
         /// A new biota be created taking all of its values from weenie.
         /// </summary>
         public static WorldObject CreateWorldObject(Weenie weenie, ObjectGuid guid, AppliedRuleset ruleset = null, Position location = null)
-        { 
+        {
             if (ruleset == null)
                 ruleset = RealmManager.DefaultRuleset;
 
@@ -37,8 +37,7 @@ namespace ACE.Server.Factories
 
             var isOverridable = ruleset.GetProperty(RealmPropertyBool.IsOverridable);
             var hasCustomContent = weenie.GetProperty(PropertyBool.IsCustomContent) ?? false;
-            var hasMonsters = ruleset.GetProperty(RealmPropertyBool.HasMonsters);
-            var isVendorNpcOnly = ruleset.GetProperty(RealmPropertyBool.IsVendorNpcOnly);
+
 
             var shouldOverride = hasCustomContent && isOverridable;
 
@@ -66,18 +65,7 @@ namespace ACE.Server.Factories
                 case WeenieType.Cow:
                     return new Cow(weenie, guid, ruleset);
                 case WeenieType.Creature:
-                    var creature = new Creature(weenie, guid, ruleset, location);
-                    if (shouldOverride)
-                        return creature;
-                    if (creature.IsMonster && hasMonsters)
-                        return creature;
-                    else if (!isVendorNpcOnly)
-                        return creature;
-                    else
-                    {
-                        creature.Destroy();
-                        return null;
-                    }
+                    return CreateCreatureObject(weenie, guid, ruleset, location, shouldOverride);
                 case WeenieType.Container:
                     return new Container(weenie, guid);
                 case WeenieType.Scroll:
@@ -169,6 +157,38 @@ namespace ACE.Server.Factories
                 default:
                     return new GenericObject(weenie, guid);
             }
+        }
+
+        private static WorldObject CreateCreatureObject(Weenie weenie, ObjectGuid guid, AppliedRuleset ruleset, Position location, bool shouldOverride)
+        {
+            var hasMonsters = ruleset.GetProperty(RealmPropertyBool.HasMonsters);
+            var isVendorNpcOnly = ruleset.GetProperty(RealmPropertyBool.IsVendorNpcOnly);
+            var creature = new Creature(weenie, guid, ruleset, location);
+
+            if (shouldOverride)
+                return creature;
+
+            if (creature.IsMonster && hasMonsters)
+                return CreateMonsterObject(creature, ruleset, location);
+
+            if (!isVendorNpcOnly)
+                return creature;
+            else
+            {
+                creature.Destroy();
+                return null;
+            }
+        }
+
+        private static WorldObject CreateMonsterObject(Creature creature, AppliedRuleset ruleset, Position location)
+        {
+            if (creature.Level < 50)
+            {
+                creature.Destroy();
+                return CreateNewWorldObject(601001, ruleset, location); // create a Forgotten Undead if this is a weak spawn
+            }
+            else
+                return creature;
         }
 
         /// <summary>
