@@ -870,7 +870,7 @@ namespace ACE.Server.WorldObjects
             Teleport(pos);
         }
 
-        private void TeleportToHideout()
+        public void TeleportToHideout()
         {
             if (Account.AccountId > 0xFFFFu)
             {
