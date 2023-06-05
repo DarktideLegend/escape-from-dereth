@@ -196,7 +196,7 @@ namespace ACE.Server.Entity
                 Overpower = Creature.GetOverpower(attacker, defender);
 
             // evasion chance
-            if (!Overpower)
+            if (!attacker.IsMonster && !Overpower) // players cannot evade monsters, temporary hack
             {
                 EvasionChance = GetEvadeChance(attacker, defender);
                 if (EvasionChance > ThreadSafeRandom.Next(0.0f, 1.0f))
