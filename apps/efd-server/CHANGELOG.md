@@ -1,3 +1,18 @@
+## [1.1.0-alpha.13](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.12...efd-server-v1.1.0-alpha.13) (2023-06-05)
+
+
+### Features
+
+* **efd-server:** ✨ add HasRebuffsDisabled realm property ([22f324f](https://github.com/DarktideLegend/escape-from-dereth/commit/22f324ff15a9facf83f547e899716e6b4ae9d23d))
+* **efd-server:** ✨ add hasRecallsDisabled realm property ([6c36c96](https://github.com/DarktideLegend/escape-from-dereth/commit/6c36c9683bd09cbf44358b73061d3ae62d207bfd))
+* **efd-server:** ✨ add hideouts to towns ([f1c4784](https://github.com/DarktideLegend/escape-from-dereth/commit/f1c4784ecff6eefdb1ab843f0f643248eece89f8))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ added exit portal to hideout ([b6775ef](https://github.com/DarktideLegend/escape-from-dereth/commit/b6775ef412b34c5ec6da0752cc062fc65509f296))
+* **efd-server:** ♻️ make TeleportToHideout public ([1eb2560](https://github.com/DarktideLegend/escape-from-dereth/commit/1eb2560808fb61f465669f4b99625fe8ee675753))
+
 ## [1.1.0-alpha.12](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.11...efd-server-v1.1.0-alpha.12) (2023-06-04)
 
 
