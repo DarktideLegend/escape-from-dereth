@@ -67,7 +67,10 @@ namespace ACE.Entity.Enum.Properties
         IsOverridable,
 
         [RealmPropertyBool(false)]
-        HasRecallsDisabled
+        HasRecallsDisabled,
+
+        [RealmPropertyBool(true)]
+        HasRebuffsDisabled
     }
 
 
