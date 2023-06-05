@@ -93,7 +93,7 @@ namespace ACE.Server.WorldObjects
 
             if (RecallsDisabled)
             {
-                Session.Network.EnqueueSend(new GameEventWeenieError(Session, WeenieError.ExitTrainingAcademyToUseCommand));
+                Session.Network.EnqueueSend(new GameEventWeenieError(Session, WeenieError.RecallsAreDisabled));
                 return;
             }
 
@@ -157,7 +157,7 @@ namespace ACE.Server.WorldObjects
 
             if (RecallsDisabled)
             {
-                Session.Network.EnqueueSend(new GameEventWeenieError(Session, WeenieError.ExitTrainingAcademyToUseCommand));
+                Session.Network.EnqueueSend(new GameEventWeenieError(Session, WeenieError.RecallsAreDisabled));
                 return;
             }
 
@@ -193,7 +193,7 @@ namespace ACE.Server.WorldObjects
 
             if (RecallsDisabled)
             {
-                Session.Network.EnqueueSend(new GameEventWeenieError(Session, WeenieError.ExitTrainingAcademyToUseCommand));
+                Session.Network.EnqueueSend(new GameEventWeenieError(Session, WeenieError.RecallsAreDisabled));
                 return;
             }
 
@@ -260,7 +260,7 @@ namespace ACE.Server.WorldObjects
 
             if (RecallsDisabled)
             {
-                Session.Network.EnqueueSend(new GameEventWeenieError(Session, WeenieError.ExitTrainingAcademyToUseCommand));
+                Session.Network.EnqueueSend(new GameEventWeenieError(Session, WeenieError.RecallsAreDisabled));
                 return;
             }
 
@@ -323,7 +323,7 @@ namespace ACE.Server.WorldObjects
 
             if (RecallsDisabled)
             {
-                Session.Network.EnqueueSend(new GameEventWeenieError(Session, WeenieError.ExitTrainingAcademyToUseCommand));
+                Session.Network.EnqueueSend(new GameEventWeenieError(Session, WeenieError.RecallsAreDisabled));
                 return;
             }
 
@@ -410,7 +410,7 @@ namespace ACE.Server.WorldObjects
 
             if (RecallsDisabled)
             {
-                Session.Network.EnqueueSend(new GameEventWeenieError(Session, WeenieError.ExitTrainingAcademyToUseCommand));
+                Session.Network.EnqueueSend(new GameEventWeenieError(Session, WeenieError.RecallsAreDisabled));
                 return;
             }
 
@@ -531,7 +531,7 @@ namespace ACE.Server.WorldObjects
 
             if (RecallsDisabled)
             {
-                Session.Network.EnqueueSend(new GameEventWeenieError(Session, WeenieError.ExitTrainingAcademyToUseCommand));
+                Session.Network.EnqueueSend(new GameEventWeenieError(Session, WeenieError.RecallsAreDisabled));
                 return;
             }
 
@@ -609,7 +609,7 @@ namespace ACE.Server.WorldObjects
 
             if (RecallsDisabled)
             {
-                Session.Network.EnqueueSend(new GameEventWeenieError(Session, WeenieError.ExitTrainingAcademyToUseCommand));
+                Session.Network.EnqueueSend(new GameEventWeenieError(Session, WeenieError.RecallsAreDisabled));
                 return;
             }
 

@@ -9,6 +9,7 @@
     "IsOverridable":  true,
     "HasNoPortals": true,
     "HasNoLifestones": true,
-    "HasNoDoors": true
+    "HasNoDoors": true,
+    "HasRecallsDisabled": true
   }
 }

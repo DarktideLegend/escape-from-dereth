@@ -255,6 +255,10 @@ namespace ACE.Server.WorldObjects
                 return new ActivationResult(false);
             }
 
+            var recallsDisabled = RealmRuleset.GetProperty(RealmPropertyBool.HasRecallsDisabled);
+            if (recallsDisabled)
+                return new ActivationResult(false);
+
             if (QuestRestriction != null && !player.IgnorePortalRestrictions)
             {
                 var hasQuest = player.QuestManager.HasQuest(QuestRestriction);

@@ -64,7 +64,10 @@ namespace ACE.Entity.Enum.Properties
         /// a custom weenie with this property set to true will bypass the blacklist filter
         /// </summary>
         [RealmPropertyBool(false)]
-        IsOverridable
+        IsOverridable,
+
+        [RealmPropertyBool(false)]
+        HasRecallsDisabled
     }
 
 
