@@ -13,6 +13,7 @@ using ACE.Server.Entity.Actions;
 using ACE.Server.Network.Enum;
 using ACE.Server.Network.GameEvent.Events;
 using ACE.Server.Network.GameMessages.Messages;
+using ACE.Server.EscapeFromDereth.Towns;
 
 namespace ACE.Server.WorldObjects
 {
@@ -474,7 +475,15 @@ namespace ACE.Server.WorldObjects
             if (Invincible || IsDead) return 0;
 
             if (source is Creature creatureAttacker)
+            {
+                // temporarily scale damage taken from mobs based on town distance
+                var townDistanceMultiplier = TownManager.GetTownDistanceMultiplier(creatureAttacker.RealmRuleset, creatureAttacker.Location);
+                var damageMultiplier = !creatureAttacker.CurrentLandblock.IsDungeon && creatureAttacker.IsMonster ?
+                    townDistanceMultiplier : 0f;
+
                 SetCurrentAttacker(creatureAttacker);
+                _amount += damageMultiplier; 
+            }
 
             // check lifestone protection
             if (UnderLifestoneProtection)
