@@ -58,7 +58,8 @@ namespace ACE.Entity.Enum.Properties
 
         /// <summary>
         /// When blacklisting types of world objects from being created in a realm (portals, doors),
-        /// a custom weenie with this property set to true will bypass the blacklist filter
+        /// If this is true, weenies with IsCustomContent property set to true will
+        /// override blacklist filter
         /// </summary>
         [RealmPropertyBool(false)]
         IsOverridable,
