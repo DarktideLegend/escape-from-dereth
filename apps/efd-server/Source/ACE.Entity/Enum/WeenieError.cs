@@ -1364,6 +1364,8 @@ namespace ACE.Entity.Enum
         /// </summary>
         OlthoiCanOnlyRecallToLifestone = 0x0593,
 
-        ContractError = 0x0594
+        ContractError = 0x0594,
+        
+        RecallsAreDisabled = 0x0595
     }
 }

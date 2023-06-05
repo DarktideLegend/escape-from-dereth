@@ -946,6 +946,10 @@ namespace ACE.Server.WorldObjects
                 return;
             }
 
+            var recallsDisabled = RealmRuleset.GetProperty(RealmPropertyBool.HasRecallsDisabled);
+            if (recallsDisabled)
+                return;
+
             switch ((SpellId)spell.Id)
             {
                 case SpellId.LifestoneTie1:  // Lifestone Tie
@@ -1034,6 +1038,10 @@ namespace ACE.Server.WorldObjects
                 player.Session.Network.EnqueueSend(new GameEventWeenieError(player.Session, WeenieError.OlthoiCanOnlyRecallToLifestone));
                 return;
             }
+
+            var recallsDisabled = RealmRuleset.GetProperty(RealmPropertyBool.HasRecallsDisabled);
+            if (recallsDisabled)
+                return;
 
             var creature = this as Creature;
 
@@ -1173,6 +1181,10 @@ namespace ACE.Server.WorldObjects
                 player.Session.Network.EnqueueSend(new GameEventWeenieError(player.Session, WeenieError.OlthoiCanOnlyRecallToLifestone));
                 return;
             }
+
+            var recallsDisabled = RealmRuleset.GetProperty(RealmPropertyBool.HasRecallsDisabled);
+            if (recallsDisabled)
+                return;
 
             if (player != null && player.PKTimerActive)
             {
@@ -1342,6 +1354,10 @@ namespace ACE.Server.WorldObjects
         {
             if (targetCreature is Player targetPlayer)
             {
+                var recallsDisabled = RealmRuleset.GetProperty(RealmPropertyBool.HasRecallsDisabled);
+                if (recallsDisabled)
+                    return;
+
                 if (targetPlayer.PKTimerActive)
                 {
                     targetPlayer.Session.Network.EnqueueSend(new GameEventWeenieError(targetPlayer.Session, WeenieError.YouHaveBeenInPKBattleTooRecently));
@@ -1383,6 +1399,10 @@ namespace ACE.Server.WorldObjects
             var targetPlayer = targetCreature as Player;
 
             if (targetPlayer == null || targetPlayer.Fellowship == null)
+                return false;
+
+            var recallsDisabled = RealmRuleset.GetProperty(RealmPropertyBool.HasRecallsDisabled);
+            if (recallsDisabled)
                 return false;
 
             if (targetPlayer.PKTimerActive)

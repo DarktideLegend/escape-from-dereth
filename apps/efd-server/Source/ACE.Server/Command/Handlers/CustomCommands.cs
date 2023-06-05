@@ -131,7 +131,7 @@ namespace ACE.Server.Command.Handlers
 
             if (player.RecallsDisabled)
             {
-                session.Network.EnqueueSend(new GameEventWeenieError(session, WeenieError.ExitTrainingAcademyToUseCommand));
+                session.Network.EnqueueSend(new GameEventWeenieError(session, WeenieError.RecallsAreDisabled));
                 return;
             }
 
