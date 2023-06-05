@@ -1,3 +1,30 @@
+## [1.1.0-alpha.14](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.13...efd-server-v1.1.0-alpha.14) (2023-06-05)
+
+
+### Features
+
+* **efd-server:** ✨ add forgotten undead monster ([444cd2f](https://github.com/DarktideLegend/escape-from-dereth/commit/444cd2f56c7b870f21fe0171a697bfe3562b8646))
+* **efd-server:** ✨ monsters have max run skill ([4e424f3](https://github.com/DarktideLegend/escape-from-dereth/commit/4e424f37e5cda54a9de18c5e6e72fcfb595baced))
+* **efd-server:** ✨ players cannot evade monsters ([da6ffdb](https://github.com/DarktideLegend/escape-from-dereth/commit/da6ffdb2c2c76dd73ebae8b9a5f176bb82c42837))
+* **efd-server:** ✨ players take increased flat damage from mobs based on distance ([3186af8](https://github.com/DarktideLegend/escape-from-dereth/commit/3186af8a5edb2bd265393cbbc2c3e40fd562b8e6))
+
+
+### Bug Fixes
+
+* **efd-server:** 🐛 increase TownDistanceMuliplier to 0.25 ([aae2e6d](https://github.com/DarktideLegend/escape-from-dereth/commit/aae2e6d89bb6de8e6ffa948880877955bfb3b16a))
+
+
+### Documentation
+
+* **efd-server:** ♻️ update IsOverridable comments ([e437169](https://github.com/DarktideLegend/escape-from-dereth/commit/e437169b924f91788bba27a88700ed178955da90))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ update create creature logic ([65a6f1b](https://github.com/DarktideLegend/escape-from-dereth/commit/65a6f1bc4ac9016dec75acf9874906f268147b40))
+* **efd-server:** ♻️ update ruleset naming convention ([d182445](https://github.com/DarktideLegend/escape-from-dereth/commit/d1824454d0bedd8a4c134f6b313adb931463dfef))
+* **efd-server:** ♻️ update vendor world object filter ([6783063](https://github.com/DarktideLegend/escape-from-dereth/commit/6783063a0e43b86fdcedaa13bbf064d0a5261e5f))
+
 ## [1.1.0-alpha.13](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.12...efd-server-v1.1.0-alpha.13) (2023-06-05)
 
 
