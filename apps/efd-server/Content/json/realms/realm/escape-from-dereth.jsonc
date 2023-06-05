@@ -10,6 +10,7 @@
     "HasNoPortals": true,
     "HasNoLifestones": true,
     "HasNoDoors": true,
-    "HasRecallsDisabled": true
+    "HasRecallsDisabled": true,
+    "HasRebuffsDisabled": false
   }
 }

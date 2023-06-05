@@ -91,14 +91,14 @@ namespace ACE.Server.Command.Handlers
             session.Player.HandleActionTeleToHideout();
         }
 
-        [CommandHandler("rebuff", AccessLevel.Player, CommandHandlerFlag.RequiresWorld, 0,
+        [CommandHandler("rebuff", AccessLevel.Player, CommandHandlerFlag.RequiresWorld,
             "Buffs you with all beneficial spells. Only usable in certain realms.")]
         public static void HandleRebuff(Session session, params string[] parameters)
         {
             var player = session.Player;
-            var realm = RealmManager.GetRealm(player.HomeRealm);
+            var realm = RealmManager.GetRealm(player.Location.RealmID);
             if (realm == null) return;
-            if (!realm.StandardRules.GetProperty(RealmPropertyBool.IsDuelingRealm)) return;
+            if (realm.StandardRules.GetProperty(RealmPropertyBool.HasRebuffsDisabled)) return;
             var ts = player.GetProperty(PropertyInt.LastRebuffTimestamp);
             if (ts != null)
             {
