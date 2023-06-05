@@ -362,6 +362,11 @@ namespace ACE.Server.WorldObjects
             }
 
             var runSkill = GetCreatureSkill(Skill.Run).Current;
+
+            // temporaily max run skill for monsters
+            if (IsMonster) 
+                runSkill = 800;
+
             var runRate = MovementSystem.GetRunRate(burden, (int)runSkill, 1.0f);
 
             return (float)runRate;
