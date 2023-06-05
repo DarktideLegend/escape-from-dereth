@@ -37,7 +37,8 @@ namespace ACE.Server.Factories
 
             var isOverridable = ruleset.GetProperty(RealmPropertyBool.IsOverridable);
             var hasCustomContent = weenie.GetProperty(PropertyBool.IsCustomContent) ?? false;
-            var hasCreatures = ruleset.GetProperty(RealmPropertyBool.HasCreatures);
+            var hasMonsters = ruleset.GetProperty(RealmPropertyBool.HasMonsters);
+            var isVendorNpcOnly = ruleset.GetProperty(RealmPropertyBool.IsVendorNpcOnly);
 
             var shouldOverride = hasCustomContent && isOverridable;
 
@@ -65,9 +66,18 @@ namespace ACE.Server.Factories
                 case WeenieType.Cow:
                     return new Cow(weenie, guid, ruleset);
                 case WeenieType.Creature:
-                    if (!ruleset.GetProperty(RealmPropertyBool.HasCreatures) && !shouldOverride)
+                    var creature = new Creature(weenie, guid, ruleset, location);
+                    if (shouldOverride)
+                        return creature;
+                    if (creature.IsMonster && hasMonsters)
+                        return creature;
+                    else if (!isVendorNpcOnly)
+                        return creature;
+                    else
+                    {
+                        creature.Destroy();
                         return null;
-                    return new Creature(weenie, guid, ruleset, location);
+                    }
                 case WeenieType.Container:
                     return new Container(weenie, guid);
                 case WeenieType.Scroll:

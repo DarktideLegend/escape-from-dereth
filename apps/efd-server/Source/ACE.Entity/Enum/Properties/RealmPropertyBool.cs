@@ -45,9 +45,6 @@ namespace ACE.Entity.Enum.Properties
         IsFullLootOnDeath,
 
         [RealmPropertyBool(true)]
-        HasCreatures,
-
-        [RealmPropertyBool(true)]
         HasDoors,
 
         [RealmPropertyBool(true)]
@@ -70,7 +67,14 @@ namespace ACE.Entity.Enum.Properties
         HasRecalls,
 
         [RealmPropertyBool(false)]
-        HasRebuffs
+        HasRebuffs,
+
+        // this does not include monsters
+        [RealmPropertyBool(false)]
+        IsVendorNpcOnly,
+
+        [RealmPropertyBool(true)]
+        HasMonsters
     }
 
 
