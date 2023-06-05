@@ -946,7 +946,7 @@ namespace ACE.Server.WorldObjects
                 return;
             }
 
-            var recallsDisabled = RealmRuleset.GetProperty(RealmPropertyBool.HasRecallsDisabled);
+            var recallsDisabled = !RealmRuleset.GetProperty(RealmPropertyBool.HasRecalls);
             if (recallsDisabled)
                 return;
 
@@ -1039,7 +1039,7 @@ namespace ACE.Server.WorldObjects
                 return;
             }
 
-            var recallsDisabled = RealmRuleset.GetProperty(RealmPropertyBool.HasRecallsDisabled);
+            var recallsDisabled = !RealmRuleset.GetProperty(RealmPropertyBool.HasRecalls);
             if (recallsDisabled)
                 return;
 
@@ -1182,7 +1182,7 @@ namespace ACE.Server.WorldObjects
                 return;
             }
 
-            var recallsDisabled = RealmRuleset.GetProperty(RealmPropertyBool.HasRecallsDisabled);
+            var recallsDisabled = !RealmRuleset.GetProperty(RealmPropertyBool.HasRecalls);
             if (recallsDisabled)
                 return;
 
@@ -1354,7 +1354,7 @@ namespace ACE.Server.WorldObjects
         {
             if (targetCreature is Player targetPlayer)
             {
-                var recallsDisabled = RealmRuleset.GetProperty(RealmPropertyBool.HasRecallsDisabled);
+                var recallsDisabled = !RealmRuleset.GetProperty(RealmPropertyBool.HasRecalls);
                 if (recallsDisabled)
                     return;
 
@@ -1401,7 +1401,7 @@ namespace ACE.Server.WorldObjects
             if (targetPlayer == null || targetPlayer.Fellowship == null)
                 return false;
 
-            var recallsDisabled = RealmRuleset.GetProperty(RealmPropertyBool.HasRecallsDisabled);
+            var recallsDisabled = !RealmRuleset.GetProperty(RealmPropertyBool.HasRecalls);
             if (recallsDisabled)
                 return false;
 

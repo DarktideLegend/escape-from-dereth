@@ -20,11 +20,5 @@
   "Max Spellcasting Angle - Wide": 1012,
   "No Movement Fizzles": 1013,
   "Increased Movement Fizzles": 1014,
-  "Reduced Projectile Accuracy": 1015,
-  "is-full-loot-on-death": 1016,
-  "has-no-creatures": 1017,
-  "has-no-doors": 1018,
-  "has-no-portals": 1019,
-  "has-no-lifestones": 1020,
-  "is-player-only": 1021
+  "Reduced Projectile Accuracy": 1015
 }

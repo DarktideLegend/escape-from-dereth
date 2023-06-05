@@ -37,6 +37,8 @@ namespace ACE.Server.Factories
 
             var isOverridable = ruleset.GetProperty(RealmPropertyBool.IsOverridable);
             var hasCustomContent = weenie.GetProperty(PropertyBool.IsCustomContent) ?? false;
+            var hasCreatures = ruleset.GetProperty(RealmPropertyBool.HasCreatures);
+
             var shouldOverride = hasCustomContent && isOverridable;
 
             switch (objWeenieType)
@@ -45,15 +47,15 @@ namespace ACE.Server.Factories
                     log.Warn($"CreateWorldObject: {weenie.GetName()} (0x{guid}:{weenie.WeenieClassId}) - WeenieType is Undef, Object cannot be created.");
                     return null;
                 case WeenieType.LifeStone:
-                    if (ruleset.GetProperty(RealmPropertyBool.HasNoLifestones) && !shouldOverride)
+                    if (!ruleset.GetProperty(RealmPropertyBool.HasLifestones) && !shouldOverride)
                         return null;
                     return new Lifestone(weenie, guid);
                 case WeenieType.Door:
-                    if (ruleset.GetProperty(RealmPropertyBool.HasNoDoors) && !shouldOverride)
+                    if (!ruleset.GetProperty(RealmPropertyBool.HasDoors) && !shouldOverride)
                         return null;
                     return new Door(weenie, guid);
                 case WeenieType.Portal:
-                    if (ruleset.GetProperty(RealmPropertyBool.HasNoPortals) && !shouldOverride)
+                    if (!ruleset.GetProperty(RealmPropertyBool.HasPortals) && !shouldOverride)
                         return null;
                     return new Portal(weenie, guid);
                 case WeenieType.Book:
@@ -63,7 +65,7 @@ namespace ACE.Server.Factories
                 case WeenieType.Cow:
                     return new Cow(weenie, guid, ruleset);
                 case WeenieType.Creature:
-                    if (ruleset.GetProperty(RealmPropertyBool.HasNoCreatures) && !shouldOverride)
+                    if (!ruleset.GetProperty(RealmPropertyBool.HasCreatures) && !shouldOverride)
                         return null;
                     return new Creature(weenie, guid, ruleset, location);
                 case WeenieType.Container:

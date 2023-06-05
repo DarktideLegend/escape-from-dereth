@@ -255,7 +255,7 @@ namespace ACE.Server.WorldObjects
                 return new ActivationResult(false);
             }
 
-            var recallsDisabled = RealmRuleset.GetProperty(RealmPropertyBool.HasRecallsDisabled);
+            var recallsDisabled = !RealmRuleset.GetProperty(RealmPropertyBool.HasRecalls);
             if (recallsDisabled)
                 return new ActivationResult(false);
 

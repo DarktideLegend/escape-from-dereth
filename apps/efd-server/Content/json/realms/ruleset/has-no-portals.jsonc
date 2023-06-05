@@ -1,9 +1,0 @@
-{
-  "name": "has-no-portals",
-  "type": "Ruleset",
-  "properties": {
-    "Description": "No portals exist in this area!",
-    "RulesetStampVendorCategory": 2,
-    "HasNoPortals": true
-  }
-}

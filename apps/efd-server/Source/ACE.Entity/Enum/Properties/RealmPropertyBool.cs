@@ -44,17 +44,17 @@ namespace ACE.Entity.Enum.Properties
         [RealmPropertyBool(false)]
         IsFullLootOnDeath,
 
-        [RealmPropertyBool(false)]
-        HasNoCreatures,
+        [RealmPropertyBool(true)]
+        HasCreatures,
 
-        [RealmPropertyBool(false)]
-        HasNoDoors,
+        [RealmPropertyBool(true)]
+        HasDoors,
 
-        [RealmPropertyBool(false)]
-        HasNoPortals,
+        [RealmPropertyBool(true)]
+        HasPortals,
 
-        [RealmPropertyBool(false)]
-        HasNoLifestones,
+        [RealmPropertyBool(true)]
+        HasLifestones,
 
         [RealmPropertyBool(false)]
         IsPlayerOnly,
@@ -66,11 +66,11 @@ namespace ACE.Entity.Enum.Properties
         [RealmPropertyBool(false)]
         IsOverridable,
 
-        [RealmPropertyBool(false)]
-        HasRecallsDisabled,
-
         [RealmPropertyBool(true)]
-        HasRebuffsDisabled
+        HasRecalls,
+
+        [RealmPropertyBool(false)]
+        HasRebuffs
     }
 
 

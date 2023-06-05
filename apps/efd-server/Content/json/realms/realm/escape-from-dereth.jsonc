@@ -7,10 +7,10 @@
     "CreatureMobAwarenessMultiplier": 10000,
     "TownDistanceMultiplier": 0.125,
     "IsOverridable":  true,
-    "HasNoPortals": true,
-    "HasNoLifestones": true,
-    "HasNoDoors": true,
-    "HasRecallsDisabled": true,
-    "HasRebuffsDisabled": false
+    "HasPortals": false,
+    "HasLifestones": false,
+    "HasDoors": false,
+    "HasRecalls": false,
+    "HasRebuffs": true
   }
 }
