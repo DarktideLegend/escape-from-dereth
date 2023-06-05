@@ -245,7 +245,7 @@ namespace ACE.Server.WorldObjects
 
             if (WeenieClassId == 600001) // to hideout
             {
-                player.HandleActionTeleToHideout();
+                player.TeleportToHideout();
                 return new ActivationResult(false);
             }
 
