@@ -98,7 +98,7 @@ namespace ACE.Server.Command.Handlers
             var player = session.Player;
             var realm = RealmManager.GetRealm(player.Location.RealmID);
             if (realm == null) return;
-            if (realm.StandardRules.GetProperty(RealmPropertyBool.HasRebuffsDisabled)) return;
+            if (!realm.StandardRules.GetProperty(RealmPropertyBool.HasRebuffs)) return;
             var ts = player.GetProperty(PropertyInt.LastRebuffTimestamp);
             if (ts != null)
             {

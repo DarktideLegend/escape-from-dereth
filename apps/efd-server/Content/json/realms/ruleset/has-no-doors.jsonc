@@ -1,9 +1,0 @@
-{
-  "name": "has-no-doors",
-  "type": "Ruleset",
-  "properties": {
-    "Description": "No doors exist in this area!",
-    "RulesetStampVendorCategory": 2,
-    "HasNoDoors": true
-  }
-}

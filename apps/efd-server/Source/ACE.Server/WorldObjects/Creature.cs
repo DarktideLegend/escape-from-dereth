@@ -113,7 +113,7 @@ namespace ACE.Server.WorldObjects
                     ClampStat(
                         (int)Biota.PropertiesAttribute[PropertyAttribute.Coordination].InitLevel,
                         ruleset.GetProperty(RealmPropertyInt.CreatureCoordinationAdded),
-                        ruleset.GetProperty(RealmPropertyFloat.CreatureCoordinationMultiplier) * distanceMultiplier
+                        ruleset.GetProperty(RealmPropertyFloat.CreatureCoordinationMultiplier)
                     );
                 }
 
@@ -123,7 +123,7 @@ namespace ACE.Server.WorldObjects
                     ClampStat(
                         (int)Biota.PropertiesAttribute[PropertyAttribute.Quickness].InitLevel,
                         ruleset.GetProperty(RealmPropertyInt.CreatureQuicknessAdded),
-                        ruleset.GetProperty(RealmPropertyFloat.CreatureQuicknessMultiplier) * distanceMultiplier
+                        ruleset.GetProperty(RealmPropertyFloat.CreatureQuicknessMultiplier)
                     );
                 }
 
@@ -133,7 +133,7 @@ namespace ACE.Server.WorldObjects
                     ClampStat(
                         (int)Biota.PropertiesAttribute[PropertyAttribute.Focus].InitLevel,
                         ruleset.GetProperty(RealmPropertyInt.CreatureFocusAdded),
-                        ruleset.GetProperty(RealmPropertyFloat.CreatureFocusMultiplier) * distanceMultiplier
+                        ruleset.GetProperty(RealmPropertyFloat.CreatureFocusMultiplier)
                     );
                 }
 
@@ -143,7 +143,7 @@ namespace ACE.Server.WorldObjects
                     ClampStat(
                         (int)Biota.PropertiesAttribute[PropertyAttribute.Self].InitLevel,
                         ruleset.GetProperty(RealmPropertyInt.CreatureSelfAdded),
-                        ruleset.GetProperty(RealmPropertyFloat.CreatureSelfMultiplier) * distanceMultiplier
+                        ruleset.GetProperty(RealmPropertyFloat.CreatureSelfMultiplier)
                     );
                 }
             }
