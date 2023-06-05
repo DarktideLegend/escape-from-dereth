@@ -11,6 +11,7 @@
     "HasLifestones": false,
     "HasDoors": false,
     "HasRecalls": false,
-    "HasRebuffs": true
+    "HasRebuffs": true,
+    "IsVendorNpcOnly": true
   }
 }
