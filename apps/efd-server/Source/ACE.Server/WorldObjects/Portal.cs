@@ -12,6 +12,9 @@ using ACE.Server.Entity.Actions;
 using ACE.Server.Managers;
 using ACE.Server.Network.GameEvent.Events;
 using ACE.Server.Network.GameMessages.Messages;
+using ACE.Server.EscapeFromDereth.Hellgates;
+using System.Collections.Generic;
+using System;
 
 namespace ACE.Server.WorldObjects
 {
@@ -91,6 +94,8 @@ namespace ACE.Server.WorldObjects
         }
 
         public bool IsGateway { get => WeenieClassId == 1955; }
+
+        public bool IsProcessingHellgate = false;
 
         //public override void OnActivate(WorldObject activator)
         //{
@@ -255,8 +260,23 @@ namespace ACE.Server.WorldObjects
                 return new ActivationResult(false);
             }
 
+            if (WeenieClassId == 600003) // to hellgate (ephemeral realm)
+            {
+
+                var rules = new List<Realm>()
+                {
+                    RealmManager.GetRealm(player.HomeRealm).Realm,
+                    RealmManager.GetRealm(1016).Realm // hellgate ruleset
+                };
+
+                if (IsProcessingHellgate)
+                    return new ActivationResult(false);
+
+                return ProcessHellgate(player, rules);
+            }
+
             var recallsDisabled = !RealmRuleset.GetProperty(RealmPropertyBool.HasRecalls);
-            if (recallsDisabled)
+            if (recallsDisabled && !Location.IsEphemeralRealm)
                 return new ActivationResult(false);
 
             if (QuestRestriction != null && !player.IgnorePortalRestrictions)
@@ -280,6 +300,27 @@ namespace ACE.Server.WorldObjects
             }
 
             return new ActivationResult(true);
+        }
+
+        private ActivationResult ProcessHellgate(Player player, List<Realm> rules)
+        {
+            IsProcessingHellgate = true;
+
+            var hellgateLocation = HellgateManager.CreateHellGate(player, rules);
+            if (hellgateLocation != null)
+            {
+                Destroy();
+                foreach (var member in player.Fellowship.GetFellowshipMembers().Values)
+                    WorldManager.ThreadSafeTeleport(member, hellgateLocation, false);
+            }
+
+            if (HellgateManager.HasReachedCapacity)
+            {
+                Destroy();
+            }
+
+            IsProcessingHellgate = false;
+            return new ActivationResult(false);
         }
 
         public override void ActOnUse(WorldObject activator)
