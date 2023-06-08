@@ -71,12 +71,10 @@ namespace ACE.Server.WorldObjects
         private void RealmMutate(AppliedRuleset ruleset, Position location = null)
         {
 
-            var distanceMultiplier = 1f;
+            var townDistanceMultiplier = 1f;
 
-            if (location != null)
-            {
-                distanceMultiplier = TownManager.GetTownDistanceMultiplier(ruleset, location);
-            }
+            if (location != null && !location.IsEphemeralRealm)
+                townDistanceMultiplier *= TownManager.GetTownDistanceMultiplier(ruleset, location);
 
             if (WeenieType == WeenieType.Creature)
             {
@@ -84,7 +82,7 @@ namespace ACE.Server.WorldObjects
                 {
                     Biota.PropertiesAttribute2nd[PropertyAttribute2nd.MaxHealth].InitLevel =
                         (uint)((double)Biota.PropertiesAttribute2nd[PropertyAttribute2nd.MaxHealth].InitLevel *
-                        ruleset.GetProperty(RealmPropertyFloat.CreatureSpawnHPMultiplier) * distanceMultiplier);
+                        ruleset.GetProperty(RealmPropertyFloat.CreatureSpawnHPMultiplier) * townDistanceMultiplier);
                 }
 
                 if (Biota?.PropertiesAttribute?.ContainsKey(PropertyAttribute.Strength) == true)
@@ -93,7 +91,7 @@ namespace ACE.Server.WorldObjects
                         ClampStat(
                             (int)Biota.PropertiesAttribute[PropertyAttribute.Strength].InitLevel,
                             ruleset.GetProperty(RealmPropertyInt.CreatureStrengthAdded),
-                            ruleset.GetProperty(RealmPropertyFloat.CreatureStrengthMultiplier) * distanceMultiplier
+                            ruleset.GetProperty(RealmPropertyFloat.CreatureStrengthMultiplier) * townDistanceMultiplier
                         ); 
                 }
 
@@ -103,7 +101,7 @@ namespace ACE.Server.WorldObjects
                     ClampStat(
                         (int)Biota.PropertiesAttribute[PropertyAttribute.Endurance].InitLevel,
                         ruleset.GetProperty(RealmPropertyInt.CreatureEnduranceAdded),
-                        ruleset.GetProperty(RealmPropertyFloat.CreatureEnduranceMultiplier) * distanceMultiplier
+                        ruleset.GetProperty(RealmPropertyFloat.CreatureEnduranceMultiplier) * townDistanceMultiplier
                     );
                 }
 
