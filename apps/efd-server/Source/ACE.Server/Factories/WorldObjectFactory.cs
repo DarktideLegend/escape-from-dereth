@@ -15,6 +15,8 @@ using Biota = ACE.Database.Models.Shard.Biota;
 using LandblockInstance = ACE.Database.Models.World.LandblockInstance;
 using ACE.Server.Realms;
 using ACE.Entity.Enum.Properties;
+using ACE.Common;
+using ACE.Server.EscapeFromDereth.Hellgates;
 
 namespace ACE.Server.Factories
 {
@@ -169,7 +171,7 @@ namespace ACE.Server.Factories
                 return creature;
 
             if (creature.IsMonster && hasMonsters)
-                return CreateMonsterObject(creature, ruleset, location);
+                return CreateMonsterOrHellgateObject(creature, ruleset, location);
 
             if (!isVendorNpcOnly)
                 return creature;
@@ -180,15 +182,22 @@ namespace ACE.Server.Factories
             }
         }
 
-        private static WorldObject CreateMonsterObject(Creature creature, AppliedRuleset ruleset, Position location)
+        private static WorldObject CreateMonsterOrHellgateObject(Creature creature, AppliedRuleset ruleset, Position location)
         {
-            if (creature.Level < 50)
+            // ideally we spawn a boss mob that spawns a portal on death, for now we will randomly spawn a hellgate portal instead of a creature 
+            var rollForHellgate = ThreadSafeRandom.Next(1, 100);
+            if (rollForHellgate < 20 && !location.IsEphemeralRealm) // 20% chance of spawning a hellgate instead of a monster
             {
                 creature.Destroy();
-                return CreateNewWorldObject(601001, ruleset, location); // create a Forgotten Undead if this is a weak spawn
+                var hellgatePortal = CreateNewWorldObject(600003, ruleset, location); // create Hellgate
+                hellgatePortal.Lifespan = (int)(HellgateManager.TimeRemaining);
+                return hellgatePortal;
             }
-            else
+            if (creature.Level > 50)
                 return creature;
+
+            creature.Destroy();
+            return CreateNewWorldObject(601001, ruleset, location); // create a Forgotten Undead if this is a weak spawn
         }
 
         /// <summary>

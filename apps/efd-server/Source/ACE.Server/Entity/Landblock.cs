@@ -28,6 +28,8 @@ using ACE.Server.WorldObjects;
 
 using Position = ACE.Entity.Position;
 using ACE.Server.Realms;
+using ACE.Server.EscapeFromDereth.Hellgates;
+using ACE.Common;
 
 namespace ACE.Server.Entity
 {
@@ -474,6 +476,8 @@ namespace ACE.Server.Entity
             actionQueue.RunActions();
             ServerPerformanceMonitor.AddToCumulativeEvent(ServerPerformanceMonitor.CumulativeEventHistoryType.Landblock_Tick_RunActions, stopwatch.Elapsed.TotalSeconds);
 
+            // Tick for hellgates
+            HellgateManager.Tick(Time.GetUnixTime());
             ProcessPendingWorldObjectAdditionsAndRemovals();
 
             // When a WorldObject Ticks, it can end up adding additional WorldObjects to this landblock
@@ -1149,6 +1153,12 @@ namespace ACE.Server.Entity
         public void Unload()
         {
             var landblockID = Id.Raw | 0xFFFF;
+
+            // If ephemeral realm, cleanup and destroy
+            if (InnerRealmInfo != null)
+            {
+                InnerRealmInfo.Destroy();
+            }
 
             //log.Debug($"Landblock.Unload({landblockID:X8})");
 
