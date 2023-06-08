@@ -1,3 +1,10 @@
+## [1.1.0-alpha.16](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.15...efd-server-v1.1.0-alpha.16) (2023-06-08)
+
+
+### Bug Fixes
+
+* **efd-server:** 🐛 handle RecallsDisabled properly ([16cd1dc](https://github.com/DarktideLegend/escape-from-dereth/commit/16cd1dcc3dba85c9c8c1e7220bbde226c5b05066))
+
 ## [1.1.0-alpha.15](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.14...efd-server-v1.1.0-alpha.15) (2023-06-08)
 
 
