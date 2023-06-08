@@ -208,7 +208,7 @@ namespace ACE.Entity.Enum.Properties
         [ServerOnly]
         AllowRulesetStamp                = 42002,
 
-        /// EFD
+        /// If IsOverridable is set in your realm, this guarantees your object will bypass the blacklist filter
         [ServerOnly]
         IsCustomContent                     = 42003
     }
