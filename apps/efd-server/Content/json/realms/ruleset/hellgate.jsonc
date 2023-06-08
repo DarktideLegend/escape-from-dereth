@@ -1,0 +1,11 @@
+{
+  "name": "hellgate",
+  "type": "Ruleset",
+    "properties": {
+        "Description": ".",
+        "RulesetStampVendorCategory": 1,
+        "IsFullLootOnDeath": true,
+        "CreatureSpawnHPMultiplier": 10.0,
+        "HasPortals":  true
+    }
+}
