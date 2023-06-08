@@ -1,3 +1,22 @@
+## [1.1.0-alpha.17](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.16...efd-server-v1.1.0-alpha.17) (2023-06-08)
+
+
+### Features
+
+* **efd-server:** ✨ add hellgate instancing management ([6b51bde](https://github.com/DarktideLegend/escape-from-dereth/commit/6b51bdedd4ef2a63dfb2aca3c6a1e922417d1978))
+* **efd-server:** ✨ add hellgate realm ruleset ([f366cb5](https://github.com/DarktideLegend/escape-from-dereth/commit/f366cb58bac2fb6132c60438977f1d7508f40c45))
+* **efd-server:** ✨ support creating EphemeralLandblock with whitelisted list of players ([c6f10dc](https://github.com/DarktideLegend/escape-from-dereth/commit/c6f10dcd6ca30d333ddf8954a43e650a193c22a8))
+
+
+### Documentation
+
+* **efd-server:** 📚️ update IsCustomContent property comments ([b68ab8a](https://github.com/DarktideLegend/escape-from-dereth/commit/b68ab8adac57c9d67628bd8ee006e8f17addccfb))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ update applying TownDistanceMultiplier to Creature attributes ([b26fabd](https://github.com/DarktideLegend/escape-from-dereth/commit/b26fabd7cc76f61c82b7ddb6cbb08a7ee7669b35))
+
 ## [1.1.0-alpha.16](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.15...efd-server-v1.1.0-alpha.16) (2023-06-08)
 
 
