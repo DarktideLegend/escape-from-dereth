@@ -1255,7 +1255,7 @@ namespace ACE.Server.WorldObjects
 
         public bool RecallsDisabled
         {
-            get => RealmRuleset.GetProperty(RealmPropertyBool.HasRecalls);
+            get => !RealmRuleset.GetProperty(RealmPropertyBool.HasRecalls);
         }
 
         public AetheriaBitfield AetheriaFlags
