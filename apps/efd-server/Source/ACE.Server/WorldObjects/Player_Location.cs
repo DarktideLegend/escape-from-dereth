@@ -867,7 +867,7 @@ namespace ACE.Server.WorldObjects
             var iid = homerealm.GetDefaultInstanceID(this);
             var homeRealmExitTo = GetPosition(PositionType.HomeRealmExitTo) ?? Home;
             var pos = new Position(homeRealmExitTo) { Instance = iid };
-            Teleport(pos);
+            WorldManager.ThreadSafeTeleport(this, pos, false);
         }
 
         public void TeleportToHideout()
@@ -879,7 +879,7 @@ namespace ACE.Server.WorldObjects
                 return;
             }
 
-            Teleport(HideoutLocation);
+            WorldManager.ThreadSafeTeleport(this, HideoutLocation, false);
         }
 
         public bool ValidatePlayerRealmPosition(Position newPosition)
