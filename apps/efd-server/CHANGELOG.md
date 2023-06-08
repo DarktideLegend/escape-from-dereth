@@ -1,3 +1,10 @@
+## [1.1.0-alpha.15](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.14...efd-server-v1.1.0-alpha.15) (2023-06-08)
+
+
+### Bug Fixes
+
+* **efd-server:** 🐛 TeleportToHideout must be threadsafe ([dc2ee75](https://github.com/DarktideLegend/escape-from-dereth/commit/dc2ee759a7270c5cc2c0d414509fb7613a800439))
+
 ## [1.1.0-alpha.14](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.13...efd-server-v1.1.0-alpha.14) (2023-06-05)
 
 
