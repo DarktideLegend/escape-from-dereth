@@ -3,6 +3,7 @@ using ACE.Server.Managers;
 using ACE.Server.WorldObjects;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace ACE.Server.Realms
 {
@@ -20,19 +21,27 @@ namespace ACE.Server.Realms
         //public bool IsDuelInstance => RulesetTemplate.
 
         private EphemeralRealm() { }
-        private EphemeralRealm(Player owner, RulesetTemplate template)
+        private EphemeralRealm(Player owner, RulesetTemplate template, ImmutableList<Player> allowedPlayers)
         {
             this.Owner = owner;
             this.RulesetTemplate = template;
+
+            if (allowedPlayers != null)
+            {
+                foreach(Player player in allowedPlayers)
+                {
+                    AllowedPlayers.Add(player);
+                }
+            }
         }
 
-        public static EphemeralRealm Initialize(Player owner, List<Realm> realms)
+        public static EphemeralRealm Initialize(Player owner, List<Realm> realms, ImmutableList<Player> allowedPlayers = null)
         {
             var baseRealm = RealmManager.GetBaseRealm(owner);
-            return Initialize(owner, baseRealm, realms);
+            return Initialize(owner, baseRealm, realms, allowedPlayers);
         }
 
-        private static EphemeralRealm Initialize(Player owner, WorldRealm baseRealm, List<Realm> appliedRealms)
+        private static EphemeralRealm Initialize(Player owner, WorldRealm baseRealm, List<Realm> appliedRealms, ImmutableList<Player> allowedPlayers)
         {
             string key = baseRealm.Realm.Id.ToString();
             RulesetTemplate template = null;
@@ -52,7 +61,14 @@ namespace ACE.Server.Realms
 
             if (template == null)
                 template = prevTemplate;
-            return new EphemeralRealm(owner, template);
+            
+
+            return new EphemeralRealm(owner, template, allowedPlayers);
+        }
+
+        internal void Destroy()
+        {
+            AllowedPlayers.Clear();
         }
     }
 }

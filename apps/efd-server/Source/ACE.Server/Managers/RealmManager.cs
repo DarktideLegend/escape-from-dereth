@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 using ACE.Entity.Enum;
 using ACE.Database.Models.World;
 using System.Threading.Tasks;
+using System.Collections.Immutable;
 
 namespace ACE.Server.Managers
 {
@@ -150,11 +151,11 @@ namespace ACE.Server.Managers
             return GetRealm(player.GetPosition(PositionType.EphemeralRealmExitTo)?.RealmID ?? player.HomeRealm);
         }
 
-        internal static Landblock GetNewEphemeralLandblock(ACE.Entity.LandblockId landblockId, Player owner, List<ACE.Entity.Models.Realm> realmTemplates)
+        internal static Landblock GetNewEphemeralLandblock(ACE.Entity.LandblockId landblockId, Player owner, List<ACE.Entity.Models.Realm> realmTemplates, ImmutableList<Player> allowedPlayers = null)
         {
             EphemeralRealm ephemeralRealm;
             lock (realmsLock)
-                ephemeralRealm = EphemeralRealm.Initialize(owner, realmTemplates);
+                ephemeralRealm = EphemeralRealm.Initialize(owner, realmTemplates, allowedPlayers);
             var iid = LandblockManager.RequestNewInstanceID(true, ephemeralRealm.RulesetTemplate.Realm.Id, landblockId);
             var landblock = LandblockManager.GetLandblock(landblockId, iid, ephemeralRealm, false, false);
 
