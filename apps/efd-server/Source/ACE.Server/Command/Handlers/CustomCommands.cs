@@ -40,44 +40,44 @@ namespace ACE.Server.Command.Handlers
             session.Network.EnqueueSend(new GameMessageSystemChat($"\n{session.Player.CurrentLandblock.RealmRuleset.DebugOutputString()}", ChatMessageType.System));
         }
 
-        [CommandHandler("exitinstance", AccessLevel.Player, CommandHandlerFlag.RequiresWorld, "Leaves the current instance, if the player is currently in one.")]
+        [CommandHandler("exitinstance", AccessLevel.Admin, CommandHandlerFlag.RequiresWorld, "Leaves the current instance, if the player is currently in one.")]
         public static void HandleExitInstance(Session session, params string[] parameters)
         {
             session.Player.ExitInstance();
         }
 
-        [CommandHandler("exitinst", AccessLevel.Player, CommandHandlerFlag.RequiresWorld, "Leaves the current instance, if the player is currently in one.")]
+        [CommandHandler("exitinst", AccessLevel.Admin, CommandHandlerFlag.RequiresWorld, "Leaves the current instance, if the player is currently in one.")]
         public static void HandleExitInst(Session session, params string[] parameters)
         {
             session.Player.ExitInstance();
         }
 
 
-        [CommandHandler("exiti", AccessLevel.Player, CommandHandlerFlag.RequiresWorld, "Leaves the current instance, if the player is currently in one.")]
+        [CommandHandler("exiti", AccessLevel.Admin, CommandHandlerFlag.RequiresWorld, "Leaves the current instance, if the player is currently in one.")]
         public static void HandleExitI(Session session, params string[] parameters)
         {
             session.Player.ExitInstance();
         }
 
-        [CommandHandler("leaveinstance", AccessLevel.Player, CommandHandlerFlag.RequiresWorld, "Leaves the current instance, if the player is currently in one.")]
+        [CommandHandler("leaveinstance", AccessLevel.Admin, CommandHandlerFlag.RequiresWorld, "Leaves the current instance, if the player is currently in one.")]
         public static void HandleLeaveInstance(Session session, params string[] parameters)
         {
             session.Player.ExitInstance();
         }
 
-        [CommandHandler("leaveinst", AccessLevel.Player, CommandHandlerFlag.RequiresWorld, "Leaves the current instance, if the player is currently in one.")]
+        [CommandHandler("leaveinst", AccessLevel.Admin, CommandHandlerFlag.RequiresWorld, "Leaves the current instance, if the player is currently in one.")]
         public static void HandleLeaveInst(Session session, params string[] parameters)
         {
             session.Player.ExitInstance();
         }
 
-        [CommandHandler("leavei", AccessLevel.Player, CommandHandlerFlag.RequiresWorld, "Leaves the current instance, if the player is currently in one.")]
+        [CommandHandler("leavei", AccessLevel.Admin, CommandHandlerFlag.RequiresWorld, "Leaves the current instance, if the player is currently in one.")]
         public static void HandleLeaveI(Session session, params string[] parameters)
         {
             session.Player.ExitInstance();
         }
 
-        [CommandHandler("hideout", AccessLevel.Player, CommandHandlerFlag.RequiresWorld, "Recalls to your hideout.")]
+        [CommandHandler("hideout", AccessLevel.Admin, CommandHandlerFlag.RequiresWorld, "Recalls to your hideout.")]
         public static void HandleHideout(Session session, params string[] parameters)
         {
             if (session?.Player?.HomeRealm == null)
@@ -113,7 +113,7 @@ namespace ACE.Server.Command.Handlers
             player.CreateSentinelBuffPlayers(new Player[] { player }, true);
         }
 
-        [CommandHandler("duels", AccessLevel.Player, CommandHandlerFlag.RequiresWorld, 0,
+        [CommandHandler("duels", AccessLevel.Admin, CommandHandlerFlag.RequiresWorld, 0,
          "Recalls you to the duel staging area.")]
         public static void HandleRecallDuels(Session session, params string[] parameters)
         {
