@@ -808,13 +808,13 @@ namespace ACE.Server.WorldObjects
             EnqueueBroadcast(new GameMessagePublicUpdatePropertyInt(this, PropertyInt.PlayerKillerStatus, (int)PlayerKillerStatus));
 
             if (newLocation.IsEphemeralRealm)
-                Session.Network.EnqueueSend(new GameMessageSystemChat($"Entering ephemeral instance. Type /exiti to leave instantly. Type /zoneinfo to view zone properties.", ChatMessageType.System));
+                Session.Network.EnqueueSend(new GameMessageSystemChat($"Entering ephemeral instance {newLocation.Instance}. Type /zoneinfo to view zone properties.", ChatMessageType.System));
             else if (Location.IsEphemeralRealm && !newLocation.IsEphemeralRealm)
                 Session.Network.EnqueueSend(new GameMessageSystemChat($"Leaving instance and returning to realm {newRealm.Realm.Name}.", ChatMessageType.System));
             else
             {
                 if (prevrealm.Realm.Id == HomeRealm)
-                    Session.Network.EnqueueSend(new GameMessageSystemChat($"You are temporarily leaving your home realm. Some actions may be restricted and your corpse will appear at your hideout if you die.", ChatMessageType.System));
+                    Session.Network.EnqueueSend(new GameMessageSystemChat($"You are temporarily leaving your home realm.", ChatMessageType.System));
                 else if (newRealm.Realm.Id == HomeRealm)
                     Session.Network.EnqueueSend(new GameMessageSystemChat($"Returning to home realm.", ChatMessageType.System));
                 else
