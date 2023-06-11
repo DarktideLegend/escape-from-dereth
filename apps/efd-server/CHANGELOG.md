@@ -1,3 +1,16 @@
+## [1.1.0-alpha.18](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.17...efd-server-v1.1.0-alpha.18) (2023-06-11)
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ allowedPlayers must be mutable list when creating ephermeral realm ([4410cd8](https://github.com/DarktideLegend/escape-from-dereth/commit/4410cd8cd086e6a8be6f1df827e75dc74fbb0e1a))
+* **efd-server:** ♻️ check if player is in hellgate on login ([2adbe5e](https://github.com/DarktideLegend/escape-from-dereth/commit/2adbe5e94cc61689cd60fbe37f86875f9c6d0512))
+* **efd-server:** ♻️ log info when a player enters a hellgate ([19a42b9](https://github.com/DarktideLegend/escape-from-dereth/commit/19a42b9943e30277799617b8b2da9977ac266536))
+* **efd-server:** ♻️ move Hellgate entity to its own file ([26544f9](https://github.com/DarktideLegend/escape-from-dereth/commit/26544f957b773789ffa1efe15ed5002fdc6a1728))
+* **efd-server:** ♻️ remove player from hellgate when exiting instance ([ef31de9](https://github.com/DarktideLegend/escape-from-dereth/commit/ef31de980de8423e2292592d15afe7bb29b5d599))
+* **efd-server:** ♻️ update hellgate cleanup ([025b360](https://github.com/DarktideLegend/escape-from-dereth/commit/025b3600859a8f1ed7fcbbae562a99e138004531))
+* **efd-server:** ♻️ use List instead of ImmutableList for allowed players ([6cd003e](https://github.com/DarktideLegend/escape-from-dereth/commit/6cd003eac3d830e067d20f089860633b905685f6))
+
 ## [1.1.0-alpha.17](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.16...efd-server-v1.1.0-alpha.17) (2023-06-08)
 
 
