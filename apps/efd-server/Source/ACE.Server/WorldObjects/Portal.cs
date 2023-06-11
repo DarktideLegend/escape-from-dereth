@@ -15,6 +15,7 @@ using ACE.Server.Network.GameMessages.Messages;
 using ACE.Server.EscapeFromDereth.Hellgates;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 namespace ACE.Server.WorldObjects
 {
@@ -310,8 +311,14 @@ namespace ACE.Server.WorldObjects
             if (hellgateLocation != null)
             {
                 Destroy();
-                foreach (var member in player.Fellowship.GetFellowshipMembers().Values)
-                    WorldManager.ThreadSafeTeleport(member, hellgateLocation, false);
+                foreach (var member in player.Fellowship.GetFellowshipMembers().Values.ToList())
+                {
+
+                    WorldManager.ThreadSafeTeleport(member, hellgateLocation, false, new ActionEventDelegate(() =>
+                    {
+                        log.Info($"Player {member.Name} has entered hellgate {hellgateLocation.Instance}");
+                    }));
+                }
             }
 
             if (HellgateManager.HasReachedCapacity)
