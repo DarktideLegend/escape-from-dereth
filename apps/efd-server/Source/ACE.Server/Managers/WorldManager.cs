@@ -26,6 +26,7 @@ using Character = ACE.Database.Models.Shard.Character;
 using Position = ACE.Entity.Position;
 using ACE.Server.Realms;
 using ACE.Server.Factories;
+using ACE.Server.EscapeFromDereth.Hellgates;
 
 namespace ACE.Server.Managers
 {
@@ -241,7 +242,10 @@ namespace ACE.Server.Managers
                 else
                 {
                     var pos = new Position(session.Player.Location);
-                    pos.SetToDefaultRealmInstance(homerealm.Realm.Id);
+                    if (HellgateManager.PositionIsHellgate(pos)) // if logging into hellgate, return to lifestone               
+                        pos = new Position(session.Player.Sanctuary ?? session.Player.Instantiation);
+                    else
+                        pos.SetToDefaultRealmInstance(homerealm.Realm.Id);
                     session.Network.EnqueueSend(new GameMessageSystemChat($"You have been transported back to your home realm.", ChatMessageType.System));
                     log.Info($"WorldManager.DoPlayerEnterWorld: player {session.Player.Name} doesn't have permission to be in realm {session.Player.Location.RealmID}, relocating to realm {homerealm.Realm.Id}.");
                     session.Player.Location = pos;
