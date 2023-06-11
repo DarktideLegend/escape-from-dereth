@@ -18,6 +18,7 @@ using ACE.Server.Network.GameMessages.Messages;
 using ACE.Server.Managers;
 using ACE.Server.Realms;
 using ACE.Server.EscapeFromDereth.Towns;
+using ACE.Server.EscapeFromDereth.Hellgates;
 
 namespace ACE.Server.WorldObjects
 {
@@ -950,6 +951,9 @@ namespace ACE.Server.WorldObjects
                 loc = GetPosition(PositionType.Sanctuary) ?? GetPosition(PositionType.Home);
                 loc.Instance = Position.InstanceIDFromVars(HomeRealm, 0, false);
             }
+            if (CurrentLandblock != null && IsInHellgate)
+                HellgateManager.RemovePlayerFromHellgate(this);
+
             WorldManager.ThreadSafeTeleport(this, loc, true, new ActionEventDelegate(() =>
             {
                 this.SetPosition(PositionType.EphemeralRealmExitTo, null);
