@@ -29,6 +29,7 @@ using ACE.Server.WorldObjects.Managers;
 using Character = ACE.Database.Models.Shard.Character;
 using MotionTable = ACE.DatLoader.FileTypes.MotionTable;
 using ACE.Server.Realms;
+using ACE.Server.EscapeFromDereth.Hellgates;
 
 namespace ACE.Server.WorldObjects
 {
@@ -45,6 +46,14 @@ namespace ACE.Server.WorldObjects
         public ContractManager ContractManager;
 
         public bool LastContact = true;
+
+        public bool IsInHellgate
+        {
+            get
+            {
+                return HellgateManager.PositionIsHellgate(Location);
+            }
+        }
 
         public bool IsJumping
         {
@@ -501,6 +510,9 @@ namespace ACE.Server.WorldObjects
         /// </summary>
         public bool LogOut(bool clientSessionTerminatedAbruptly = false, bool forceImmediate = false)
         {
+            if (IsInHellgate)
+                HellgateManager.RemovePlayerFromHellgate(this);
+
             if (PKLogoutActive && !forceImmediate)
             {
                 //Session.Network.EnqueueSend(new GameEventWeenieError(Session, WeenieError.YouHaveBeenInPKBattleTooRecently));
