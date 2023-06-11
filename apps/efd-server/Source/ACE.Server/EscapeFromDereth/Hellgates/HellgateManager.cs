@@ -1,9 +1,9 @@
 using ACE.Common;
-using ACE.DatLoader.Entity.AnimationHooks;
 using ACE.Entity;
 using ACE.Entity.Models;
 using ACE.Server.Entity;
 using ACE.Server.EscapeFromDereth.Common;
+using ACE.Server.EscapeFromDereth.Hellgates.Entity;
 using ACE.Server.Managers;
 using ACE.Server.WorldObjects;
 using log4net;
@@ -29,10 +29,12 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
         private static readonly Dictionary<uint, Hellgate> ActiveHellgates = new Dictionary<uint, Hellgate>();
 
         // This should be defined in PropertyManager
-        private static int MaxActiveHellgates = 1;
+        private static int MaxActiveHellgates = 5;
 
         // This should be defined in PropertyManager
-        private static TimeSpan HellgateTimer = TimeSpan.FromMinutes(2); 
+        private static TimeSpan HellgateTimer = TimeSpan.FromMinutes(5);
+
+        private static bool IsCleaning = false;
 
         public static double HellgateExpiration { get; private set; } = Time.GetUnixTime() + HellgateTimer.TotalSeconds;
 
@@ -52,22 +54,10 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             }
         }
 
-        public class Hellgate
+        public static bool PositionIsHellgate(Position pos)
         {
-            public readonly ImmutableList<Player> Players;
-            public readonly LandblockId Landblock;
-            public readonly uint Instance;
-            public Hellgate(LandblockId landblock, ImmutableList<Player> players, uint instance)
-            {
-                Players = players;
-                Landblock = landblock;
-                Instance = instance;
-            }
-
-            public void Destroy()
-            {
-                Players.Clear();
-            }
+            if (pos == null) return false;
+            return pos.IsEphemeralRealm && ActiveHellgates[pos.Instance] != null;
         }
 
         public static void Tick(double currentUnixTime)
@@ -78,24 +68,35 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
                 HellgateExpiration = currentUnixTime + HellgateTimer.TotalSeconds;
                 return;
             }
-
         }
+
+        public static void RemovePlayerFromHellgate(Player player)
+        {
+            var hellgate = ActiveHellgates[player.Location.Instance];
+
+            if (hellgate != null && hellgate.Players.Contains(player))
+            {
+                hellgate.RemovePlayer(player);
+                log.Info($"Removed {player.Name} from hellgate {hellgate.Instance}");
+            }
+        }
+
 
         private static void Cleanup()
         {
-            foreach(var hellgate in ActiveHellgates.Values)
+            if (IsCleaning)
+                return;
+
+            IsCleaning = true;
+            log.Info($"Cleaning up hellgates");
+            foreach (var hellgate in ActiveHellgates.Values.ToList())
             {
-                foreach(var player in hellgate.Players)
-                {
-                    if (player != null)
-                    {
-                        player.ExitInstance();
-                    }
-                }
+                log.Info($"Destroying hellgate {hellgate.Instance}");
                 hellgate.Destroy();
             }
 
             ActiveHellgates.Clear();
+            IsCleaning = false;
         }
 
         public static Position CreateHellGate(Player leader, List<Realm> appliedRulesets)
@@ -104,13 +105,15 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             if (!CreateHellGateValidator(leader))
                 return null;
 
-            var allowedPlayers = leader.Fellowship.GetFellowshipMembers().Values.ToImmutableList();
+            var allowedPlayers = leader.Fellowship.GetFellowshipMembers().Values.ToList();
             var ephemeralRealm = RealmManager.GetNewEphemeralLandblock(CurrentHellgatePosition.LandblockId, leader, appliedRulesets, allowedPlayers);
             var instance = ephemeralRealm.Instance;
             var hellgate = new Hellgate(CurrentHellgatePosition.LandblockId, allowedPlayers, instance);
             var targetPosition = CurrentHellgatePosition;
             targetPosition.Instance = instance;
             ActiveHellgates.Add(instance, hellgate);
+
+            log.Info($"Creating Hellgate for {leader.Name} - {instance}");
             return targetPosition;
         }
 
@@ -118,7 +121,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
         {
             if (HasReachedCapacity)
             {
-                leader.SendMessage("Hellgates are currently at max capacity");
+                leader.SendMessage("Hellgates have reached max capacity. Try again later.");
                 return false;
             }
 
@@ -149,7 +152,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             if (fellowship.FellowshipMembers.Count == 1)
                 return true;
 
-            foreach(var member in fellowship.GetFellowshipMembers().Values)
+            foreach (var member in fellowship.GetFellowshipMembers().Values.ToList())
             {
                 if (member == leader)
                     continue;
