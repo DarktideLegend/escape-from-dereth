@@ -21,7 +21,7 @@ namespace ACE.Server.Realms
         //public bool IsDuelInstance => RulesetTemplate.
 
         private EphemeralRealm() { }
-        private EphemeralRealm(Player owner, RulesetTemplate template, ImmutableList<Player> allowedPlayers)
+        private EphemeralRealm(Player owner, RulesetTemplate template, List<Player> allowedPlayers)
         {
             this.Owner = owner;
             this.RulesetTemplate = template;
@@ -35,13 +35,13 @@ namespace ACE.Server.Realms
             }
         }
 
-        public static EphemeralRealm Initialize(Player owner, List<Realm> realms, ImmutableList<Player> allowedPlayers = null)
+        public static EphemeralRealm Initialize(Player owner, List<Realm> realms, List<Player> allowedPlayers = null)
         {
             var baseRealm = RealmManager.GetBaseRealm(owner);
             return Initialize(owner, baseRealm, realms, allowedPlayers);
         }
 
-        private static EphemeralRealm Initialize(Player owner, WorldRealm baseRealm, List<Realm> appliedRealms, ImmutableList<Player> allowedPlayers)
+        private static EphemeralRealm Initialize(Player owner, WorldRealm baseRealm, List<Realm> appliedRealms, List<Player> allowedPlayers)
         {
             string key = baseRealm.Realm.Id.ToString();
             RulesetTemplate template = null;
