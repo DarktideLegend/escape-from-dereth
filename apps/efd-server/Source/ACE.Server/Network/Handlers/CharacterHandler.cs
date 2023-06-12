@@ -147,7 +147,9 @@ namespace ACE.Server.Network.Handlers
             }
 
             PlayerFactoryEx.LevelUpPlayer(player);
-            PlayerFactoryEx.SpendAllXp(player, false);
+            PlayerFactoryEx.GiveMaxAugs(player);
+            PlayerFactoryEx.SpecializeAllSkills(player);
+            PlayerFactoryEx.GiveStarterAttributes(player);
 
             DatabaseManager.Shard.IsCharacterNameAvailable(characterCreateInfo.Name, isAvailable =>
             {

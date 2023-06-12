@@ -146,7 +146,7 @@ namespace ACE.Server.Factories
 
         public static void TeachAugmentations(Player player)
         {
-            foreach(var augtype in RealmConstants.DuelAugmentations)
+            foreach (var augtype in RealmConstants.DuelAugmentations)
             {
                 AugmentationDevice.DoAugmentation(player, augtype, null, false, false);
                 player.SaveBiotaToDatabase();
@@ -191,52 +191,53 @@ namespace ACE.Server.Factories
             actionChain.EnqueueChain();
         }
 
+        public static void SpecializeAllSkills(Player player)
+        {
+
+            foreach (var s in player.Skills)
+            {
+                player.TrainSkill(s.Key, 0);
+                player.SpecializeSkill(s.Key, 0);
+                var playerSkill = player.Skills[s.Key];
+                playerSkill.Ranks = 226;
+            }
+            player.SaveBiotaToDatabase();
+        }
+
+
+        public static void GiveMaxAugs(Player player)
+        {
+            foreach (var kvp in AugmentationDevice.AugProps)
+            {
+                var type = kvp.Key;
+                var prop = kvp.Value;
+                var max = AugmentationDevice.MaxAugs[type];
+
+                player.SetProperty(prop, max);
+            }
+
+            player.SaveBiotaToDatabase();
+        }
+
+        public static void GiveStarterAttributes(Player player)
+        {
+            foreach (var a in player.Attributes)
+            {
+                var playerAttr = player.Attributes[a.Key];
+                playerAttr.StartingValue = 100;
+
+            }
+
+            player.SaveBiotaToDatabase();
+
+        }
+
         public static void LevelUpPlayer(Player player)
         {
-            player.AvailableExperience += 191226310247;
-            player.TotalExperience += 191226310247;
-            player.Level = 275;
-            player.AvailableSkillCredits += 46;
-            player.TotalSkillCredits += 46;
-
-            // Playability Augs
-            if (player.AugmentationExtraPackSlot == 0)
-            {
-                player.AugmentationExtraPackSlot = 1;
-                player.AvailableExperience -= 4000000000;
-            }
-
-            while (player.AugmentationIncreasedCarryingCapacity < 5)
-            {
-                player.AugmentationIncreasedCarryingCapacity++;
-                player.AvailableExperience -= 1000000000;
-            }
-
-            while (player.AugmentationLessDeathItemLoss < 3)
-            {
-                player.AugmentationLessDeathItemLoss++;
-                player.AvailableExperience -= 2000000000;
-            }
-
-            if (player.AugmentationSpellsRemainPastDeath == 0)
-            {
-                player.AugmentationSpellsRemainPastDeath = 1;
-                player.AvailableExperience -= 4000000000;
-            }
-
-            while (player.AugmentationIncreasedSpellDuration < 5)
-            {
-                player.AugmentationIncreasedSpellDuration++;
-                player.AvailableExperience -= 1000000000;
-            }
-
-            if (player.AugmentationJackOfAllTrades == 0)
-            {
-                player.AugmentationJackOfAllTrades = 1;
-                player.AvailableExperience -= 4000000000;
-            }
-
-            // todo: Optionally add other augs
+            player.AvailableExperience += 55919623;
+            player.TotalExperience += 55919623;
+            player.Level = 50;
+            player.SaveBiotaToDatabase();
         }
 
         public static void LoadDefaultSpellBars(Player player)
@@ -245,9 +246,9 @@ namespace ACE.Server.Factories
             uint barNumber = 0;
             uint indexInBar = 0;
             player.Character.AddSpellToBar(barNumber, indexInBar++, 2645, player.CharacterDatabaseLock); // Portal Recall
-            player.Character.AddSpellToBar(barNumber, indexInBar++,   48, player.CharacterDatabaseLock); // Primary Portal Recall
-            player.Character.AddSpellToBar(barNumber, indexInBar++,  157, player.CharacterDatabaseLock); // Summon Primary Portal I
-            player.Character.AddSpellToBar(barNumber, indexInBar++,   47, player.CharacterDatabaseLock); // Primary Portal Tie
+            player.Character.AddSpellToBar(barNumber, indexInBar++, 48, player.CharacterDatabaseLock); // Primary Portal Recall
+            player.Character.AddSpellToBar(barNumber, indexInBar++, 157, player.CharacterDatabaseLock); // Summon Primary Portal I
+            player.Character.AddSpellToBar(barNumber, indexInBar++, 47, player.CharacterDatabaseLock); // Primary Portal Tie
             player.Character.AddSpellToBar(barNumber, indexInBar++, 2647, player.CharacterDatabaseLock); // Secondary Portal Recall
             player.Character.AddSpellToBar(barNumber, indexInBar++, 2648, player.CharacterDatabaseLock); // Summon Secondary Portal I
             player.Character.AddSpellToBar(barNumber, indexInBar++, 2646, player.CharacterDatabaseLock); // Secondary Portal Tie
@@ -283,7 +284,7 @@ namespace ACE.Server.Factories
             // Buffs - Self
             barNumber++;
             indexInBar = 0;
-            player.Character.AddSpellToBar(barNumber, indexInBar++,  562, player.CharacterDatabaseLock); // "Creature Enchantment Mastery Self VI","Increases the caster's Creature Enchantment skill by 35 points."
+            player.Character.AddSpellToBar(barNumber, indexInBar++, 562, player.CharacterDatabaseLock); // "Creature Enchantment Mastery Self VI","Increases the caster's Creature Enchantment skill by 35 points."
             player.Character.AddSpellToBar(barNumber, indexInBar++, 1426, player.CharacterDatabaseLock); // "Focus Self VI","Increases the caster's Focus by 35 points."
             player.Character.AddSpellToBar(barNumber, indexInBar++, 1450, player.CharacterDatabaseLock); // "Willpower Self VI","Increases the caster's Self by 35 points."
 
