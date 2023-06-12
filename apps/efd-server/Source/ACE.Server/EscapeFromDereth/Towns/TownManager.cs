@@ -106,14 +106,9 @@ namespace ACE.Server.EscapeFromDereth.Towns
         public static float GetTownDistanceMultiplier(AppliedRuleset ruleset, Position location)
         {
             var town = GetClosestTownFromPosition(location);
-            var distance = Math.Sqrt(town.position.DistanceTo(location));
-
-            var distanceMultiplier = 1f;
+            var distance = town.position.DistanceTo(location);
             var townDistanceMultiplier = ruleset.GetProperty(RealmPropertyFloat.TownDistanceMultiplier);
-            if (townDistanceMultiplier < 1)
-                distanceMultiplier = (float)(distance * townDistanceMultiplier);
-
-            return distanceMultiplier;
+            return (float)(distance * townDistanceMultiplier);
         }
     }
 }
