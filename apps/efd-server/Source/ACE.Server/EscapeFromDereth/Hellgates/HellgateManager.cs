@@ -81,7 +81,6 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             }
         }
 
-
         private static void Cleanup()
         {
             if (IsCleaning)
@@ -101,7 +100,6 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
 
         public static Position CreateHellGate(Player leader, List<Realm> appliedRulesets)
         {
-
             if (!CreateHellGateValidator(leader))
                 return null;
 
@@ -146,7 +144,6 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
 
             return true;
         }
-
         private static bool FellowshipValidator(Fellowship fellowship, Player leader)
         {
             if (fellowship.FellowshipMembers.Count == 1)
