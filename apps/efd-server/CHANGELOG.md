@@ -1,3 +1,19 @@
+## [1.1.0-alpha.19](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.18...efd-server-v1.1.0-alpha.19) (2023-06-12)
+
+
+### Features
+
+* **efd-server:** ✨ add forgotten monsters ([0cf33a5](https://github.com/DarktideLegend/escape-from-dereth/commit/0cf33a57d3733afd374e9b3b33bc174d51e57dcc))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ change access level for custom realm commands ([34460c6](https://github.com/DarktideLegend/escape-from-dereth/commit/34460c6c4aec5a100c9dc0910d68484a8561a4c3))
+* **efd-server:** ♻️ remove damage scale based on distance multiplier ([3deec82](https://github.com/DarktideLegend/escape-from-dereth/commit/3deec82c94d35eca523bced1e621b09292eb5bc7))
+* **efd-server:** ♻️ simplify distance multiplier ([f80ccb6](https://github.com/DarktideLegend/escape-from-dereth/commit/f80ccb688a39d1c351b7f04d389c75c4e7e48880))
+* **efd-server:** ♻️ update game message when transitioning between realms ([f4dfb32](https://github.com/DarktideLegend/escape-from-dereth/commit/f4dfb32287d6e536b51f4278c29a428f90d5c04d))
+* **efd-server:** ♻️ update tier of mobs that spawn in hellgate based on distance ([25f2fcf](https://github.com/DarktideLegend/escape-from-dereth/commit/25f2fcfee92757dee07e2227d651955ff44b1598))
+
 ## [1.1.0-alpha.18](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.17...efd-server-v1.1.0-alpha.18) (2023-06-11)
 
 
