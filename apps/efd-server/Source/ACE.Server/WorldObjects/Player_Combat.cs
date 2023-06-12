@@ -476,13 +476,7 @@ namespace ACE.Server.WorldObjects
 
             if (source is Creature creatureAttacker)
             {
-                // temporarily scale damage taken from mobs based on town distance
-                var townDistanceMultiplier = TownManager.GetTownDistanceMultiplier(creatureAttacker.RealmRuleset, creatureAttacker.Location);
-                var damageMultiplier = !creatureAttacker.CurrentLandblock.IsDungeon && creatureAttacker.IsMonster ?
-                    townDistanceMultiplier : 0f;
-
                 SetCurrentAttacker(creatureAttacker);
-                _amount += damageMultiplier; 
             }
 
             // check lifestone protection
