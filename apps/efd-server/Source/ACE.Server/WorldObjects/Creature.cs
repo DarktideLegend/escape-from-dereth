@@ -70,19 +70,13 @@ namespace ACE.Server.WorldObjects
 
         private void RealmMutate(AppliedRuleset ruleset, Position location = null)
         {
-
-            var townDistanceMultiplier = 1f;
-
-            if (location != null && !location.IsEphemeralRealm)
-                townDistanceMultiplier *= TownManager.GetTownDistanceMultiplier(ruleset, location);
-
             if (WeenieType == WeenieType.Creature)
             {
                 if (Biota?.PropertiesAttribute2nd?.ContainsKey(PropertyAttribute2nd.MaxHealth) == true)
                 {
                     Biota.PropertiesAttribute2nd[PropertyAttribute2nd.MaxHealth].InitLevel =
                         (uint)((double)Biota.PropertiesAttribute2nd[PropertyAttribute2nd.MaxHealth].InitLevel *
-                        ruleset.GetProperty(RealmPropertyFloat.CreatureSpawnHPMultiplier) * townDistanceMultiplier);
+                        ruleset.GetProperty(RealmPropertyFloat.CreatureSpawnHPMultiplier));
                 }
 
                 if (Biota?.PropertiesAttribute?.ContainsKey(PropertyAttribute.Strength) == true)
@@ -91,7 +85,7 @@ namespace ACE.Server.WorldObjects
                         ClampStat(
                             (int)Biota.PropertiesAttribute[PropertyAttribute.Strength].InitLevel,
                             ruleset.GetProperty(RealmPropertyInt.CreatureStrengthAdded),
-                            ruleset.GetProperty(RealmPropertyFloat.CreatureStrengthMultiplier) * townDistanceMultiplier
+                            ruleset.GetProperty(RealmPropertyFloat.CreatureStrengthMultiplier)
                         ); 
                 }
 
@@ -101,7 +95,7 @@ namespace ACE.Server.WorldObjects
                     ClampStat(
                         (int)Biota.PropertiesAttribute[PropertyAttribute.Endurance].InitLevel,
                         ruleset.GetProperty(RealmPropertyInt.CreatureEnduranceAdded),
-                        ruleset.GetProperty(RealmPropertyFloat.CreatureEnduranceMultiplier) * townDistanceMultiplier
+                        ruleset.GetProperty(RealmPropertyFloat.CreatureEnduranceMultiplier)
                     );
                 }
 
