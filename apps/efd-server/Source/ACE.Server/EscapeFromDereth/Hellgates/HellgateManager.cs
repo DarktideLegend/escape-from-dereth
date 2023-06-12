@@ -54,6 +54,11 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             }
         }
 
+        public static Hellgate GetHellgate(uint instance)
+        {
+            return ActiveHellgates[instance];
+        }
+
         public static bool PositionIsHellgate(Position pos)
         {
             if (pos == null) return false;
@@ -106,7 +111,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             var allowedPlayers = leader.Fellowship.GetFellowshipMembers().Values.ToList();
             var ephemeralRealm = RealmManager.GetNewEphemeralLandblock(CurrentHellgatePosition.LandblockId, leader, appliedRulesets, allowedPlayers);
             var instance = ephemeralRealm.Instance;
-            var hellgate = new Hellgate(CurrentHellgatePosition.LandblockId, allowedPlayers, instance);
+            var hellgate = new Hellgate(CurrentHellgatePosition.LandblockId, allowedPlayers, new Position(leader.Location), instance);
             var targetPosition = CurrentHellgatePosition;
             targetPosition.Instance = instance;
             ActiveHellgates.Add(instance, hellgate);

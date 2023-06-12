@@ -166,13 +166,28 @@ namespace ACE.Server.Factories
         {
             var hasMonsters = ruleset.GetProperty(RealmPropertyBool.HasMonsters);
             var isVendorNpcOnly = ruleset.GetProperty(RealmPropertyBool.IsVendorNpcOnly);
+            var rollForHellgate = true;
+
+            if (HellgateManager.PositionIsHellgate(location))
+            {
+                var hellgate = HellgateManager.GetHellgate(location.Instance);
+                if (hellgate != null)
+                {
+                    location = new Position(hellgate.LeaderPosition);
+                    rollForHellgate = false;
+                }
+            }
+
             var creature = new Creature(weenie, guid, ruleset, location);
 
             if (shouldOverride)
                 return creature;
 
             if (creature.IsMonster && hasMonsters)
-                return CreateMonsterOrHellgateObject(creature, ruleset, location);
+            {
+                creature.Destroy();
+                return CreateMonsterOrHellgate(ruleset, location, rollForHellgate);
+            }
 
             if (!isVendorNpcOnly)
                 return creature;
@@ -183,11 +198,11 @@ namespace ACE.Server.Factories
             }
         }
 
-        private static WorldObject CreateMonsterOrHellgateObject(Creature creature, AppliedRuleset ruleset, Position location)
+        private static WorldObject CreateMonsterOrHellgate(AppliedRuleset ruleset, Position location, bool rollForHellgate)
         {
+            var hellgateRoll = ThreadSafeRandom.Next(1, 100);
             // ideally we spawn a boss mob that spawns a portal on death, for now we will randomly spawn a hellgate portal instead of a creature 
-            var rollForHellgate = ThreadSafeRandom.Next(1, 100);
-            if (rollForHellgate < 20 && !location.IsEphemeralRealm) // 20% chance of spawning a hellgate instead of a monster
+            if (rollForHellgate && hellgateRoll < 20) // 20% chance of spawning a hellgate instead of a monster
             {
                 var hellgatePortal = CreateNewWorldObject(600003, ruleset, location); // create Hellgate
                 hellgatePortal.Lifespan = (int)(HellgateManager.TimeRemaining);
