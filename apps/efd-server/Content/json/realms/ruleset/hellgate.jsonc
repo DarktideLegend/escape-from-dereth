@@ -6,6 +6,7 @@
         "RulesetStampVendorCategory": 1,
         "IsFullLootOnDeath": true,
         "CreatureSpawnHPMultiplier": 10.0,
+        "ExperienceMultiplierAll": 0.75,
         "HasPortals":  true
     }
 }
