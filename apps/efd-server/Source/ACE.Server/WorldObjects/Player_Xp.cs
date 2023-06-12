@@ -8,6 +8,7 @@ using ACE.Entity.Enum.Properties;
 using ACE.Server.Entity.Actions;
 using ACE.Server.Managers;
 using ACE.Server.Network.GameMessages.Messages;
+using ACE.Server.Realms;
 
 namespace ACE.Server.WorldObjects
 {
@@ -23,8 +24,10 @@ namespace ACE.Server.WorldObjects
         {
             //Console.WriteLine($"{Name}.EarnXP({amount}, {sharable}, {fixedAmount})");
 
+
             // apply xp modifier
-            var modifier = PropertyManager.GetDouble("xp_modifier").Item;
+            //var modifier = PropertyManager.GetDouble("xp_modifier").Item;
+            var modifier = RealmRuleset?.GetProperty(RealmPropertyFloat.ExperienceMultiplierAll) ?? PropertyManager.GetDouble("xp_modifier").Item;
 
             // should this be passed upstream to fellowship / allegiance?
             var enchantment = GetXPAndLuminanceModifier(xpType);
