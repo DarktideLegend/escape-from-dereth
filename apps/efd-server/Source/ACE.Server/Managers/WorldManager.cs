@@ -297,12 +297,10 @@ namespace ACE.Server.Managers
                     session.Network.EnqueueSend(new GameEventPopupString(session, AppendLines(popup_welcome, popup_motd)));
                 else
                 {
-                    PlayerFactoryEx.TeachAugmentations(player);
                     PlayerFactoryEx.LearnAllNonAdminSpells(player);
                     PlayerFactoryEx.DisableSpellComponentRequirement(player);
                     PlayerFactoryEx.LoadDefaultSpellBars(player);
                     PlayerFactoryEx.LoadSkillSpecificDefaultSpellBar(player);
-                    PlayerFactoryEx.GiveDuelGear(player);
                     session.Network.EnqueueSend(new GameEventPopupString(session, AppendLines(popup_header, popup_motd, popup_welcome)));
                 }
             }
