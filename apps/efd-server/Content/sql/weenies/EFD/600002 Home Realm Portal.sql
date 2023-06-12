@@ -6,7 +6,6 @@ VALUES (600002, 'ace600002-homerealmportal', 7, '2023-06-04 22:22:28') /* Portal
 INSERT INTO `weenie_properties_int` (`object_Id`, `type`, `value`)
 VALUES (600002,   1,      65536) /* ItemType - Portal */
      , (600002,  16,         32) /* ItemUseable - Remote */
-     , (600002,  86,         80) /* MinLevel */
      , (600002,  93,       3084) /* PhysicsState - Ethereal, ReportCollisions, Gravity, LightingOn */
      , (600002, 111,          1) /* PortalBitmask - Unrestricted */
      , (600002, 133,          4) /* ShowableOnRadar - ShowAlways */;
