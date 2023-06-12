@@ -17,6 +17,7 @@ using ACE.Server.Realms;
 using ACE.Entity.Enum.Properties;
 using ACE.Common;
 using ACE.Server.EscapeFromDereth.Hellgates;
+using ACE.Server.EscapeFromDereth.Towns;
 
 namespace ACE.Server.Factories
 {
@@ -188,16 +189,23 @@ namespace ACE.Server.Factories
             var rollForHellgate = ThreadSafeRandom.Next(1, 100);
             if (rollForHellgate < 20 && !location.IsEphemeralRealm) // 20% chance of spawning a hellgate instead of a monster
             {
-                creature.Destroy();
                 var hellgatePortal = CreateNewWorldObject(600003, ruleset, location); // create Hellgate
                 hellgatePortal.Lifespan = (int)(HellgateManager.TimeRemaining);
                 return hellgatePortal;
             }
-            if (creature.Level > 50)
-                return creature;
 
-            creature.Destroy();
-            return CreateNewWorldObject(601001, ruleset, location); // create a Forgotten Undead if this is a weak spawn
+            var distanceMultiplier = TownManager.GetTownDistanceMultiplier(ruleset, location);
+
+            if (distanceMultiplier <= 100)
+                return CreateNewWorldObject(601001, ruleset, location); // create a Forgotten Revenant if this is short distance
+
+            if (distanceMultiplier <= 200)
+                return CreateNewWorldObject(601002, ruleset, location); // create a Forgotten Leech if this is a medium distance
+
+            if (distanceMultiplier <= 300)
+                return CreateNewWorldObject(601003, ruleset, location); // create a Forgotten Lord if this is a long distance
+
+            return CreateNewWorldObject(601004, ruleset, location); // create a Forgotten Champion if this is an extreme distance
         }
 
         /// <summary>
