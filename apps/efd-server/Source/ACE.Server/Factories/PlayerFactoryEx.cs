@@ -198,8 +198,6 @@ namespace ACE.Server.Factories
             {
                 player.TrainSkill(s.Key, 0);
                 player.SpecializeSkill(s.Key, 0);
-                var playerSkill = player.Skills[s.Key];
-                playerSkill.Ranks = 226;
             }
             player.SaveBiotaToDatabase();
         }
