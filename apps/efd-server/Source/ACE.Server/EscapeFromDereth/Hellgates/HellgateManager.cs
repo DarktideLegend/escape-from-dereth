@@ -62,7 +62,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
         public static bool PositionIsHellgate(Position pos)
         {
             if (pos == null) return false;
-            return pos.IsEphemeralRealm && ActiveHellgates[pos.Instance] != null;
+            return pos.IsEphemeralRealm && ActiveHellgates.Keys.Contains(pos.Instance);
         }
 
         public static void Tick(double currentUnixTime)
