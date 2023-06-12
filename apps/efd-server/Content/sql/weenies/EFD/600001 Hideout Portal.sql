@@ -6,7 +6,6 @@ VALUES (600001, 'ace600001-hideoutportal', 7, '2023-06-04 22:22:28') /* Portal *
 INSERT INTO `weenie_properties_int` (`object_Id`, `type`, `value`)
 VALUES (600001,   1,      65536) /* ItemType - Portal */
      , (600001,  16,         32) /* ItemUseable - Remote */
-     , (600001,  86,         80) /* MinLevel */
      , (600001,  93,       3084) /* PhysicsState - Ethereal, ReportCollisions, Gravity, LightingOn */
      , (600001, 111,          1) /* PortalBitmask - Unrestricted */
      , (600001, 133,          4) /* ShowableOnRadar - ShowAlways */;

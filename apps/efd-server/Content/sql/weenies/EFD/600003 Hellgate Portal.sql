@@ -6,7 +6,6 @@ VALUES (600003, 'ace600003-hellgateportal', 7, '2023-06-05 22:51:17') /* Portal 
 INSERT INTO `weenie_properties_int` (`object_Id`, `type`, `value`)
 VALUES (600003,   1,      65536) /* ItemType - Portal */
      , (600003,  16,         32) /* ItemUseable - Remote */
-     , (600003,  86,         80) /* MinLevel */
      , (600003,  93,       3084) /* PhysicsState - Ethereal, ReportCollisions, Gravity, LightingOn */
      , (600003, 111,         56) /* PortalBitmask - NoNPK, NoSummon, NoRecall */
      , (600003, 133,          4) /* ShowableOnRadar - ShowAlways */;
