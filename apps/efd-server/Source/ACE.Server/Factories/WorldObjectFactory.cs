@@ -212,15 +212,18 @@ namespace ACE.Server.Factories
             var distanceMultiplier = TownManager.GetTownDistanceMultiplier(ruleset, location);
 
             if (distanceMultiplier <= 100)
-                return CreateNewWorldObject(601001, ruleset, location); // create a Forgotten Revenant if this is short distance
+                return CreateNewWorldObject(601001, ruleset, location); // create a Forgotten Leech if this is short distance
 
             if (distanceMultiplier <= 200)
-                return CreateNewWorldObject(601002, ruleset, location); // create a Forgotten Leech if this is a medium distance
+                return CreateNewWorldObject(601002, ruleset, location); // create a Forgotten Revenant if this is a medium distance
 
             if (distanceMultiplier <= 300)
-                return CreateNewWorldObject(601003, ruleset, location); // create a Forgotten Lord if this is a long distance
+                return CreateNewWorldObject(601003, ruleset, location); // create a Forgotten Demilich if this is a long distance
 
-            return CreateNewWorldObject(601004, ruleset, location); // create a Forgotten Champion if this is an extreme distance
+            if (distanceMultiplier <= 400)
+                return CreateNewWorldObject(601004, ruleset, location); // create a Forgotten Olthoi Slayer if this is a long distance
+
+            return CreateNewWorldObject(601005, ruleset, location); // create a Forgotten Champion if this is an extreme distance
         }
 
         /// <summary>
