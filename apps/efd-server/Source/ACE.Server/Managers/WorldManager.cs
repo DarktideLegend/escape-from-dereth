@@ -27,6 +27,7 @@ using Position = ACE.Entity.Position;
 using ACE.Server.Realms;
 using ACE.Server.Factories;
 using ACE.Server.EscapeFromDereth.Hellgates;
+using ACE.Server.Command.Handlers;
 
 namespace ACE.Server.Managers
 {
@@ -301,6 +302,7 @@ namespace ACE.Server.Managers
                     PlayerFactoryEx.DisableSpellComponentRequirement(player);
                     PlayerFactoryEx.LoadDefaultSpellBars(player);
                     PlayerFactoryEx.LoadSkillSpecificDefaultSpellBar(player);
+                    DeveloperCommands.HandleCurrency(session);
                     session.Network.EnqueueSend(new GameEventPopupString(session, AppendLines(popup_header, popup_motd, popup_welcome)));
                 }
             }
