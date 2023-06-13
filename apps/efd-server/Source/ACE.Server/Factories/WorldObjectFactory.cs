@@ -66,7 +66,7 @@ namespace ACE.Server.Factories
                 case WeenieType.PKModifier:
                     return new PKModifier(weenie, guid);
                 case WeenieType.Cow:
-                    return new Cow(weenie, guid, ruleset);
+                    return CreateCreatureObject(weenie, guid, ruleset, location, shouldOverride);
                 case WeenieType.Creature:
                     return CreateCreatureObject(weenie, guid, ruleset, location, shouldOverride);
                 case WeenieType.Container:
