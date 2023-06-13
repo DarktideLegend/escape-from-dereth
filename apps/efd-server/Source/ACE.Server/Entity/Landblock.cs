@@ -880,10 +880,10 @@ namespace ACE.Server.Entity
 
             creature.DeathTreasureType = 464;
 
-            if (distanceMultiplier >= 800)
+            if (distanceMultiplier >= 300)
                 creature.DeathTreasureType = 1000;
 
-            if (distanceMultiplier >= 1000)
+            if (distanceMultiplier >= 400)
                 creature.DeathTreasureType = 1005;
 
             wo.SaveBiotaToDatabase();
