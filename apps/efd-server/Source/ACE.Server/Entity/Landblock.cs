@@ -30,6 +30,7 @@ using Position = ACE.Entity.Position;
 using ACE.Server.Realms;
 using ACE.Server.EscapeFromDereth.Hellgates;
 using ACE.Common;
+using ACE.Server.EscapeFromDereth.Towns;
 
 namespace ACE.Server.Entity
 {
@@ -851,6 +852,43 @@ namespace ACE.Server.Entity
             AddWorldObjectInternal(wo);
         }
 
+        public HashSet<uint> RealmTreasureTypes = new HashSet<uint>()
+        {
+            453,    // tier 1
+            464,    // tier 5
+            1000,   // tier 7
+            1005    // tier 8
+        };
+        private void MutateDeathTreasureTypeByTownDistance(WorldObject wo)
+        {
+            if (!(wo is Creature) || wo.IsGenerator)
+                return;
+
+            if (!(wo as Creature).IsMonster)
+                return;
+
+            var creature = wo as Creature;
+            if (!HellgateManager.PositionIsHellgate(creature.Location))
+            {
+                creature.DeathTreasureType = 453;
+                return;
+            }
+
+            var hellgate = HellgateManager.GetHellgate(creature.Location.Instance);
+
+            var distanceMultiplier = TownManager.GetTownDistanceMultiplier(creature.RealmRuleset, hellgate.LeaderPosition);
+
+            creature.DeathTreasureType = 464;
+
+            if (distanceMultiplier >= 800)
+                creature.DeathTreasureType = 1000;
+
+            if (distanceMultiplier >= 1000)
+                creature.DeathTreasureType = 1005;
+
+            wo.SaveBiotaToDatabase();
+        }
+
         private bool AddWorldObjectInternal(WorldObject wo)
         {
             if (LandblockManager.CurrentlyTickingLandblockGroupsMultiThreaded)
@@ -887,6 +925,8 @@ namespace ACE.Server.Entity
             wo.CurrentLandblock = this;
 
             wo.Location.Instance = Instance;
+
+            MutateDeathTreasureTypeByTownDistance(wo);
 
             if (wo.PhysicsObj == null)
                 wo.InitPhysicsObj();
