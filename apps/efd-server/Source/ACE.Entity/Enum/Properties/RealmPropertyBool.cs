@@ -78,7 +78,10 @@ namespace ACE.Entity.Enum.Properties
         IsVendorNpcOnly,
 
         [RealmPropertyBool(true)]
-        HasMonsters
+        HasMonsters,
+
+        [RealmPropertyBool(true)]
+        HasHousing
     }
 
 
