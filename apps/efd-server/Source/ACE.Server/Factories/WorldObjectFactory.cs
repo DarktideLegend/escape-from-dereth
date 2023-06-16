@@ -130,6 +130,8 @@ namespace ACE.Server.Factories
                 case WeenieType.ManaStone:
                     return new ManaStone(weenie, guid);
                 case WeenieType.House:
+                    if (!ruleset.GetProperty(RealmPropertyBool.HasHousing) && !shouldOverride)
+                        return null;
                     return new House(weenie, guid);
                 case WeenieType.SlumLord:
                     if (!ruleset.GetProperty(RealmPropertyBool.HasHousing) && !shouldOverride)
@@ -138,10 +140,16 @@ namespace ACE.Server.Factories
                 case WeenieType.Storage:
                     return CreateHideoutStorage(weenie, location);
                 case WeenieType.Hook:
+                    if (!ruleset.GetProperty(RealmPropertyBool.HasHousing) && !shouldOverride)
+                        return null;
                     return new Hook(weenie, guid);
                 case WeenieType.Hooker:
+                    if (!ruleset.GetProperty(RealmPropertyBool.HasHousing) && !shouldOverride)
+                        return null;
                     return new Hooker(weenie, guid);
                 case WeenieType.HousePortal:
+                    if (!ruleset.GetProperty(RealmPropertyBool.HasHousing) && !shouldOverride)
+                        return null;
                     return new HousePortal(weenie, guid);
                 case WeenieType.SkillAlterationDevice:
                     return new SkillAlterationDevice(weenie, guid);
