@@ -47,12 +47,19 @@ namespace ACE.Server.WorldObjects
 
         public override ActivationResult CheckUseRequirements(WorldObject activator)
         {
+            if (!(activator is Player player))
+                return new ActivationResult(false);
+
+            if (activator is Admin)
+                return new ActivationResult(true);
+
+            if (player.HideoutLocation.RealmID == 0x7FFF && player.Location.Instance == player.HideoutLocation.Instance)
+                return new ActivationResult(true);
+
             var baseRequirements = base.CheckUseRequirements(activator);
             if (!baseRequirements.Success)
                 return baseRequirements;
 
-            if (!(activator is Player player))
-                return new ActivationResult(false);
 
             if (player.IgnoreHouseBarriers)
                 return new ActivationResult(true);

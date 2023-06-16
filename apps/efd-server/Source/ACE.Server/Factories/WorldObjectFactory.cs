@@ -18,6 +18,7 @@ using ACE.Entity.Enum.Properties;
 using ACE.Common;
 using ACE.Server.EscapeFromDereth.Hellgates;
 using ACE.Server.EscapeFromDereth.Towns;
+using ACE.Server.EscapeFromDereth.Hideouts;
 
 namespace ACE.Server.Factories
 {
@@ -130,7 +131,7 @@ namespace ACE.Server.Factories
                 case WeenieType.SlumLord:
                     return new SlumLord(weenie, guid);
                 case WeenieType.Storage:
-                    return new Storage(weenie, guid);
+                    return CreateHideoutStorage(weenie, location);
                 case WeenieType.Hook:
                     return new Hook(weenie, guid);
                 case WeenieType.Hooker:
@@ -160,6 +161,14 @@ namespace ACE.Server.Factories
                 default:
                     return new GenericObject(weenie, guid);
             }
+        }
+
+        private static WorldObject CreateHideoutStorage(Weenie weenie, Position location)
+        {
+            if (location.RealmID != 0x7FFF)
+                return null;
+
+            return HideoutManager.GetHideoutStorage(weenie, location);
         }
 
         private static WorldObject CreateCreatureObject(Weenie weenie, ObjectGuid guid, AppliedRuleset ruleset, Position location, bool shouldOverride)

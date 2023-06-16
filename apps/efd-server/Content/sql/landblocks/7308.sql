@@ -133,5 +133,9 @@ INSERT INTO `landblock_instance_link` (`parent_GUID`, `child_GUID`, `last_Modifi
 VALUES (0x77308033, 0x77308027, '2005-02-09 10:00:00') /* Ulgrim the Unappreciated (26457) */;
 
 INSERT INTO `landblock_instance` (`guid`, `weenie_Class_Id`, `obj_Cell_Id`, `origin_X`, `origin_Y`, `origin_Z`, `angles_W`, `angles_X`, `angles_Y`, `angles_Z`, `is_Link_Child`, `last_Modified`)
-VALUES (0x77308034, 600002, 0x7308001F, 85.4854, 159.5566, 11.937, 0.4685, 0, 0, -0.883463, False, '2023-06-04 16:32:53'); /* Home Realm Portal */
-/* @teleloc 0x7308001F [85.485397 159.556595 11.937000] 0.468500 0.000000 0.000000 -0.883463 */
+VALUES (0x77308034, 600002, 0x7308001F, 85.4854, 159.557, 11.937, 0.4685, 0, 0, -0.883463, False, '2023-06-04 16:32:53'); /* Home Realm Portal */
+/* @teleloc 0x7308001F [85.485397 159.557007 11.937000] 0.468500 0.000000 0.000000 -0.883463 */
+
+INSERT INTO `landblock_instance` (`guid`, `weenie_Class_Id`, `obj_Cell_Id`, `origin_X`, `origin_Y`, `origin_Z`, `angles_W`, `angles_X`, `angles_Y`, `angles_Z`, `is_Link_Child`, `last_Modified`)
+VALUES (0x77308035, 600000, 0x73080105, 51.43764, 182.7604, 8.056001, 0.604615, 0, 0, 0.796518, False, '2023-06-13 03:06:11'); /* Hideout Storage */
+/* @teleloc 0x73080105 [51.437641 182.760406 8.056001] 0.604615 0.000000 0.000000 0.796518 */
