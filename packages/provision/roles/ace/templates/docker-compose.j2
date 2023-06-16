@@ -17,7 +17,7 @@ services:
       - {{ ace_network_name }}
 
   ace-server:
-    image: {{ ace_docker_production_image }}
+    image: {{ ace_docker_production_image }}:{{ ace_docker_production_tag }}
     depends_on:
       - ace-db
     container_name: ace-server

@@ -17,6 +17,7 @@ vault_ace_mysql_password: "2020acEmulator2017"
 vault_ace_mysql_database: "ace%"
 vault_ace_mysql_production_port: "3306"
 vault_ace_docker_production_image: "apourman/efd"
+vault_ace_docker_production_tag: "latest"
 
 # # acemulator Config.js VARIABLES
 vault_ace_world_name: "acemulator"
