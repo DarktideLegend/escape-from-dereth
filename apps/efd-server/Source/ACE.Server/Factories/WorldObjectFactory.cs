@@ -40,8 +40,11 @@ namespace ACE.Server.Factories
             var objWeenieType = weenie.WeenieType;
 
             var isOverridable = ruleset.GetProperty(RealmPropertyBool.IsOverridable);
+            var isCustomContentOnly = ruleset.GetProperty(RealmPropertyBool.IsCustomContentOnly);
             var hasCustomContent = weenie.GetProperty(PropertyBool.IsCustomContent) ?? false;
 
+            if (isCustomContentOnly && !hasCustomContent)
+                return null;
 
             var shouldOverride = hasCustomContent && isOverridable;
 
