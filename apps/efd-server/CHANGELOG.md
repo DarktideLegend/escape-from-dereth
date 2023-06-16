@@ -1,3 +1,35 @@
+## [1.1.0-alpha.20](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.19...efd-server-v1.1.0-alpha.20) (2023-06-16)
+
+
+### Features
+
+* **efd-server:** ✨ add ExperienceMultiplierAll realm implementation ([e7fb359](https://github.com/DarktideLegend/escape-from-dereth/commit/e7fb3597396b98c4091d0c79ff9063a5261f7639))
+* **efd-server:** ✨ add Forgotten Revenant, Olthoi Slayer, Demilich monsters ([7d415cb](https://github.com/DarktideLegend/escape-from-dereth/commit/7d415cbab59706dad4d87cf329ef37708d0b3efd))
+* **efd-server:** ✨ add loot tier based on town distance multiplier ([557acb0](https://github.com/DarktideLegend/escape-from-dereth/commit/557acb048f5e59f3b7a069905ed7fe303f4d2880))
+* **efd-server:** ✨ add persistent storage to hideouts ([6429427](https://github.com/DarktideLegend/escape-from-dereth/commit/6429427b0dbf6b56727141314f63d635881e803a))
+* **efd-server:** ✨ add realm property to only allow custom content ([ceafa77](https://github.com/DarktideLegend/escape-from-dereth/commit/ceafa7737c679377f7b72e4748255c9799056ba4))
+* **efd-server:** ✨ clear a players inventory before creation ([eabc06c](https://github.com/DarktideLegend/escape-from-dereth/commit/eabc06cd2f2c10ed1ed9b833e7c6ae729b85344d))
+* **efd-server:** ✨ cows create monsters or hellgates ([d449f24](https://github.com/DarktideLegend/escape-from-dereth/commit/d449f245f3dcb6659a8978e87edd711baf5b1156))
+* **efd-server:** ✨ mutate creature DeathTreasureType to scale with town distance multiplier ([c65c9ab](https://github.com/DarktideLegend/escape-from-dereth/commit/c65c9aba755f0de158365656fa3177701ba99901))
+* **efd-server:** ✨ new players get a stack of mmds ([a8487f3](https://github.com/DarktideLegend/escape-from-dereth/commit/a8487f3b18643b20d7054e29a7439c2a7a4a7566))
+* **efd-server:** ✨ new players start at level 50 with max augs and all skills specialized ([9acf170](https://github.com/DarktideLegend/escape-from-dereth/commit/9acf17085278b56d7825c51349c62231e366ea09))
+* **efd-server:** ✨ set ExperienceMultiplierAll to 0.25 globally ([2fa4783](https://github.com/DarktideLegend/escape-from-dereth/commit/2fa4783600a76b1514e22c61de3e5f3f5e8b9a34))
+* **efd-server:** ✨ set ExperienceMultiplierAll to 0.75 for hellgate ruleset ([1844c1c](https://github.com/DarktideLegend/escape-from-dereth/commit/1844c1c9f9686106d03411dda6f98da5800474c1))
+
+
+### Bug Fixes
+
+* **efd-server:** 🐛 check for location before creating hideout storage ([4768da7](https://github.com/DarktideLegend/escape-from-dereth/commit/4768da79b823f338203a8720e01acadaaf191f20))
+* **efd-server:** 🐛 properly check if position is in hellgate ([6764bf3](https://github.com/DarktideLegend/escape-from-dereth/commit/6764bf3510872171afa7945088386faf000b5540))
+* **efd-server:** 🐛 properly specialize all skills ([5c4d932](https://github.com/DarktideLegend/escape-from-dereth/commit/5c4d9324c1aa38ab994ff113886bfa763fac74e6))
+* **efd-server:** 🐛 remove level requirement for hideout, hellgate, and home realm portals ([0d78dc7](https://github.com/DarktideLegend/escape-from-dereth/commit/0d78dc7f4d7743ded0bb535aa8870ce07669b170))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ add demilich and olthoi slayer mobs to distance multiplier check ([3b39299](https://github.com/DarktideLegend/escape-from-dereth/commit/3b3929978bcb5b1f11ac3612739f957da7514262))
+* **efd-server:** ♻️ organize weenie content ([57d83c1](https://github.com/DarktideLegend/escape-from-dereth/commit/57d83c119638d21b72d6e52c7cf16d9820be085f))
+
 ## [1.1.0-alpha.19](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.18...efd-server-v1.1.0-alpha.19) (2023-06-12)
 
 
