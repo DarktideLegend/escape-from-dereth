@@ -18,6 +18,7 @@ using ACE.Database.Entity;
 using ACE.Database.Models.Shard;
 using ACE.Entity.Enum;
 using ACE.Entity.Enum.Properties;
+using ACE.Entity;
 
 namespace ACE.Database
 {
@@ -530,6 +531,29 @@ namespace ACE.Database
             }
 
             return dynamics;
+        }
+
+        public Biota GetHideoutStorage(Position position)
+        {
+            using (var context = new ShardDbContext())
+            {
+                context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+
+                var results = context.BiotaPropertiesPosition
+                    .Where(p => (p.Instance ?? 0) == position.Instance)
+                    .ToList();
+
+                foreach (var result in results)
+                {
+                    var biota = GetBiota(result.ObjectId);
+
+                    if (biota.WeenieClassId == 600000)
+                        return biota;
+                }
+
+                return null;
+
+            }
         }
 
         public List<Biota> GetHousesOwned()
