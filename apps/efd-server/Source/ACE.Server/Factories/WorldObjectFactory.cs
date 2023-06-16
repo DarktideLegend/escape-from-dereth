@@ -168,6 +168,9 @@ namespace ACE.Server.Factories
 
         private static WorldObject CreateHideoutStorage(Weenie weenie, Position location)
         {
+            if (location == null)
+                return null;
+
             if (location.RealmID != 0x7FFF)
                 return null;
 
