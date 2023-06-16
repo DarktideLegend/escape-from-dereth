@@ -132,6 +132,8 @@ namespace ACE.Server.Factories
                 case WeenieType.House:
                     return new House(weenie, guid);
                 case WeenieType.SlumLord:
+                    if (!ruleset.GetProperty(RealmPropertyBool.HasHousing) && !shouldOverride)
+                        return null;
                     return new SlumLord(weenie, guid);
                 case WeenieType.Storage:
                     return CreateHideoutStorage(weenie, location);

@@ -13,6 +13,7 @@
     "HasDoors": false,
     "HasRecalls": false,
     "HasRebuffs": true,
+    "HasHousing": false,
     "IsVendorNpcOnly": true
   }
 }
