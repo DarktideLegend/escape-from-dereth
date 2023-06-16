@@ -1,3 +1,16 @@
+## [1.1.0-alpha.21](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.20...efd-server-v1.1.0-alpha.21) (2023-06-16)
+
+
+### Features
+
+* **efd-server:** ✨ add HasBindstones realm property ([5533e7b](https://github.com/DarktideLegend/escape-from-dereth/commit/5533e7b4f8dbd95c7255d76fca5af460f3cd9fb7))
+* **efd-server:** ✨ add HasHousing realm property ([53fc3bb](https://github.com/DarktideLegend/escape-from-dereth/commit/53fc3bb46ea131eb9d940d1d001a8c97038fd89f))
+
+
+### Bug Fixes
+
+* **efd-server:** 🐛 add hooks and house world objects to HasHousing filter ([16f390a](https://github.com/DarktideLegend/escape-from-dereth/commit/16f390aa7a236b6a0ffcfa11a0d4a917c53be6d6))
+
 ## [1.1.0-alpha.20](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.19...efd-server-v1.1.0-alpha.20) (2023-06-16)
 
 
