@@ -81,7 +81,10 @@ namespace ACE.Entity.Enum.Properties
         HasMonsters,
 
         [RealmPropertyBool(true)]
-        HasHousing
+        HasHousing,
+
+        [RealmPropertyBool(true)]
+        HasBindstones
     }
 
 

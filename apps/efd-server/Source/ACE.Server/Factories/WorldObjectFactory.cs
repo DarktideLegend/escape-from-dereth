@@ -92,6 +92,8 @@ namespace ACE.Server.Factories
                 case WeenieType.GamePiece:
                     return new GamePiece(weenie, guid, ruleset);
                 case WeenieType.AllegianceBindstone:
+                    if (!ruleset.GetProperty(RealmPropertyBool.HasBindstones) && !shouldOverride)
+                        return null;
                     return new Bindstone(weenie, guid);
                 case WeenieType.Clothing:
                     return new Clothing(weenie, guid);
