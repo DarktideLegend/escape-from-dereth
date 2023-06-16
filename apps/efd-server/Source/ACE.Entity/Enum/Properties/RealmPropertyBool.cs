@@ -64,6 +64,9 @@ namespace ACE.Entity.Enum.Properties
         [RealmPropertyBool(false)]
         IsOverridable,
 
+        [RealmPropertyBool(false)]
+        IsCustomContentOnly,
+
         [RealmPropertyBool(true)]
         HasRecalls,
 
