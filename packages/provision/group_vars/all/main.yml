@@ -22,6 +22,7 @@ ace_mysql_development_port: "{{ vault_ace_mysql_development_port }}"
 ace_world_name: "{{ vault_ace_world_name }}"
 ace_docker_production_image: "{{ vault_ace_docker_production_image }}"
 ace_docker_development_image: "{{ vault_ace_docker_development_image }}"
+ace_docker_production_tag: "{{ vault_ace_docker_production_tag }}"
 ace_dat_files_directory: "{{ vault_ace_dat_files_directory }}"
 
 # webhook
