@@ -511,7 +511,10 @@ namespace ACE.Server.WorldObjects
         public bool LogOut(bool clientSessionTerminatedAbruptly = false, bool forceImmediate = false)
         {
             if (IsInHellgate)
+            {
                 HellgateManager.RemovePlayerFromHellgate(this);
+                Die();
+            }
 
             if (PKLogoutActive && !forceImmediate)
             {
