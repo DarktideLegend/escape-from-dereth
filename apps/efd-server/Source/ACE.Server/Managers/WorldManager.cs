@@ -238,12 +238,12 @@ namespace ACE.Server.Managers
                 if (exitloc != null)
                 {
                     session.Network.EnqueueSend(new GameMessageSystemChat($"The instance you were in has expired and you have been transported outside!", ChatMessageType.System));
-                    session.Player.ExitInstance();
+                    session.Player.Location = exitloc; 
                 }
                 else
                 {
                     var pos = new Position(session.Player.Location);
-                    if (HellgateManager.PositionIsHellgate(pos)) // if logging into hellgate, return to lifestone               
+                    if (pos.IsEphemeralRealm) // if logging into ephemeral realm without an exitloc, return to lifestone               
                         pos = new Position(session.Player.Sanctuary ?? session.Player.Instantiation);
                     else
                         pos.SetToDefaultRealmInstance(homerealm.Realm.Id);
