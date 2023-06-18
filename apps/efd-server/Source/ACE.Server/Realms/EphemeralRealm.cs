@@ -13,7 +13,7 @@ namespace ACE.Server.Realms
     public class EphemeralRealm
     {
         public Player Owner { get; set; }
-        public List<Player> AllowedPlayers { get; } = new List<Player>();
+        public List<Player> AllowedPlayers { get; private set; } = new List<Player>();
         public bool OpenToFellowship { get; set; } = true;
         public DateTime ExpiresAt = DateTime.UtcNow.AddDays(1);
 
@@ -25,14 +25,7 @@ namespace ACE.Server.Realms
         {
             this.Owner = owner;
             this.RulesetTemplate = template;
-
-            if (allowedPlayers != null)
-            {
-                foreach(Player player in allowedPlayers)
-                {
-                    AllowedPlayers.Add(player);
-                }
-            }
+            this.AllowedPlayers = allowedPlayers;
         }
 
         public static EphemeralRealm Initialize(Player owner, List<Realm> realms, List<Player> allowedPlayers = null)
