@@ -778,6 +778,10 @@ namespace ACE.Server.WorldObjects
             var prevrealm = RealmManager.GetRealm(prevRealmId);
             var newRealm = RealmManager.GetRealm(newRealmId);
 
+            // if we are trinsitioning from a hellgate
+            if (prevRealmId == 1016)
+                HellgateManager.RemovePlayerFromHellgate(this);
+
             // if we are transitioning to Hideout, stamp our current location with an offset 
             if (newRealmId == 0x7FFF)
                 SetPosition(PositionType.HomeRealmExitTo, new Position(Location.InFrontOf(-5f, true)));
@@ -951,8 +955,6 @@ namespace ACE.Server.WorldObjects
                 loc = GetPosition(PositionType.Sanctuary) ?? GetPosition(PositionType.Home);
                 loc.Instance = Position.InstanceIDFromVars(HomeRealm, 0, false);
             }
-            if (CurrentLandblock != null && IsInHellgate)
-                HellgateManager.RemovePlayerFromHellgate(this);
 
             WorldManager.ThreadSafeTeleport(this, loc, true, new ActionEventDelegate(() =>
             {
