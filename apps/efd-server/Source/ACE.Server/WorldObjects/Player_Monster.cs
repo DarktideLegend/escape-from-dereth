@@ -18,6 +18,7 @@ namespace ACE.Server.WorldObjects
         /// </summary>
         public void CheckMonsters()
         {
+            Attackable = true;
             if (!Attackable || Teleporting) return;
 
             var visibleObjs = PhysicsObj.ObjMaint.GetVisibleObjectsValuesOfTypeCreature();

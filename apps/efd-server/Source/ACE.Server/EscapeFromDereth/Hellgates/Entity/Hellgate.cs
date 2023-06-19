@@ -8,12 +8,12 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
 {
     public class Hellgate
     {
-        public readonly List<Player> Players;
+        public readonly HashSet<Player> Players;
         public readonly LandblockId Landblock;
         public readonly uint Instance;
         public readonly Position LeaderPosition; // location of leader before entering hellgate 
 
-        public Hellgate(LandblockId landblock, List<Player> players, Position leaderPosition, uint instance)
+        public Hellgate(LandblockId landblock, HashSet<Player> players, Position leaderPosition, uint instance)
         {
             Players = players;
             Landblock = landblock;
@@ -23,10 +23,6 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
 
         public void Destroy()
         {
-            foreach(var player in Players.ToList())
-            {
-                player.ExitInstance();
-            }
             Players.Clear();
         }
 

@@ -229,11 +229,14 @@ namespace ACE.Server.Factories
         {
             var hellgateRoll = ThreadSafeRandom.Next(1, 100);
             // ideally we spawn a boss mob that spawns a portal on death, for now we will randomly spawn a hellgate portal instead of a creature 
-            if (rollForHellgate && hellgateRoll < 20) // 20% chance of spawning a hellgate instead of a monster
+            if (rollForHellgate && hellgateRoll <= 20) // 20% chance of spawning a hellgate instead of a monster
             {
                 var hellgatePortal = CreateNewWorldObject(600003, ruleset, location); // create Hellgate
-                hellgatePortal.Lifespan = (int)(HellgateManager.TimeRemaining);
-                return hellgatePortal;
+                if (hellgatePortal != null)
+                {
+                    hellgatePortal.Lifespan = (int)(HellgateManager.CurrentHellgateGroup.TimeRemaining);
+                    return hellgatePortal;
+                }
             }
 
             var distanceMultiplier = TownManager.GetTownDistanceMultiplier(ruleset, location);

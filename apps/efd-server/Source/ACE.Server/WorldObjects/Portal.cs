@@ -321,11 +321,6 @@ namespace ACE.Server.WorldObjects
                 }
             }
 
-            if (HellgateManager.HasReachedCapacity)
-            {
-                Destroy();
-            }
-
             IsProcessingHellgate = false;
             return new ActivationResult(false);
         }

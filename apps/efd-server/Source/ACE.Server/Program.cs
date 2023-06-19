@@ -14,6 +14,7 @@ using ACE.DatLoader;
 using ACE.Server.Command;
 using ACE.Server.Managers;
 using ACE.Server.Network.Managers;
+using ACE.Server.EscapeFromDereth.Hellgates;
 
 namespace ACE.Server
 {
@@ -282,6 +283,9 @@ namespace ACE.Server
 
             log.Info("Initializing RealmManager...");
             RealmManager.Initialize();
+
+            log.Info("Initializing HellgateManager...");
+            HellgateManager.Initialize();
 
             log.Info("Initializing PlayerManager...");
             PlayerManager.Initialize();
