@@ -1,3 +1,22 @@
+## [1.1.0-alpha.22](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.21...efd-server-v1.1.0-alpha.22) (2023-06-19)
+
+
+### Features
+
+* **efd-server:** ✨ add HellgateGroup and HellgatePurgatory ([140a614](https://github.com/DarktideLegend/escape-from-dereth/commit/140a6144f631a70c0585ff5704387e6deea4b705))
+* **efd-server:** ✨ add player death when logging out from a hellgate ([bd8eef0](https://github.com/DarktideLegend/escape-from-dereth/commit/bd8eef0721bdd03f3bd125b4111909a916b648f0))
+
+
+### Bug Fixes
+
+* **efd-server:** 🐛 set location to exitLoc if possible when player enters world ([8fb4ff5](https://github.com/DarktideLegend/escape-from-dereth/commit/8fb4ff5e89960d3486488851fe4c8193672d95b8))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ assign list of players to ephemeral realm ([92cf1d0](https://github.com/DarktideLegend/escape-from-dereth/commit/92cf1d0f59e6bd4fa174b623f0657229927034fd))
+* **efd-server:** ♻️ remove player from hellgate cache on realm transition ([9f63037](https://github.com/DarktideLegend/escape-from-dereth/commit/9f6303747b61c35d376680acec350c308fbbcde7))
+
 ## [1.1.0-alpha.21](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.20...efd-server-v1.1.0-alpha.21) (2023-06-16)
 
 
