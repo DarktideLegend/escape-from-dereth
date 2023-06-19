@@ -7,6 +7,7 @@
         "IsFullLootOnDeath": true,
         "CreatureSpawnHPMultiplier": 10.0,
         "ExperienceMultiplierAll": 0.75,
-        "HasPortals":  true
+        "IsNeutralZone": true,
+        "HasPortals":  false
     }
 }

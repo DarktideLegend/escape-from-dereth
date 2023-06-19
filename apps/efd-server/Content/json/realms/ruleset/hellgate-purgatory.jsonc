@@ -1,0 +1,13 @@
+{
+  "name": "hellgate-purgatory",
+  "type": "Ruleset",
+    "properties": {
+        "Description": ".",
+        "RulesetStampVendorCategory": 1,
+        "IsOverridable": true,
+        "IsFullLootOnDeath": true,
+        "IsCustomContentOnly": true,
+        "CanInteractWithNeutralZone":  true
+           
+    }
+}
