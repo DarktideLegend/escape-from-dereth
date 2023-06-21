@@ -8,7 +8,7 @@ const path = require('path');
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
 const nextConfig = {
-  output: "standalone",
+  output: 'standalone',
   experimental: {
     outputFileTracingRoot: path.join(__dirname, '../../'),
   },
