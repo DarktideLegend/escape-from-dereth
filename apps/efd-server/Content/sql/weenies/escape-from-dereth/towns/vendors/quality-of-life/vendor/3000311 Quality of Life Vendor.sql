@@ -50,7 +50,7 @@ VALUES (3000311,   1,   33554433) /* Setup */
      , (3000311,  15,   67117076) /* HairPalette */
      , (3000311,  16,   67109564) /* EyesPalette */
      , (3000311,  17,   67109560) /* SkinPalette */
-     , (3000311,  57,      20630) /* AlternateCurrency - Trade Note (250,000) */;
+     , (3000311,  57,      273) /* AlternateCurrency - Trade Note (250,000) */;
 
 INSERT INTO `weenie_properties_attribute` (`object_Id`, `type`, `init_Level`, `level_From_C_P`, `c_P_Spent`)
 VALUES (3000311,   1, 260, 0, 0) /* Strength */
@@ -123,67 +123,9 @@ VALUES (3000311, 0,     0,  0, 0, 0, False) /* Create nothing for Undef */
      , (3000311, 4, 23356, -1, 0, 0, False) /* Create Sanguinary Aegis (23356) for Shop */
      , (3000311, 4, 21998, -1, 0, 0, False) /* Create Bundle of Deadly Chorizite Arrowheads (21998) for Shop */
      , (3000311, 4, 15856, -1, 0, 0, False) /* Create Encrusted Bloodstone Jewel (15856) for Shop */
-     , (3000311, 4, 29266, -1, 0, 0, False) /* Create Ciandra's Fortune (29266) for Shop */
-     , (3000311, 4, 29267, -1, 0, 0, False) /* Create Quick Learner (29267) for Shop */
-     , (3000311, 4, 29268, -1, 0, 0, False) /* Create Might of the Seventh Mule (29268) for Shop */
-     , (3000311, 4, 29269, -1, 0, 0, False) /* Create Critical Protection (29269) for Shop */
-     , (3000311, 4, 29270, -1, 0, 0, False) /* Create Clutch of the Miser (29270) for Shop */
-     , (3000311, 4, 29271, -1, 0, 0, False) /* Create Enduring Enchantment (29271) for Shop */
-     , (3000311, 4, 29272, -1, 0, 0, False) /* Create Innate Renewal (29272) for Shop */
-     , (3000311, 4, 29273, -1, 0, 0, False) /* Create Charmed Smith (29273) for Shop */
-     , (3000311, 4, 29275, -1, 0, 0, False) /* Create Enhancement of the Mace Turner (29275) for Shop */
-     , (3000311, 4, 29276, -1, 0, 0, False) /* Create Storm's Enhancement (29276) for Shop */
-     , (3000311, 4, 29277, -1, 0, 0, False) /* Create Fiery Enhancement (29277) for Shop */
-     , (3000311, 4, 29278, -1, 0, 0, False) /* Create Icy Enhancement (29278) for Shop */
-     , (3000311, 4, 29279, -1, 0, 0, False) /* Create Enhancement of the Arrow Turner (29279) for Shop */
-     , (3000311, 4, 29280, -1, 0, 0, False) /* Create Enhancement of the Blade Turner (29280) for Shop */
-     , (3000311, 4, 29284, -1, 0, 0, False) /* Create Jibril's Essence (29284) for Shop */
-     , (3000311, 4, 29282, -1, 0, 0, False) /* Create Shadow of The Seventh Mule (29282) for Shop */
-     , (3000311, 4, 29283, -1, 0, 0, False) /* Create Archmage's Endurance (29283) for Shop */
-     , (3000311, 4, 29285, -1, 0, 0, False) /* Create Yoshi's Essence (29285) for Shop */
-     , (3000311, 4, 29286, -1, 0, 0, False) /* Create Celdiseth's Essence (29286) for Shop */
-     , (3000311, 4, 29287, -1, 0, 0, False) /* Create Ciandra's Essence (29287) for Shop */
-     , (3000311, 4, 29288, -1, 0, 0, False) /* Create Koga's Essence (29288) for Shop */
-     , (3000311, 4, 29289, -1, 0, 0, False) /* Create Oswald's Enhancement (29289) for Shop */
-     , (3000311, 4, 29290, -1, 0, 0, False) /* Create Bleeargh's Fortitude (29290) for Shop */
-     , (3000311, 4, 29291, -1, 0, 0, False) /* Create Enduring Calm (29291) for Shop */
-     , (3000311, 4, 29292, -1, 0, 0, False) /* Create Siraluun's Blessing (29292) for Shop */
-     , (3000311, 4, 29293, -1, 0, 0, False) /* Create Steadfast Will (29293) for Shop */
-     , (3000311, 4, 29294, -1, 0, 0, False) /* Create Reinforcement of the Lugians (29294) for Shop */
-     , (3000311, 4, 41472, -1, 0, 0, False) /* Create Infused Creature Magic (41472) for Shop */
-     , (3000311, 4, 41473, -1, 0, 0, False) /* Create Infused Item Magic (41473) for Shop */
-     , (3000311, 4, 41474, -1, 0, 0, False) /* Create Infused Life Magic (41474) for Shop */
-     , (3000311, 4, 41475, -1, 0, 0, False) /* Create Infused War Magic (41475) for Shop */
-     , (3000311, 4, 41476, -1, 0, 0, False) /* Create Master of the Five Fold Path (41476) for Shop */
-     , (3000311, 4, 41477, -1, 0, 0, False) /* Create Master of the Steel Circle (41477) for Shop */
-     , (3000311, 4, 41478, -1, 0, 0, False) /* Create Frenzy of the Slayer (41478) for Shop */
-     , (3000311, 4, 41479, -1, 0, 0, False) /* Create Infused Void Magic (41479) for Shop */
-     , (3000311, 4, 41480, -1, 0, 0, False) /* Create Iron Skin of the Invincible (41480) for Shop */
-     , (3000311, 4, 41481, -1, 0, 0, False) /* Create Hand of the Remorseless (41481) for Shop */
-     , (3000311, 4, 41482, -1, 0, 0, False) /* Create Eye of the Remorseless (41482) for Shop */
-     , (3000311, 4, 41490, -1, 0, 0, False) /* Create Master of the Focused Eye (41490) for Shop */
-     , (3000311, 4, 43167, -1, 0, 0, False) /* Create Jack of All Trades (43167) for Shop */
      , (3000311, 4, 30246, -1, 0, 0, False) /* Create Artist's Crystal (30246) for Shop */
      , (3000311, 4,  8904, -1, 0, 0, False) /* Create Focusing Stone (8904) for Shop */
      , (3000311, 4, 35593, -1, 0, 0, False) /* Create  (35593) for Shop */
-     , (3000311, 4, 21964, -1, 0, 0, False) /* Create Phantom Bow (21964) for Shop */
-     , (3000311, 4, 21353, -1, 0, 0, False) /* Create Phantom Axe (21353) for Shop */
-     , (3000311, 4, 21354, -1, 0, 0, False) /* Create Phantom Dagger (21354) for Shop */
-     , (3000311, 4, 21355, -1, 0, 0, False) /* Create Phantom Katar (21355) for Shop */
-     , (3000311, 4, 21356, -1, 0, 0, False) /* Create Phantom Mace (21356) for Shop */
-     , (3000311, 4, 21357, -1, 0, 0, False) /* Create Phantom Staff (21357) for Shop */
-     , (3000311, 4, 21358, -1, 0, 0, False) /* Create Phantom Spear (21358) for Shop */
-     , (3000311, 4, 41708, -1, 0, 0, False) /* Create Phantom Two Handed Spear (41708) for Shop */
-     , (3000311, 4, 21359, -1, 0, 0, False) /* Create Phantom Sword (21359) for Shop */
-     , (3000311, 4,  7563, -1, 0, 0, False) /* Create Hollow Axe (7563) for Shop */
-     , (3000311, 4,  7565, -1, 0, 0, False) /* Create Hollow Dagger (7565) for Shop */
-     , (3000311, 4,  7567, -1, 0, 0, False) /* Create Hollow Katar (7567) for Shop */
-     , (3000311, 4,  7569, -1, 0, 0, False) /* Create Hollow Mace (7569) for Shop */
-     , (3000311, 4,  7571, -1, 0, 0, False) /* Create Hollow Staff (7571) for Shop */
-     , (3000311, 4,  7573, -1, 0, 0, False) /* Create Hollow Spear (7573) for Shop */
-     , (3000311, 4,  7575, -1, 0, 0, False) /* Create Hollow Sword (7575) for Shop */
-     , (3000311, 4, 21961, -1, 0, 0, False) /* Create Hollow Bow (21961) for Shop */
-     , (3000311, 4, 4100252, -1, 0, 0, False) /* Create  (4100252) for Shop */
      , (3000311, 4, 41637, -1, 0, 0, False) /* Create Hollow Two Handed Spear (41637) for Shop */
      
 
