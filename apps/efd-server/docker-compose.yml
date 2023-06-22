@@ -32,3 +32,17 @@ services:
     #restart: unless-stopped
     restart: on-failure
 
+  ace-web:
+    build:
+      context: ../../
+      dockerfile: apps/efd-web/Dockerfile
+    depends_on:
+      - ace-db
+    container_name: ace-web
+    volumes:
+      - ../efd-web:/app
+    ports:
+      - "3000:3000"
+    #restart: unless-stopped
+    restart: on-failure
+
