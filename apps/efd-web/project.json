@@ -177,7 +177,7 @@
               ],
               "dockerImage": "efd-web",
               "dockerFile": "apps/efd-web/Dockerfile",
-              "dockerContext": "apps/efd-web",
+              "dockerContext": "../../",
               "dockerProject": "apourman"
             }
           ]
