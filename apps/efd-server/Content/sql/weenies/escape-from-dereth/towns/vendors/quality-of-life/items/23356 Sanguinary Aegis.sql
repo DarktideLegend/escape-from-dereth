@@ -14,6 +14,7 @@ VALUES (23356,   1,          2) /* ItemType - Armor */
      , (23356,  27,          2) /* ArmorType - Leather */
      , (23356,  28,          0) /* ArmorLevel */
      , (23356,  33,          1) /* Bonded - Bonded */
+     , (23356, 114,          1) /* Attuned - Attuned */
      , (23356,  36,       9999) /* ResistMagic */
      , (23356,  51,          4) /* CombatUse - Shield */
      , (23356,  93,       1044) /* PhysicsState - Ethereal, IgnoreCollisions, Gravity */
