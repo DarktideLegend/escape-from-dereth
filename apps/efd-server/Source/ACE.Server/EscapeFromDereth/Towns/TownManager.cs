@@ -27,7 +27,7 @@ namespace ACE.Server.EscapeFromDereth.Towns
                 EFDHelpers.slocToPosition("0xC6A90013 [51.633736 68.552765 42.005001] -0.080479 0.000000 0.000000 0.996756 0"),
                 EFDHelpers.slocToPosition("0xC5A80004 [22.075813 93.041489 56.005001] 0.464588 0.000000 0.000000 0.885527 393216")) },
             { 0xC98C, new Town("Rithwic",
-                EFDHelpers.slocToPosition("0xC98C0028 [113.666000 190.259003 22.009998] -0.707107 0.000000 0.000000 -0.707107 0"),
+                EFDHelpers.slocToPosition("0xC98C0028 [113.666000 190.259003 22.009998] -0.707107 0.000000 0.000000 -0.707107 393216"),
                 EFDHelpers.slocToPosition("0xCA8C002D [132.680344 106.881424 12.004999] 0.884355 0.000000 0.000000 0.466815 393216")) },
             { 0xCE95, new Town("Eastham",
                 EFDHelpers.slocToPosition("0xCE950023 [115.072716 68.856300 20.004999] 0.860280 0.000000 0.000000 -0.509823 0"),
