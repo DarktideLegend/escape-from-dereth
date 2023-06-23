@@ -33,6 +33,10 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             { 0x00DC, new HellgateLandblock(EFDHelpers.slocToPosition("0x00DC016C [0.000000 -55.017300 -5.990000] 1.000000 0.000000 0.000000 0.000000 393216"), "Moarsmen Priory") }
         };
 
+        private static double NextHeartbeatTime;
+
+        private static readonly double HeartbeatInterval = 5.0f;
+
         private static readonly ImmutableList<ushort> HellgateLandblockKeys = HellgateLandblocks.Keys.ToImmutableList(); 
 
         private static readonly Dictionary<uint, Hellgate> ActiveHellgates = new Dictionary<uint, Hellgate>();
@@ -45,7 +49,14 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
 
         public static void Initialize()
         {
+            InitializeHeartbeats();
             CreateHellgateGroup();
+        }
+
+        private static void InitializeHeartbeats()
+        {
+            var currentUnixTime = Time.GetUnixTime();
+            NextHeartbeatTime = currentUnixTime + HeartbeatInterval;
         }
 
         private static void CreateHellgateGroup()
@@ -54,11 +65,12 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             {
                 var index = ThreadSafeRandom.Next(0, HellgateLandblocks.Count - 1);
                 var landblockShort = HellgateLandblockKeys[index];
-                var landblockPosition = HellgateLandblocks[landblockShort];
+                var landblock = HellgateLandblocks[landblockShort];
+                var landblockPosition = landblock.DropLocation;
 
                 var timespan = ThreadSafeRandom.Next(15, 30); // hellgates are open for 15-30 minutes
 
-                CurrentHellgateGroup = new HellgateGroup(landblockPosition, 5, 5);
+                CurrentHellgateGroup = new HellgateGroup(landblockPosition, 10, 5);
                 HellgateGroups.Add(CurrentHellgateGroup);
             }
         }
@@ -84,6 +96,9 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
 
         public static void Tick(double currentUnixTime)
         {
+            if (NextHeartbeatTime > currentUnixTime)
+                return;
+
             lock (hellgateLock)
             {
                 if (CurrentHellgateGroup.HellgateGroupExpiration < currentUnixTime || CurrentHellgateGroup.HasReachedCapacity)
@@ -92,19 +107,21 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
                 foreach(var hellgateGroup in HellgateGroups.ToList())
                 {
 
-                    if (hellgateGroup != null && hellgateGroup.HellgateGroupExpiration < currentUnixTime )
+                    if (hellgateGroup != null && hellgateGroup.HellgateGroupExpiration < currentUnixTime)
                         CleanupHellgateGroup(hellgateGroup);
                 }
 
                 foreach(var hellgatePurgatory in HellgatePurgatories.ToList())
                 {
-                    if (hellgatePurgatory != null && hellgatePurgatory.ArenaExpiration < currentUnixTime )
-                        CleanupHellgatePurgatories(hellgatePurgatory);
+                    if (hellgatePurgatory != null && hellgatePurgatory.ArenaExpiration < currentUnixTime)
+                        CleanupHellgatePurgatory(hellgatePurgatory);
                 }
             }
+
+            NextHeartbeatTime = currentUnixTime + HeartbeatInterval;
         }
 
-        private static void CleanupHellgatePurgatories(HellgatePurgatory hellgatePurgatory)
+        private static void CleanupHellgatePurgatory(HellgatePurgatory hellgatePurgatory)
         {
             foreach (var player in hellgatePurgatory.Players.ToList())
             {
@@ -161,12 +178,12 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             var defaultPlayer = hellgatePurgatoryPlayers.FirstOrDefault();
 
             if (hellgatePurgatoryPlayers.Count > 0)
-                CreateHellgatePurgatories(arenaLocation, defaultPlayer, hellgatePurgatoryPlayers);
+                CreateHellgatePurgatory(arenaLocation, defaultPlayer, hellgatePurgatoryPlayers);
 
             hellgateGroup.Destroy();
         }
 
-        private static void CreateHellgatePurgatories(Position arenaLocation, Player leader, HashSet<Player> hellgatePurgatoryPlayers)
+        private static void CreateHellgatePurgatory(Position arenaLocation, Player leader, HashSet<Player> hellgatePurgatoryPlayers)
         {
             var rules = new List<Realm>()
             {
@@ -174,7 +191,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
                 RealmManager.GetRealm(1017).Realm // hellgate ruleset
             };
 
-            var timespan = TimeSpan.FromMinutes(2); // purgatory only lasts 2 minutes for testing
+            var timespan = TimeSpan.FromMinutes(1); // purgatory only lasts 2 minutes for testing
             var expiration = Time.GetUnixTime() + timespan.TotalSeconds;
             var ephemeralRealm = RealmManager.GetNewEphemeralLandblock(arenaLocation.LandblockId, leader , rules, hellgatePurgatoryPlayers.ToList());
             var instance = ephemeralRealm.Instance;
