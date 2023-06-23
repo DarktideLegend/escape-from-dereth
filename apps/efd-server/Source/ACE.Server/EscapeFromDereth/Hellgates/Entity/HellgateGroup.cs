@@ -32,7 +32,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
         {
             get
             {
-                return Hellgates.Count == MaxActiveHellgates;
+                return Hellgates.Count >= MaxActiveHellgates;
             }
         }
 
