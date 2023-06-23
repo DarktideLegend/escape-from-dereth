@@ -476,5 +476,13 @@ VALUES (0x7C6A96A7, 600001, 0xC6A9001B, 78.0413, 59.0401, 42.198, -0.220603, 0, 
 /* @teleloc 0xC6A9001B [78.041298 59.040100 42.198002] -0.220603 0.000000 0.000000 0.975364 */
 
 INSERT INTO `landblock_instance` (`guid`, `weenie_Class_Id`, `obj_Cell_Id`, `origin_X`, `origin_Y`, `origin_Z`, `angles_W`, `angles_X`, `angles_Y`, `angles_Z`, `is_Link_Child`, `last_Modified`)
-VALUES (0x7C6A96A8, 3000311, 0xC6A9001B, 81.62702, 63.69582, 42.005, 0.520284, 0, 0, 0.853993, False, '2023-06-13 00:17:19'); /* Quality of Life Vendor */
-/* @teleloc 0xC6A9001B [81.627022 63.695820 42.005001] 0.520284 0.000000 0.000000 0.853993 */
+VALUES (0x7C6A96A8, 3000311, 0xC6A9001B, 81.627, 63.6958, 42.005, 0.520284, 0, 0, 0.853993, False, '2023-06-13 00:17:19'); /* Quality of Life Vendor */
+/* @teleloc 0xC6A9001B [81.626999 63.695801 42.005001] 0.520284 0.000000 0.000000 0.853993 */
+
+INSERT INTO `landblock_instance` (`guid`, `weenie_Class_Id`, `obj_Cell_Id`, `origin_X`, `origin_Y`, `origin_Z`, `angles_W`, `angles_X`, `angles_Y`, `angles_Z`, `is_Link_Child`, `last_Modified`)
+VALUES (0x7C6A96A9, 72331, 0xC6A9001B, 84.6837, 62.8252, 42.005, -0.371615, 0, 0, -0.928387, False, '2023-06-23 00:09:42'); /* Arqubal the Archmage */
+/* @teleloc 0xC6A9001B [84.683701 62.825199 42.005001] -0.371615 0.000000 0.000000 -0.928387 */
+
+INSERT INTO `landblock_instance` (`guid`, `weenie_Class_Id`, `obj_Cell_Id`, `origin_X`, `origin_Y`, `origin_Z`, `angles_W`, `angles_X`, `angles_Y`, `angles_Z`, `is_Link_Child`, `last_Modified`)
+VALUES (0x7C6A96AA, 3000304, 0xC6A9001B, 86.62618, 60.56237, 42.005, 0.677556, 0, 0, 0.735472, False, '2023-06-23 01:36:17'); /* Fitness Instructor Anthony */
+/* @teleloc 0xC6A9001B [86.626183 60.562370 42.005001] 0.677556 0.000000 0.000000 0.735472 */
