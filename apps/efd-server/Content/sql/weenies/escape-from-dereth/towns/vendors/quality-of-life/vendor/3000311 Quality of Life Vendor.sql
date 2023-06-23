@@ -27,7 +27,8 @@ VALUES (3000311,   1, True ) /* Stuck */
      , (3000311,  14, True ) /* GravityStatus */
      , (3000311,  19, False) /* Attackable */
      , (3000311,  39, True ) /* DealMagicalItems */
-     , (3000311,  41, True ) /* ReportCollisionsAsEnvironment */;
+     , (3000311,  41, True ) /* ReportCollisionsAsEnvironment */
+     , (3000311,  42003, True ) /* Custom Content */;
 
 INSERT INTO `weenie_properties_float` (`object_Id`, `type`, `value`)
 VALUES (3000311,  37,       1) /* BuyPrice */
@@ -50,7 +51,7 @@ VALUES (3000311,   1,   33554433) /* Setup */
      , (3000311,  15,   67117076) /* HairPalette */
      , (3000311,  16,   67109564) /* EyesPalette */
      , (3000311,  17,   67109560) /* SkinPalette */
-     , (3000311,  57,      273) /* AlternateCurrency - Trade Note (250,000) */;
+     , (3000311,  57,      20630) /* AlternateCurrency - Trade Note (250,000) */;
 
 INSERT INTO `weenie_properties_attribute` (`object_Id`, `type`, `init_Level`, `level_From_C_P`, `c_P_Spent`)
 VALUES (3000311,   1, 260, 0, 0) /* Strength */
@@ -111,22 +112,17 @@ VALUES (3000311, 0,     0,  0, 0, 0, False) /* Create nothing for Undef */
      , (3000311, 4, 36621, -1, 0, 0, False) /* Create  (36621) for Shop */
      , (3000311, 4, 36623, -1, 0, 0, False) /* Create  (36623) for Shop */
      , (3000311, 4, 36627, -1, 0, 0, False) /* Create  (36627) for Shop */
-     , (3000311, 4, 3000330, -1, 0, 0, False) /* Create  (3000330) for Shop */
      , (3000311, 4, 2029109, -1, 0, 0, False) /* Create  (2029109) for Shop */
      , (3000311, 4, 2032272, -1, 0, 0, False) /* Create  (2032272) for Shop */
      , (3000311, 4, 2029104, -1, 0, 0, False) /* Create  (2029104) for Shop */
      , (3000311, 4, 2032270, -1, 0, 0, False) /* Create  (2032270) for Shop */
      , (3000311, 4, 2032271, -1, 0, 0, False) /* Create  (2032271) for Shop */
      , (3000311, 4, 22449, -1, 0, 0, False) /* Create Plentiful Healing Kit (22449) for Shop */
-     , (3000311, 4, 3000360, -1, 0, 0, False) /* Create  (3000360) for Shop */
      , (3000311, 4, 34257, -1, 0, 0, False) /* Create Asheron's Lesser Benediction (34257) for Shop */
-     , (3000311, 4, 23356, -1, 0, 0, False) /* Create Sanguinary Aegis (23356) for Shop */
-     , (3000311, 4, 21998, -1, 0, 0, False) /* Create Bundle of Deadly Chorizite Arrowheads (21998) for Shop */
      , (3000311, 4, 15856, -1, 0, 0, False) /* Create Encrusted Bloodstone Jewel (15856) for Shop */
      , (3000311, 4, 30246, -1, 0, 0, False) /* Create Artist's Crystal (30246) for Shop */
      , (3000311, 4,  8904, -1, 0, 0, False) /* Create Focusing Stone (8904) for Shop */
      , (3000311, 4, 35593, -1, 0, 0, False) /* Create  (35593) for Shop */
-     , (3000311, 4, 41637, -1, 0, 0, False) /* Create Hollow Two Handed Spear (41637) for Shop */
      
 
 /* Lifestoned Changelog:
