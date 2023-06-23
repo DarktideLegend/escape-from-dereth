@@ -14,6 +14,7 @@ using ACE.Entity.Enum;
 using ACE.Server.Entity;
 using ACE.Server.WorldObjects;
 using ACE.Server.Realms;
+using ACE.Server.EscapeFromDereth.Hellgates;
 
 namespace ACE.Server.Managers
 {
@@ -344,6 +345,9 @@ namespace ACE.Server.Managers
                         landblock.TickMultiThreadedWork(Time.GetUnixTime());
                 }
             }
+
+            // Tick for hellgates
+            HellgateManager.Tick(Time.GetUnixTime());
         }
 
         private static void TickSingleThreadedWork()
