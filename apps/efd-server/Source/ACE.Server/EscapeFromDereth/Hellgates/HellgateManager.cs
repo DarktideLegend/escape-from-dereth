@@ -27,6 +27,8 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             { 0x02F0, EFDHelpers.slocToPosition("0x02F00152 [140.000000 -130.000000 0.005000] 1.000000 0.000000 0.000000 0.000000 393216") } // Hills Citadel
             { 0x5875, new HellgateLandblock(EFDHelpers.slocToPosition("0x58750294 [180.000000 -109.111000 6.505000] 1.000000 0.000000 0.000000 0.000000 393216"), "Rynthid Genesis") }, 
             { 0x03A3, new HellgateLandblock(EFDHelpers.slocToPosition("0x03A30201 [70.000000 -590.000000 0.005000] 1.000000 0.000000 0.000000 0.000000 393216"), "Northern Infiltrator Keep") }, 
+            { 0x5D49, new HellgateLandblock(EFDHelpers.slocToPosition("0x5D49014D [90.000000 0.000000 0.010000] 0.000000 0.000000 0.000000 -1.000000 393216"), "Olthoi Arcade South") }, 
+            { 0x8B03, new HellgateLandblock(EFDHelpers.slocToPosition("0x8B0303FF [110.026001 -150.014008 -17.995001] 1.000000 0.000000 0.000000 0.000000 393216"), "Apostate Nexus") }, 
         };
 
         private static readonly ImmutableList<ushort> HellgateLandblockKeys = HellgateLandblocks.Keys.ToImmutableList(); 
