@@ -480,8 +480,12 @@ namespace ACE.Server.WorldObjects
             // get all items in inventory
             var inventory = GetAllPossessions();
 
-            // exclude bonded items
-            inventory = inventory.Where(i => (i.GetProperty(PropertyInt.Bonded) ?? 0) == 0).ToList();
+            if (fullLoot)
+                // exclude attuned
+                inventory = inventory.Where(i => (i.GetProperty(PropertyInt.Attuned) ?? 0) == 0).ToList();
+            else
+                // exclude bonded items
+                inventory = inventory.Where(i => (i.GetProperty(PropertyInt.Bonded) ?? 0) == 0).ToList();
 
             // handle items with BondedStatus.Destroy
             var destroyedItems = HandleDestroyBonded();
