@@ -25,6 +25,8 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
         private static readonly Dictionary<ushort, Position> HellgateLandblocks = new Dictionary<ushort, Position>()
         {
             { 0x02F0, EFDHelpers.slocToPosition("0x02F00152 [140.000000 -130.000000 0.005000] 1.000000 0.000000 0.000000 0.000000 393216") } // Hills Citadel
+            { 0x5875, new HellgateLandblock(EFDHelpers.slocToPosition("0x58750294 [180.000000 -109.111000 6.505000] 1.000000 0.000000 0.000000 0.000000 393216"), "Rynthid Genesis") }, 
+            { 0x03A3, new HellgateLandblock(EFDHelpers.slocToPosition("0x03A30201 [70.000000 -590.000000 0.005000] 1.000000 0.000000 0.000000 0.000000 393216"), "Northern Infiltrator Keep") }, 
         };
 
         private static readonly ImmutableList<ushort> HellgateLandblockKeys = HellgateLandblocks.Keys.ToImmutableList(); 
