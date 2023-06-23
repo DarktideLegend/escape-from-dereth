@@ -1061,7 +1061,7 @@ namespace ACE.Server.Command.Handlers
         [CommandHandler("currency", AccessLevel.Developer, CommandHandlerFlag.RequiresWorld, 0, "Creates some currency items in your inventory for testing.")]
         public static void HandleCurrency(Session session, params string[] parameters)
         {
-            HashSet<uint> weenieIds = new HashSet<uint> { 273, 20630 };
+            HashSet<uint> weenieIds = new HashSet<uint> { 273 };
 
             AddWeeniesToInventory(session, weenieIds);
         }
