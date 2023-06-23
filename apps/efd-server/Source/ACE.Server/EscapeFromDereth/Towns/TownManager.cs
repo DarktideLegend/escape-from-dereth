@@ -89,7 +89,16 @@ namespace ACE.Server.EscapeFromDereth.Towns
 
         public static Town GetRandomTown()
         {
-            return TownsList[ThreadSafeRandom.Next(0, TownsList.Count - 1)];
+            int random;
+            Town town;
+
+            do
+            {
+                random = ThreadSafeRandom.Next(0, TownsList.Count - 1);
+                town = TownsList[random];
+            } while (town.isClosed);
+
+            return town;
         }
 
         public static Town GetClosestTownFromPosition(Position position)
