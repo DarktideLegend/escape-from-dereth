@@ -1,3 +1,15 @@
+## [1.1.0-alpha.24](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.23...efd-server-v1.1.0-alpha.24) (2023-06-24)
+
+
+### Bug Fixes
+
+* **efd-server:** 🐛 save creature to biota after outdoor death treasure mutation ([b4155db](https://github.com/DarktideLegend/escape-from-dereth/commit/b4155db13456f19e495fb9913367df2505bf9480))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ organize realms weenie content ([4d8feef](https://github.com/DarktideLegend/escape-from-dereth/commit/4d8feefc35e27f0ecab21d1b24a03b75d2341b9d))
+
 ## [1.1.0-alpha.23](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.22...efd-server-v1.1.0-alpha.23) (2023-06-24)
 
 
