@@ -1,3 +1,42 @@
+## [1.1.0-alpha.23](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.22...efd-server-v1.1.0-alpha.23) (2023-06-24)
+
+
+### Features
+
+* **efd-server:** ✨ add Black Spear Temple Upper and Moarsmen Priory to HellgateLandblock pool ([9d8d288](https://github.com/DarktideLegend/escape-from-dereth/commit/9d8d28800f3ad1e1cb799a6ea86c7f70018216f4))
+* **efd-server:** ✨ add Fitness Instructor Anthony NPC to towns ([b70c028](https://github.com/DarktideLegend/escape-from-dereth/commit/b70c0282f1575eb30597cd7d8ff2caa88ef1f29a))
+* **efd-server:** ✨ add HellgateLandblock entity ([318a61c](https://github.com/DarktideLegend/escape-from-dereth/commit/318a61cd3708978d7fd1e74eb1b1098b487077bf))
+* **efd-server:** ✨ add Olthoi Arcade South + Apostate Nexus to HellgateLandblock pool ([09984b2](https://github.com/DarktideLegend/escape-from-dereth/commit/09984b246f342870617c09ce9af44b8e5fc872b6))
+* **efd-server:** ✨ add Rynthid Genesis + Northern Infiltrator Keep to HellgateLandblock pool ([c6d034b](https://github.com/DarktideLegend/escape-from-dereth/commit/c6d034b0973e6862c317a34125e16eec9a06271a))
+* **efd-server:** ✨ disable corpse_destroy_pyreals property ([f783b30](https://github.com/DarktideLegend/escape-from-dereth/commit/f783b3052de7eb9d5c4e14c993350e9fd646d6fa))
+* **efd-server:** ✨ enable HasLifestones ruleset in home realm ([e58ce37](https://github.com/DarktideLegend/escape-from-dereth/commit/e58ce3745707cfb7f511d74e8126140604a69b58))
+* **efd-server:** ✨ make Sanguinary Aegis attuned ([182f10f](https://github.com/DarktideLegend/escape-from-dereth/commit/182f10fc71a5f2ba0cd49462f9df796307bdfe2b))
+
+
+### Bug Fixes
+
+* **efd-server:** 🐛 attuned items do not drop with full loot ruleset ([8fc212e](https://github.com/DarktideLegend/escape-from-dereth/commit/8fc212e7d423778a3a5f95f43a45ef8457e882ba))
+* **efd-server:** 🐛 corpses should pass CustomContentOnly filter ([05b3ce3](https://github.com/DarktideLegend/escape-from-dereth/commit/05b3ce339bd78f0845d1d531ce574f63fad7c0ad))
+* **efd-server:** 🐛 remove stack of mmds from starter items ([59aeec6](https://github.com/DarktideLegend/escape-from-dereth/commit/59aeec6a636d6cf2437f9688c81fe2c51b2f51bd))
+
+
+### Performance Improvements
+
+* **efd-server:** ⚡️ add HellgateManager heartbeat ([5d84cb3](https://github.com/DarktideLegend/escape-from-dereth/commit/5d84cb378dcccf3551bab7d5a5752038ca491db3))
+
+
+### Build System Dependencies
+
+* **efd-server:** 📦️ add ace-web service to docker compose ([772faaa](https://github.com/DarktideLegend/escape-from-dereth/commit/772faaa1b2fae754cb32e4b49b4f78d21ebe3b97))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ GetRandomTown only returns towns that are open ([8f4a302](https://github.com/DarktideLegend/escape-from-dereth/commit/8f4a302e201e896a264154d6db71529cc263123b))
+* **efd-server:** ♻️ organize weenie content ([3fca40e](https://github.com/DarktideLegend/escape-from-dereth/commit/3fca40ead510ce90248bbe9dd272b4bc9288f86a))
+* **efd-server:** ♻️ update HasReachedCapacity equality logic ([0cc1202](https://github.com/DarktideLegend/escape-from-dereth/commit/0cc1202b5b48e451140d8b72b035aecaa42f9cd5))
+* **efd-server:** ♻️ update rithwic drop position ([de62bd1](https://github.com/DarktideLegend/escape-from-dereth/commit/de62bd1374ca417bd181fa6ed79671f90519d619))
+
 ## [1.1.0-alpha.22](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.21...efd-server-v1.1.0-alpha.22) (2023-06-19)
 
 
