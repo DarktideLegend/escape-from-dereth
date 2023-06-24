@@ -869,6 +869,7 @@ namespace ACE.Server.Entity
             if (!HellgateManager.PositionIsHellgate(creature.Location))
             {
                 creature.DeathTreasureType = 453;
+                creature.SaveBiotaToDatabase();
                 return;
             }
 
