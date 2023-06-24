@@ -9,7 +9,7 @@
     "ExperienceMultiplierAll": 0.25,
     "IsOverridable":  true,
     "HasPortals": false,
-    "HasLifestones": false,
+    "HasLifestones": true,
     "HasDoors": false,
     "HasRecalls": false,
     "HasRebuffs": true,
