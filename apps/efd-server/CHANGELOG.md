@@ -1,3 +1,25 @@
+## [1.1.0-alpha.25](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.24...efd-server-v1.1.0-alpha.25) (2023-06-25)
+
+
+### Features
+
+* **efd-server:** ✨ add UseWieldRequirements realm ruleset ([a04c73b](https://github.com/DarktideLegend/escape-from-dereth/commit/a04c73b063d14e7b382fd2155fe11cedb8273f6a))
+* **efd-server:** ✨ disable wield requirements for home realm ([539c395](https://github.com/DarktideLegend/escape-from-dereth/commit/539c3953648190ba969a98c18b9608a93fe66b37))
+* **efd-server:** ✨ set IsPkOnly to true for hideouts ([7f8dd8b](https://github.com/DarktideLegend/escape-from-dereth/commit/7f8dd8b5a1ba4bc4a0f60d6a4ba7eb430335b9f1))
+
+
+### Bug Fixes
+
+* **efd-server:** 🐛 remove hellgate group before destroying ([466f13f](https://github.com/DarktideLegend/escape-from-dereth/commit/466f13f5456e7619bfd0cd89e344a178abdce254))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ add dynamic guid to HellgateGroup ([29fb1d3](https://github.com/DarktideLegend/escape-from-dereth/commit/29fb1d3dfbf8d1798892e0eb9b9d6a2e30ec6a4f))
+* **efd-server:** ♻️ hellgates expire in 3 minutes for testing ([63bc725](https://github.com/DarktideLegend/escape-from-dereth/commit/63bc725d0509f1217e8da1115397d79a143007dc))
+* **efd-server:** ♻️ move Drudge Orb to Fitness Instructor Anthony ([ef4c631](https://github.com/DarktideLegend/escape-from-dereth/commit/ef4c63166799578f48fdf88c30a655ec90e6e362))
+* **efd-server:** ♻️ use TimeRemaining instead of HellgateGroupExpiration ([e8d2c62](https://github.com/DarktideLegend/escape-from-dereth/commit/e8d2c62e34d98173d88d8ca6de41434ea1ce007a))
+
 ## [1.1.0-alpha.24](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.23...efd-server-v1.1.0-alpha.24) (2023-06-24)
 
 
