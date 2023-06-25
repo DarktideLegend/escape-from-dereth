@@ -70,8 +70,9 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
 
                 var timespan = ThreadSafeRandom.Next(15, 30); // hellgates are open for 15-30 minutes
 
-                CurrentHellgateGroup = new HellgateGroup(landblockPosition, 10, 5);
+                CurrentHellgateGroup = new HellgateGroup(landblockPosition, 3, 5);
                 HellgateGroups.Add(CurrentHellgateGroup);
+                log.Info($"Created HellgateGroup - {CurrentHellgateGroup.Guid}");
             }
         }
 
