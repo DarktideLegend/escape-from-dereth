@@ -181,6 +181,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             if (hellgatePurgatoryPlayers.Count > 0)
                 CreateHellgatePurgatory(arenaLocation, defaultPlayer, hellgatePurgatoryPlayers);
 
+            HellgateGroups.Remove(hellgateGroup);
             hellgateGroup.Destroy();
         }
 
