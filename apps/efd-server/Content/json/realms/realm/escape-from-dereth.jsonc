@@ -15,6 +15,7 @@
     "HasRebuffs": true,
     "HasHousing": false,
     "HasBindstones": false,
-    "IsVendorNpcOnly": true
+    "IsVendorNpcOnly": true,
+    "UseWieldRequirements": false
   }
 }
