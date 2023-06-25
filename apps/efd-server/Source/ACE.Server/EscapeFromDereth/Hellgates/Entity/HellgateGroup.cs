@@ -1,5 +1,6 @@
 using ACE.Common;
 using ACE.Entity;
+using ACE.Server.Managers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,8 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
 {
     internal class HellgateGroup
     {
+        public readonly ObjectGuid Guid;
+
         public readonly Position Location;
 
         private Dictionary<uint, Hellgate> Hellgates = new Dictionary<uint, Hellgate>();
@@ -57,14 +60,17 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
             }
 
             Hellgates.Clear();
+            GuidManager.RecycleDynamicGuid(Guid);
         }
 
         public HellgateGroup(Position position, int timespan, int maxActiveHellgates)
         {
-            this.Location = position;
-            this.HellgateTimer = TimeSpan.FromMinutes(timespan);
-            this.MaxActiveHellgates = maxActiveHellgates;
-            this.HellgateGroupExpiration = Time.GetUnixTime() + HellgateTimer.TotalSeconds;
+
+            Guid = GuidManager.NewDynamicGuid();
+            Location = position;
+            HellgateTimer = TimeSpan.FromMinutes(timespan);
+            MaxActiveHellgates = maxActiveHellgates;
+            HellgateGroupExpiration = Time.GetUnixTime() + HellgateTimer.TotalSeconds;
         }
     }
 }
