@@ -225,7 +225,8 @@ VALUES (3000304, 4,  6597, -1, 0, 0, False) /* Create Greater Koujia Shadow Brea
      , (3000304, 4, 24203, -1, 0, 0, False) /* Create Weeping Mace (24203) for Shop */
      , (3000304, 4, 24205, -1, 0, 0, False) /* Create Weeping Staff (24205) for Shop */
      , (3000304, 4, 24206, -1, 0, 0, False) /* Create Weeping Sword (24206) for Shop */
-     , (3000304, 4, 41638, -1, 0, 0, False) /* Create Weeping Two Handed (41638) for Shop */;
+     , (3000304, 4, 41638, -1, 0, 0, False) /* Create Weeping Two Handed (41638) for Shop */
+     , (3000304, 4, 35593, -1, 0, 0, False) /* Create  (35593) Drudge Orb for Shop */;
 
 
 /* Lifestoned Changelog:
