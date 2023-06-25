@@ -1957,6 +1957,9 @@ namespace ACE.Server.WorldObjects
 
         private WeenieError CheckWieldRequirements(WorldObject item)
         {
+            if (!RealmRuleset.GetProperty(RealmPropertyBool.UseWieldRequirements))
+                return WeenieError.None;
+
             if (!PropertyManager.GetBool("use_wield_requirements").Item)
                 return WeenieError.None;
 

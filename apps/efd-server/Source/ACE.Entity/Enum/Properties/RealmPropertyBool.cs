@@ -84,7 +84,10 @@ namespace ACE.Entity.Enum.Properties
         HasHousing,
 
         [RealmPropertyBool(true)]
-        HasBindstones
+        HasBindstones,
+
+        [RealmPropertyBool(true)]
+        UseWieldRequirements
     }
 
 
