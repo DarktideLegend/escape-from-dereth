@@ -49,11 +49,11 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
 
         public static void Initialize()
         {
-            InitializeHeartbeats();
+            InitializeHeartbeat();
             CreateHellgateGroup();
         }
 
-        private static void InitializeHeartbeats()
+        private static void InitializeHeartbeat()
         {
             var currentUnixTime = Time.GetUnixTime();
             NextHeartbeatTime = currentUnixTime + HeartbeatInterval;
@@ -102,19 +102,19 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
 
             lock (hellgateLock)
             {
-                if (CurrentHellgateGroup.HellgateGroupExpiration < currentUnixTime || CurrentHellgateGroup.HasReachedCapacity)
+                if (CurrentHellgateGroup.TimeRemaining <= 0 || CurrentHellgateGroup.HasReachedCapacity)
                     CreateHellgateGroup();
 
                 foreach(var hellgateGroup in HellgateGroups.ToList())
                 {
 
-                    if (hellgateGroup != null && hellgateGroup.HellgateGroupExpiration < currentUnixTime)
+                    if (hellgateGroup != null && hellgateGroup.TimeRemaining <= 0)
                         CleanupHellgateGroup(hellgateGroup);
                 }
 
                 foreach(var hellgatePurgatory in HellgatePurgatories.ToList())
                 {
-                    if (hellgatePurgatory != null && hellgatePurgatory.ArenaExpiration < currentUnixTime)
+                    if (hellgatePurgatory != null && hellgatePurgatory.TimeRemaining <= 0)
                         CleanupHellgatePurgatory(hellgatePurgatory);
                 }
             }
@@ -143,7 +143,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
                 if(ActiveHellgates.TryGetValue(instance, out Hellgate hellgate))
                 {
                     hellgate.RemovePlayer(player);
-                    log.Info($"Removed {player.Name} from hellgate {hellgate.Instance}");
+                    log.Info($"Removed {player.Name} from hellgate - {hellgate.Instance} ");
                     return;
                 }
 
@@ -159,6 +159,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
 
         private static void CleanupHellgateGroup(HellgateGroup hellgateGroup)
         {
+            log.Info($"CleanupHellgateGroup - {hellgateGroup.Guid}");
             var hellgatePurgatoryPlayers = new HashSet<Player>();
             var arenaLocation = hellgateGroup.Location;
 
