@@ -118,8 +118,12 @@ namespace ACE.Server
 
                 var line = string.Empty;
                 var completeSQLline = string.Empty;
+
+                var dbname = ConfigManager.Config.MySql.World.Database;
+
                 while ((line = sr.ReadLine()) != null)
                 {
+                    line = line.Replace("ace_world", dbname);
                     //do minimal amount of work here
                     if (line.EndsWith(";"))
                     {
@@ -204,6 +208,7 @@ namespace ACE.Server
                         Console.Write($"Found {file.FullName} .... ");
                         var sqlDBFile = File.ReadAllText(file.FullName);
                         var sqlConnect = new MySql.Data.MySqlClient.MySqlConnection($"server={ConfigManager.Config.MySql.World.Host};port={ConfigManager.Config.MySql.World.Port};user={ConfigManager.Config.MySql.World.Username};password={ConfigManager.Config.MySql.World.Password};database={ConfigManager.Config.MySql.World.Database};DefaultCommandTimeout=120");
+                        sqlDBFile = sqlDBFile.Replace("ace_world", ConfigManager.Config.MySql.World.Database);
                         var script = new MySql.Data.MySqlClient.MySqlScript(sqlConnect, sqlDBFile);
 
                         Console.Write($"Importing into World database on SQL server at {ConfigManager.Config.MySql.World.Host}:{ConfigManager.Config.MySql.World.Port} .... ");
@@ -231,15 +236,15 @@ namespace ACE.Server
             log.Info($"Automatic Database Patching started...");
             Thread.Sleep(1000);
 
-            PatchDatabase("Authentication", ConfigManager.Config.MySql.Authentication.Host, ConfigManager.Config.MySql.Authentication.Port, ConfigManager.Config.MySql.Authentication.Username, ConfigManager.Config.MySql.Authentication.Password, ConfigManager.Config.MySql.Authentication.Database);
-            PatchDatabase("Shard", ConfigManager.Config.MySql.Shard.Host, ConfigManager.Config.MySql.Shard.Port, ConfigManager.Config.MySql.Shard.Username, ConfigManager.Config.MySql.Shard.Password, ConfigManager.Config.MySql.Shard.Database);
-            PatchDatabase("World", ConfigManager.Config.MySql.World.Host, ConfigManager.Config.MySql.World.Port, ConfigManager.Config.MySql.World.Username, ConfigManager.Config.MySql.World.Password, ConfigManager.Config.MySql.World.Database);
+            PatchDatabase("Authentication", ConfigManager.Config.MySql.Authentication.Host, ConfigManager.Config.MySql.Authentication.Port, ConfigManager.Config.MySql.Authentication.Username, ConfigManager.Config.MySql.Authentication.Password, ConfigManager.Config.MySql.Authentication.Database, ConfigManager.Config.MySql.Shard.Database, ConfigManager.Config.MySql.World.Database);
+            PatchDatabase("Shard", ConfigManager.Config.MySql.Shard.Host, ConfigManager.Config.MySql.Shard.Port, ConfigManager.Config.MySql.Shard.Username, ConfigManager.Config.MySql.Shard.Password, ConfigManager.Config.MySql.Authentication.Database, ConfigManager.Config.MySql.Shard.Database, ConfigManager.Config.MySql.World.Database);
+            PatchDatabase("World", ConfigManager.Config.MySql.World.Host, ConfigManager.Config.MySql.World.Port, ConfigManager.Config.MySql.World.Username, ConfigManager.Config.MySql.World.Password, ConfigManager.Config.MySql.Authentication.Database, ConfigManager.Config.MySql.Shard.Database, ConfigManager.Config.MySql.World.Database);
 
             Thread.Sleep(1000);
             log.Info($"Automatic Database Patching complete.");
         }
 
-        private static void PatchDatabase(string dbType, string host, uint port, string username, string password, string database)
+        private static void PatchDatabase(string dbType, string host, uint port, string username, string password, string authDB, string shardDB, string worldDB)
         {
             var updatesPath = $"DatabaseSetupScripts{Path.DirectorySeparatorChar}Updates{Path.DirectorySeparatorChar}{dbType}";
             var updatesFile = $"{updatesPath}{Path.DirectorySeparatorChar}applied_updates.txt";
@@ -260,7 +265,23 @@ namespace ACE.Server
 
                 Console.Write($"Found {file.Name} .... ");
                 var sqlDBFile = File.ReadAllText(file.FullName);
+                var database = "";
+                switch (dbType)
+                {
+                    case "Authentication":
+                        database = authDB;
+                        break;
+                    case "Shard":
+                        database = shardDB;
+                        break;
+                    case "World":
+                        database = worldDB;
+                        break;
+                }
                 var sqlConnect = new MySql.Data.MySqlClient.MySqlConnection($"server={host};port={port};user={username};password={password};database={database};DefaultCommandTimeout=120");
+                sqlDBFile = sqlDBFile.Replace("ace_auth", authDB);
+                sqlDBFile = sqlDBFile.Replace("ace_shard", shardDB);
+                sqlDBFile = sqlDBFile.Replace("ace_world", worldDB);
                 var script = new MySql.Data.MySqlClient.MySqlScript(sqlConnect, sqlDBFile);
 
                 Console.Write($"Importing into {database} database on SQL server at {host}:{port} .... ");

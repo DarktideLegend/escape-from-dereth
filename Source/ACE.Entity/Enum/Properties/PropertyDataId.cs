@@ -75,10 +75,10 @@ namespace ACE.Entity.Enum.Properties
         LinkedPortalOne            = 31,
         [ServerOnly]
         WieldedTreasureType        = 32,
-
-        UnknownGuessedname         = 33,
-        UnknownGuessedname2        = 34,
-
+        [ServerOnly]
+        InventoryTreasureType      = 33,
+        [ServerOnly]
+        ShowTreasureType           = 34,
         [ServerOnly]
         DeathTreasureType          = 35,
         [ServerOnly]
@@ -224,6 +224,46 @@ namespace ACE.Entity.Enum.Properties
             }
 
             return null;
+        }
+
+        public static bool IsHexData(this PropertyDataId property)
+        {
+
+            switch (property)
+            {
+                case PropertyDataId.AccountHouseId:
+                case PropertyDataId.AlternateCurrency:
+                case PropertyDataId.AugmentationCreateItem:
+                case PropertyDataId.AugmentationEffect:
+                case PropertyDataId.BlueSurgeSpell:
+                case PropertyDataId.DeathSpell:
+                case PropertyDataId.DeathTreasureType:
+                case PropertyDataId.HouseId:
+                case PropertyDataId.ItemSkillLimit:
+                case PropertyDataId.ItemSpecializedOnly:
+                case PropertyDataId.LastPortal:
+                case PropertyDataId.LinkedPortalOne:
+                case PropertyDataId.LinkedPortalTwo:
+                case PropertyDataId.OlthoiDeathTreasureType:
+                case PropertyDataId.OriginalPortal:
+                case PropertyDataId.PhysicsScript:
+                case PropertyDataId.ProcSpell:
+                case PropertyDataId.RedSurgeSpell:
+                case PropertyDataId.RestrictionEffect:
+                case PropertyDataId.Spell:
+                case PropertyDataId.SpellComponent:
+                case PropertyDataId.UseCreateItem:
+                case PropertyDataId.UseSound:
+                case PropertyDataId.VendorsClassId:
+                case PropertyDataId.WieldedTreasureType:
+                case PropertyDataId.YellowSurgeSpell:
+
+                case PropertyDataId x when x >= PropertyDataId.PCAPRecordedWeenieHeader:
+                    return false;
+
+                default:
+                    return true;
+            }
         }
     }
 }
