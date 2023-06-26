@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 
 ADD Content /ace/Content
 
@@ -48,3 +48,4 @@ VOLUME /ace/Config /ace/Dats /ace/Logs
 # health check
 HEALTHCHECK --start-period=5m --interval=1m --timeout=3s \
   CMD netstat -an | grep 9000 > /dev/null; if [ 0 != $? ]; then exit 1; fi;
+
