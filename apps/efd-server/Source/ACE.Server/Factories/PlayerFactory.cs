@@ -392,7 +392,6 @@ namespace ACE.Server.Factories
 
             if (!player.IsOlthoiPlayer)
             {
-
                 // set home realm for new players to Escape from Dereth
                 var realm = RealmManager.GetRealm((ushort)6);
                 player.SetProperty(PropertyInt.HomeRealm, realm.Realm.Id);
@@ -673,3 +672,4 @@ namespace ACE.Server.Factories
         }
     }
 }
+

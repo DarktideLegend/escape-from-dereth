@@ -29,7 +29,6 @@ using ACE.Server.WorldObjects;
 using Position = ACE.Entity.Position;
 using ACE.Server.Realms;
 using ACE.Server.EscapeFromDereth.Hellgates;
-using ACE.Common;
 using ACE.Server.EscapeFromDereth.Towns;
 
 namespace ACE.Server.Entity
@@ -329,7 +328,10 @@ namespace ACE.Server.Entity
 
                     var sortCell = LScape.get_landcell(pos.ObjCellID, Instance) as SortCell;
                     if (sortCell != null && sortCell.has_building())
+                    {
+                        wo.Destroy();
                         return;
+                    }
 
                     if (PropertyManager.GetBool("override_encounter_spawn_rates").Item)
                     {
@@ -356,7 +358,8 @@ namespace ACE.Server.Entity
                         }
                     }
 
-                    AddWorldObject(wo);
+                    if (!AddWorldObject(wo))
+                        wo.Destroy();
                 }));
             }
         }
@@ -841,7 +844,6 @@ namespace ACE.Server.Entity
                 return false;
             }
 
-
             return AddWorldObjectInternal(wo);
         }
 
@@ -849,7 +851,6 @@ namespace ACE.Server.Entity
         {
             AddWorldObjectInternal(wo);
         }
-
         public HashSet<uint> RealmTreasureTypes = new HashSet<uint>()
         {
             453,    // tier 1
@@ -1382,7 +1383,7 @@ namespace ACE.Server.Entity
                 foreach (var lb in Adjacents)
                     lb.FogColor = environChangeType;
 
-                foreach(var player in players)
+                foreach (var player in players)
                 {
                     player.SetFogColor(FogColor);
                 }

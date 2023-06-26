@@ -19,6 +19,7 @@ using ACE.Common;
 using ACE.Server.EscapeFromDereth.Hellgates;
 using ACE.Server.EscapeFromDereth.Towns;
 using ACE.Server.EscapeFromDereth.Hideouts;
+using static Google.Protobuf.Reflection.SourceCodeInfo.Types;
 
 namespace ACE.Server.Factories
 {
@@ -464,7 +465,12 @@ namespace ACE.Server.Factories
         /// </summary>
         public static WorldObject CreateNewWorldObject(Weenie weenie, AppliedRuleset ruleset, Position location = null)
         {
-            var worldObject = CreateWorldObject(weenie, GuidManager.NewDynamicGuid(), ruleset, location);
+            var guid = GuidManager.NewDynamicGuid();
+
+            var worldObject = CreateWorldObject(weenie, guid, ruleset, location);
+
+            if (worldObject == null)
+                GuidManager.RecycleDynamicGuid(guid);
 
             return worldObject;
         }
@@ -524,3 +530,4 @@ namespace ACE.Server.Factories
         }
     }
 }
+

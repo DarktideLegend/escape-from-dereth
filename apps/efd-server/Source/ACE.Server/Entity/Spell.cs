@@ -18,7 +18,7 @@ namespace ACE.Server.Entity
     /// The Spell class for game code
     /// A wrapper around SpellBase and Database.Spell
     /// </summary>
-    public partial class Spell: IEquatable<Spell>
+    public partial class Spell : IEquatable<Spell>
     {
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -219,10 +219,10 @@ namespace ACE.Server.Entity
             switch (School)
             {
                 case MagicSchool.CreatureEnchantment: return Skill.CreatureEnchantment;
-                case MagicSchool.ItemEnchantment:     return Skill.ItemEnchantment;
-                case MagicSchool.LifeMagic:           return Skill.LifeMagic;
-                case MagicSchool.WarMagic:            return Skill.WarMagic;
-                case MagicSchool.VoidMagic:           return Skill.VoidMagic;
+                case MagicSchool.ItemEnchantment: return Skill.ItemEnchantment;
+                case MagicSchool.LifeMagic: return Skill.LifeMagic;
+                case MagicSchool.WarMagic: return Skill.WarMagic;
+                case MagicSchool.VoidMagic: return Skill.VoidMagic;
             }
             return Skill.None;
         }
@@ -245,6 +245,28 @@ namespace ACE.Server.Entity
                     case SpellCategory.FireResistanceRaisingRare:
                     case SpellCategory.PierceResistanceRaisingRare:
                     case SpellCategory.SlashResistanceRaisingRare:
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns TRUE if spell category matches spells that should redirect to items player is holding
+        /// </summary>
+        public bool IsItemRedirectableType
+        {
+            get
+            {
+                switch (Category)
+                {
+                    case SpellCategory.DamageRaisingRare:
+                    case SpellCategory.AttackModRaisingRare:
+                    case SpellCategory.DefenseModRaisingRare:
+                    case SpellCategory.WeaponTimeRaisingRare:
+                    case SpellCategory.AppraisalResistanceLoweringRare:
+                    case SpellCategory.MaxDamageRaising:
                         return true;
                     default:
                         return false;

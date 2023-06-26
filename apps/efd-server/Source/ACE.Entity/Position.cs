@@ -242,17 +242,26 @@ namespace ACE.Entity
             Rotation = pos.Rotation;
         }
 
-        public Position(uint blockCellID, float newPositionX, float newPositionY, float newPositionZ, float newRotationX, float newRotationY, float newRotationZ, float newRotationW, uint instance)
+        public Position(uint blockCellID, float newPositionX, float newPositionY, float newPositionZ, float newRotationX, float newRotationY, float newRotationZ, float newRotationW, uint instance, bool relativePos = false)
         {
             LandblockId = new LandblockId(blockCellID);
 
             Instance = instance;
 
-            Pos = new Vector3(newPositionX, newPositionY, newPositionZ);
-            Rotation = new Quaternion(newRotationX, newRotationY, newRotationZ, newRotationW);
+            if (!relativePos)
+            {
+                Pos = new Vector3(newPositionX, newPositionY, newPositionZ);
+                Rotation = new Quaternion(newRotationX, newRotationY, newRotationZ, newRotationW);
 
-            if ((blockCellID & 0xFFFF) == 0)
-                SetPosition(Pos);
+                if ((blockCellID & 0xFFFF) == 0)
+                    SetPosition(Pos);
+            }
+            else
+            {
+                // position is marked as relative so pass in raw values and make no further adjustments.
+                PositionX = newPositionX; PositionY = newPositionY; PositionZ = newPositionZ;
+                Rotation = new Quaternion(newRotationX, newRotationY, newRotationZ, newRotationW);
+            }
         }
 
         public Position(uint blockCellID, Vector3 position, Quaternion rotation, uint instance)
@@ -314,18 +323,16 @@ namespace ACE.Entity
         /// Given a Vector2 set of coordinates, create a new position object for use in converting from VLOC to LOC
         /// </summary>
         /// <param name="coordinates">A set coordinates provided in a Vector2 object with East-West being the X value and North-South being the Y value</param>
-        public Position(Vector2 coordinates)
+        public Position(Vector2 coordinates, uint instance)
         {
-            // convert from (-102, 102) to (0, 204)
-            coordinates += Vector2.One * 102;
+            // convert from (-101.95, 102.05) to (0, 204)
+            coordinates += Vector2.One * 101.95f;
 
             // 204 = map clicks across dereth
             // 2040 = number of cells across dereth
             // 24 = meters per cell
             //var globalPos = coordinates / 204 * 2040 * 24;
             var globalPos = coordinates * 240;   // simplified
-
-            globalPos -= Vector2.One * 12.0f; // ?????
 
             // inlining, this logic is in PositionExtensions.FromGlobal()
             var blockX = (int)globalPos.X / BlockLength;
@@ -346,6 +353,8 @@ namespace ACE.Entity
             Pos = new Vector3(originX, originY, 0);     // must use PositionExtensions.AdjustMapCoords() to get Z
 
             Rotation = Quaternion.Identity;
+
+            Instance = instance;
         }
 
         public void Serialize(BinaryWriter payload, PositionFlags positionFlags, int animationFrame, bool writeLandblock = true)

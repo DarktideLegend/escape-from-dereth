@@ -13,7 +13,6 @@ using ACE.Server.Entity.Actions;
 using ACE.Server.Network.Enum;
 using ACE.Server.Network.GameEvent.Events;
 using ACE.Server.Network.GameMessages.Messages;
-using ACE.Server.EscapeFromDereth.Towns;
 
 namespace ACE.Server.WorldObjects
 {
@@ -179,13 +178,13 @@ namespace ACE.Server.WorldObjects
                 // handle Dirty Fighting
                 if (GetCreatureSkill(Skill.DirtyFighting).AdvancementClass >= SkillAdvancementClass.Trained)
                     FightDirty(target, damageEvent.Weapon);
-                
+
                 target.EmoteManager.OnDamage(this);
 
                 if (damageEvent.IsCritical)
                     target.EmoteManager.OnReceiveCritical(this);
             }
-            
+
             if (targetPlayer == null)
                 OnAttackMonster(target);
 
@@ -229,7 +228,7 @@ namespace ACE.Server.WorldObjects
             attackSkill = (uint)Math.Round(attackSkill * accuracyMod * offenseMod);
 
             //if (IsExhausted)
-                //attackSkill = GetExhaustedSkill(attackSkill);
+            //attackSkill = GetExhaustedSkill(attackSkill);
 
             //var baseStr = offenseMod != 1.0f ? $" (base: {GetCreatureSkill(GetCurrentWeaponSkill()).Current})" : "";
             //Console.WriteLine("Attack skill: " + attackSkill + baseStr);
@@ -430,15 +429,15 @@ namespace ACE.Server.WorldObjects
             //UpdateVitalDelta(Stamina, -1);
 
             //if (Fellowship != null)
-                //Fellowship.OnVitalUpdate(this);
+            //Fellowship.OnVitalUpdate(this);
 
             // send damage text message
             //if (PropertyManager.GetBool("show_dot_messages").Item)
             //{
-                var nether = damageType == DamageType.Nether ? "nether " : "";
-                var chatMessageType = damageType == DamageType.Nether ? ChatMessageType.Magic : ChatMessageType.Combat;
-                var text = $"You receive {amount} points of periodic {nether}damage.";
-                SendMessage(text, chatMessageType);
+            var nether = damageType == DamageType.Nether ? "nether " : "";
+            var chatMessageType = damageType == DamageType.Nether ? ChatMessageType.Magic : ChatMessageType.Combat;
+            var text = $"You receive {amount} points of periodic {nether}damage.";
+            SendMessage(text, chatMessageType);
             //}
 
             // splatter effects
@@ -475,9 +474,7 @@ namespace ACE.Server.WorldObjects
             if (Invincible || IsDead) return 0;
 
             if (source is Creature creatureAttacker)
-            {
                 SetCurrentAttacker(creatureAttacker);
-            }
 
             // check lifestone protection
             if (UnderLifestoneProtection)
@@ -522,7 +519,7 @@ namespace ACE.Server.WorldObjects
             }
 
             //if (Fellowship != null)
-                //Fellowship.OnVitalUpdate(this);
+            //Fellowship.OnVitalUpdate(this);
 
             if (Health.Current <= 0)
             {
@@ -763,7 +760,7 @@ namespace ACE.Server.WorldObjects
             }
 
             LastCombatMode = newCombatMode;
-            
+
             if (DateTime.UtcNow >= NextUseTime.AddSeconds(UseTimeEpsilon))
                 HandleActionChangeCombatMode_Inner(newCombatMode, forceHandCombat, callback);
             else
@@ -950,11 +947,11 @@ namespace ACE.Server.WorldObjects
         {
             var strAndEnd = Strength.Base + Endurance.Base;
 
-            if (strAndEnd > 440)        return "Indomitable";
-            else if (strAndEnd > 380)   return "Resilient";
-            else if (strAndEnd > 320)   return "Hardy";
-            else if (strAndEnd > 260)   return "Mediocre";
-            else if (strAndEnd > 200)   return "Poor";
+            if (strAndEnd > 440) return "Indomitable";
+            else if (strAndEnd > 380) return "Resilient";
+            else if (strAndEnd > 320) return "Hardy";
+            else if (strAndEnd > 260) return "Mediocre";
+            else if (strAndEnd > 200) return "Poor";
             else
                 return "None";
         }
@@ -963,11 +960,11 @@ namespace ACE.Server.WorldObjects
         {
             var strAndEnd = Strength.Base + 2 * Endurance.Base;
 
-            if (strAndEnd > 690)        return "Indomitable";
-            else if (strAndEnd > 580)   return "Resilient";
-            else if (strAndEnd > 470)   return "Hardy";
-            else if (strAndEnd > 346)   return "Mediocre";
-            else if (strAndEnd > 200)   return "Poor";
+            if (strAndEnd > 690) return "Indomitable";
+            else if (strAndEnd > 580) return "Resilient";
+            else if (strAndEnd > 470) return "Hardy";
+            else if (strAndEnd > 346) return "Mediocre";
+            else if (strAndEnd > 200) return "Poor";
             else
                 return "None";
         }
@@ -1146,7 +1143,7 @@ namespace ACE.Server.WorldObjects
         /// <returns>null if no errors, else pk error list</returns>
         public override List<WeenieErrorWithString> CheckPKStatusVsTarget(WorldObject target, Spell spell)
         {
-            if (target == null ||target == this)
+            if (target == null || target == this)
                 return null;
 
             var targetCreature = target as Creature;
@@ -1202,3 +1199,4 @@ namespace ACE.Server.WorldObjects
         }
     }
 }
+

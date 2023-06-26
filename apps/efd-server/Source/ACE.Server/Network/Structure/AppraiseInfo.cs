@@ -137,7 +137,10 @@ namespace ACE.Server.Network.Structure
                         if (!PropertiesInt.ContainsKey(PropertyInt.AppraisalLockpickSuccessPercent))
                             PropertiesInt.Add(PropertyInt.AppraisalLockpickSuccessPercent, (int)successChance);
                     }
-                }                
+                }
+                // if wo has DefaultLocked property and is unlocked, add that state to the property buckets
+                else if (PropertiesBool.ContainsKey(PropertyBool.DefaultLocked))
+                    PropertiesBool[PropertyBool.Locked] = false;
             }
 
             if (wo is Corpse)
@@ -255,28 +258,35 @@ namespace ACE.Server.Network.Structure
 
                     containsString = "It contains: \n";
 
-                    if (PropertiesString.ContainsKey(PropertyString.LongDesc) && PropertiesString[PropertyString.LongDesc] != null)
+                    if (!string.IsNullOrWhiteSpace(hookedItem.LongDesc))
                     {
-                        containsString += PropertiesString[PropertyString.LongDesc];
+                        containsString += hookedItem.LongDesc;
                     }
-                    else if (PropertiesString.ContainsKey(PropertyString.ShortDesc) && PropertiesString[PropertyString.ShortDesc] != null)
-                    {
-                        containsString += PropertiesString[PropertyString.ShortDesc];
-                    }
+                    //else if (PropertiesString.ContainsKey(PropertyString.ShortDesc) && PropertiesString[PropertyString.ShortDesc] != null)
+                    //{
+                    //    containsString += PropertiesString[PropertyString.ShortDesc];
+                    //}
                     else
                     {
-                        containsString += PropertiesString[PropertyString.Name];
+                        containsString += hookedItem.Name;
                     }
 
                     BuildHookProfile(hookedItem);
                 }
 
-                if (PropertiesString.ContainsKey(PropertyString.LongDesc) && PropertiesString[PropertyString.LongDesc] != null)
-                    PropertiesString[PropertyString.LongDesc] = baseDescString + containsString;
-                else if (PropertiesString.ContainsKey(PropertyString.ShortDesc) && PropertiesString[PropertyString.ShortDesc] != null)
-                    PropertiesString[PropertyString.LongDesc] = baseDescString + containsString;
-                else
-                    PropertiesString[PropertyString.LongDesc] = baseDescString + containsString;
+                //if (PropertiesString.ContainsKey(PropertyString.LongDesc) && PropertiesString[PropertyString.LongDesc] != null)
+                //    PropertiesString[PropertyString.LongDesc] = baseDescString + containsString;
+                ////else if (PropertiesString.ContainsKey(PropertyString.ShortDesc) && PropertiesString[PropertyString.ShortDesc] != null)
+                ////    PropertiesString[PropertyString.LongDesc] = baseDescString + containsString;
+                //else
+                //    PropertiesString[PropertyString.LongDesc] = baseDescString + containsString;
+
+                PropertiesString[PropertyString.LongDesc] = baseDescString + containsString;
+
+                PropertiesInt.Remove(PropertyInt.Structure);
+
+                // retail should have removed this property and then server side built the same result for the hook longdesc replacement but didn't and ends up with some odd looking appraisals as seen on video/pcaps
+                //PropertiesInt.Remove(PropertyInt.AppraisalLongDescDecoration);
             }
 
             if (wo is ManaStone)

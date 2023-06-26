@@ -468,17 +468,17 @@ namespace ACE.Server.WorldObjects
         [Flags]
         public enum SearchLocations
         {
-            None                = 0x00,
-            MyInventory         = 0x01,
-            MyEquippedItems     = 0x02,
-            Landblock           = 0x04,
-            LastUsedContainer   = 0x08,
-            WieldedByOther      = 0x10,
-            TradedByOther       = 0x20,
-            ObjectsKnownByMe    = 0x40,
-            LastUsedHook        = 0x80,
-            LocationsICanMove   = MyInventory | MyEquippedItems | Landblock | LastUsedContainer,
-            Everywhere          = 0xFF
+            None = 0x00,
+            MyInventory = 0x01,
+            MyEquippedItems = 0x02,
+            Landblock = 0x04,
+            LastUsedContainer = 0x08,
+            WieldedByOther = 0x10,
+            TradedByOther = 0x20,
+            ObjectsKnownByMe = 0x40,
+            LastUsedHook = 0x80,
+            LocationsICanMove = MyInventory | MyEquippedItems | Landblock | LastUsedContainer,
+            Everywhere = 0xFF
         }
 
         public WorldObject FindObject(uint objectGuid, SearchLocations searchLocations)
@@ -625,10 +625,11 @@ namespace ACE.Server.WorldObjects
             ActionChain pickupChain = new ActionChain();
 
             // start picking up item animation
+            EnqueueBroadcast(new GameMessageUpdatePosition(this));
+
             var motion = new Motion(CurrentMotionState.Stance, MotionPickup);
-            EnqueueBroadcast(
-                new GameMessageUpdatePosition(this),
-                new GameMessageUpdateMotion(this, motion));
+
+            EnqueueBroadcastMotion(motion);
 
             // Wait for animation to progress
             var motionTable = DatManager.PortalDat.ReadFromDat<MotionTable>(MotionTableId);
@@ -686,10 +687,11 @@ namespace ACE.Server.WorldObjects
                 return new ActionChain();
 
             // start picking up item animation
+            EnqueueBroadcast(new GameMessageUpdatePosition(this));
+
             var motion = new Motion(CurrentMotionState.Stance, pickupMotion);
-            EnqueueBroadcast(
-                new GameMessageUpdatePosition(this),
-                new GameMessageUpdateMotion(this, motion));
+
+            EnqueueBroadcastMotion(motion);
 
             // Wait for animation to progress
             var motionTable = DatManager.PortalDat.ReadFromDat<MotionTable>(MotionTableId);
@@ -1134,6 +1136,17 @@ namespace ACE.Server.WorldObjects
             }
             else // This is a self-contained movement
             {
+                var _containerRootOwner = containerRootOwner ?? container;
+
+                if (_containerRootOwner != this && _containerRootOwner != itemRootOwner)
+                {
+                    // this *should* be a self-contained movement..
+                    // duplicated check/message from client
+                    Session.Network.EnqueueSend(new GameEventInventoryServerSaveFailed(Session, itemGuid));
+                    SendTransientError($"You must first pick up the {item.Name}");
+                    return;
+                }
+
                 var wieldedLocation = item.CurrentWieldedLocation ?? EquipMask.None;
 
                 // note that special sequence for swapping arrows while in missile combat
@@ -1648,8 +1661,8 @@ namespace ACE.Server.WorldObjects
             // verify Aetheria slot, client doesn't handle this
             if ((wieldedLocation & EquipMask.Sigil) != 0)
             {
-                if (wieldedLocation.HasFlag(EquipMask.SigilOne)   && !AetheriaFlags.HasFlag(AetheriaBitfield.Blue) ||
-                    wieldedLocation.HasFlag(EquipMask.SigilTwo)   && !AetheriaFlags.HasFlag(AetheriaBitfield.Yellow) ||
+                if (wieldedLocation.HasFlag(EquipMask.SigilOne) && !AetheriaFlags.HasFlag(AetheriaBitfield.Blue) ||
+                    wieldedLocation.HasFlag(EquipMask.SigilTwo) && !AetheriaFlags.HasFlag(AetheriaBitfield.Yellow) ||
                     wieldedLocation.HasFlag(EquipMask.SigilThree) && !AetheriaFlags.HasFlag(AetheriaBitfield.Red))
                 {
                     Session.Network.EnqueueSend(new GameEventInventoryServerSaveFailed(Session, item.Guid.Full));
@@ -2198,7 +2211,7 @@ namespace ACE.Server.WorldObjects
                 return;
             }
 
-            if ((stackRootOwner == this && containerRootOwner != this)  || (stackRootOwner != this && containerRootOwner == this)) // Movement is between the player and the world
+            if ((stackRootOwner == this && containerRootOwner != this) || (stackRootOwner != this && containerRootOwner == this)) // Movement is between the player and the world
             {
                 if (stackRootOwner is Vendor)
                 {
@@ -2599,7 +2612,7 @@ namespace ACE.Server.WorldObjects
                 }
             }
 
-            if ((sourceStackRootOwner == this && targetStackRootOwner != this)  || (sourceStackRootOwner != this && targetStackRootOwner == this)) // Movement is between the player and the world
+            if ((sourceStackRootOwner == this && targetStackRootOwner != this) || (sourceStackRootOwner != this && targetStackRootOwner == this)) // Movement is between the player and the world
             {
                 if (sourceStackRootOwner is Vendor)
                 {
@@ -3060,7 +3073,7 @@ namespace ACE.Server.WorldObjects
             else
             {
                 if (item.WeenieType == WeenieType.Deed && target.AiAcceptEverything) // http://acpedia.org/wiki/Housing_FAQ#House_deeds
-                {                    
+                {
                     var stackSize = item.StackSize ?? 1;
 
                     var stackMsg = stackSize != 1 ? $"{stackSize} " : "";
@@ -3321,7 +3334,7 @@ namespace ACE.Server.WorldObjects
             Prev_PutItemInContainer[1] = Prev_PutItemInContainer[0];
             Prev_PutItemInContainer[0] = new PutItemInContainerEvent(itemGuid, containerGuid, placement);
         }
-        
+
         public void GiveFromEmote(WorldObject emoter, uint weenieClassId, int amount = 1, int palette = 0, float shade = 0)
         {
             if (emoter is null || weenieClassId == 0)
@@ -3583,3 +3596,4 @@ namespace ACE.Server.WorldObjects
         }
     }
 }
+
