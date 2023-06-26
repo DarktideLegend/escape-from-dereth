@@ -1,3 +1,10 @@
+## [1.1.0-alpha.26](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.25...efd-server-v1.1.0-alpha.26) (2023-06-26)
+
+
+### Features
+
+* **efd-server:** ✨ merge acrealms-ace-merge branch v1.39.4192 ([d535f9a](https://github.com/DarktideLegend/escape-from-dereth/commit/d535f9a933562b60e5ee90a289ad6e571f438a25))
+
 ## [1.1.0-alpha.25](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.24...efd-server-v1.1.0-alpha.25) (2023-06-25)
 
 
