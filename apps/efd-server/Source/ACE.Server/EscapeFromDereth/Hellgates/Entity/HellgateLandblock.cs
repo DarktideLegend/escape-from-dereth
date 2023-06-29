@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
 {
-    internal class HellgateLandblock
+    public class HellgateLandblock
     {
         public Position DropLocation;
         public string Name;

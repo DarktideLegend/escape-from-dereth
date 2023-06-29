@@ -201,7 +201,7 @@ namespace ACE.Server.Factories
                 var hellgate = HellgateManager.GetHellgate(location.Instance);
                 if (hellgate != null)
                 {
-                    location = new Position(hellgate.LeaderPosition);
+                    location = new Position(hellgate.ExitPosition);
                     rollForHellgate = false;
                 }
             }

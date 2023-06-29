@@ -1,3 +1,4 @@
+using ACE.Entity;
 using ACE.Entity.Models;
 using ACE.Server.Managers;
 using ACE.Server.WorldObjects;
@@ -13,7 +14,7 @@ namespace ACE.Server.Realms
     public class EphemeralRealm
     {
         public Player Owner { get; set; }
-        public List<Player> AllowedPlayers { get; private set; } = new List<Player>();
+        public HashSet<Player> AllowedPlayers { get; private set; } = new HashSet<Player>();
         public bool OpenToFellowship { get; set; } = true;
         public DateTime ExpiresAt = DateTime.UtcNow.AddDays(1);
 
@@ -21,20 +22,20 @@ namespace ACE.Server.Realms
         //public bool IsDuelInstance => RulesetTemplate.
 
         private EphemeralRealm() { }
-        private EphemeralRealm(Player owner, RulesetTemplate template, List<Player> allowedPlayers)
+        private EphemeralRealm(Player owner, RulesetTemplate template, HashSet<Player> allowedPlayers)
         {
             this.Owner = owner;
             this.RulesetTemplate = template;
             this.AllowedPlayers = allowedPlayers;
         }
 
-        public static EphemeralRealm Initialize(Player owner, List<Realm> realms, List<Player> allowedPlayers = null)
+        public static EphemeralRealm Initialize(Player owner, List<Realm> realms, HashSet<Player> allowedPlayers = null)
         {
             var baseRealm = RealmManager.GetBaseRealm(owner);
             return Initialize(owner, baseRealm, realms, allowedPlayers);
         }
 
-        private static EphemeralRealm Initialize(Player owner, WorldRealm baseRealm, List<Realm> appliedRealms, List<Player> allowedPlayers)
+        private static EphemeralRealm Initialize(Player owner, WorldRealm baseRealm, List<Realm> appliedRealms, HashSet<Player> allowedPlayers)
         {
             string key = baseRealm.Realm.Id.ToString();
             RulesetTemplate template = null;
