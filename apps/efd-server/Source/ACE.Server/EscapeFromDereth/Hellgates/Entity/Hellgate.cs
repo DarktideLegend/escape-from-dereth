@@ -13,7 +13,6 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
         public readonly HashSet<Player> Players;
         public readonly HellgateLandblock Landblock;
         public readonly uint Instance;
-        public readonly Position ExitPosition; // location of leader before entering hellgate 
         public uint HellgateGroup;
         public double Expiration;
 
@@ -28,19 +27,41 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
         {
             get
             {
-                var drop = Landblock.DropLocation;
-                var position = new Position(drop);
+                var dropLocation = Landblock.DropLocation;
+                var position = new Position(dropLocation);
                 position.Instance = Instance;
                 return position;
             }
         }
 
+        public Position BossPosition
+        {
+            get
+            {
+                var bossLocation = Landblock.BossLocation;
+                var position = new Position(bossLocation);
+                position.Instance = Instance;
+                return position;
+            }
 
-        public Hellgate(HellgateLandblock landblock, HashSet<Player> players, Position exitPosition, double expiration, uint hellgateGroup, uint instance)
+        }
+        public Position ExitPosition
+        {
+            get
+            {
+                var exitLocation = Landblock.ExitLocation;
+                var position = new Position(exitLocation);
+                position.Instance = Instance;
+                return position;
+            }
+
+        }
+
+
+        public Hellgate(HellgateLandblock landblock, HashSet<Player> players, double expiration, uint hellgateGroup, uint instance)
         {
             Players = players;
             Landblock = landblock;
-            ExitPosition = exitPosition;
             Expiration = expiration;
             HellgateGroup = hellgateGroup;
             Instance = instance;
