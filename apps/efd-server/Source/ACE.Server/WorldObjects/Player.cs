@@ -47,13 +47,6 @@ namespace ACE.Server.WorldObjects
 
         public bool LastContact = true;
 
-        public bool IsInHellgate
-        {
-            get
-            {
-                return HellgateManager.PositionIsHellgate(Location);
-            }
-        }
 
         public bool IsJumping
         {

@@ -9,19 +9,19 @@ using System.Threading.Tasks;
 
 namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
 {
-    internal class HellgateGroup
+    public class HellgateGroup
     {
         public readonly ObjectGuid Guid;
 
-        public readonly Position Location;
+        public readonly HellgateLandblock HellgateLandblock;
 
-        private Dictionary<uint, Hellgate> Hellgates = new Dictionary<uint, Hellgate>();
+        private HashSet<uint> Hellgates = new HashSet<uint>();
 
         private TimeSpan HellgateTimer;
 
         private int MaxActiveHellgates;
 
-        public double HellgateGroupExpiration { get; private set; } 
+        public double HellgateGroupExpiration { get; private set; }
 
         public double TimeRemaining
         {
@@ -39,35 +39,29 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
             }
         }
 
-        public void AddHellgate(Hellgate hellgate)
+        public void AddHellgate(uint instance)
         {
-            if (HasReachedCapacity || Hellgates.ContainsKey(hellgate.Instance))
-                return;
 
-            Hellgates.Add(hellgate.Instance, hellgate);
+
+            Hellgates.Add(instance);
         }
 
-        internal List<Hellgate> GetAllHellgates()
+        internal HashSet<uint> GetAllHellgates()
         {
-            return Hellgates.Values.ToList();
+            return Hellgates;
         }
 
         internal void Destroy()
         {
-            foreach(var hellgate in Hellgates.Values.ToList())
-            {
-                hellgate.Destroy();
-            }
-
             Hellgates.Clear();
             GuidManager.RecycleDynamicGuid(Guid);
         }
 
-        public HellgateGroup(Position position, int timespan, int maxActiveHellgates)
+        public HellgateGroup(HellgateLandblock hellgateLandblock, int timespan, int maxActiveHellgates, ObjectGuid guid)
         {
 
-            Guid = GuidManager.NewDynamicGuid();
-            Location = position;
+            Guid = guid;
+            HellgateLandblock = hellgateLandblock;
             HellgateTimer = TimeSpan.FromMinutes(timespan);
             MaxActiveHellgates = maxActiveHellgates;
             HellgateGroupExpiration = Time.GetUnixTime() + HellgateTimer.TotalSeconds;

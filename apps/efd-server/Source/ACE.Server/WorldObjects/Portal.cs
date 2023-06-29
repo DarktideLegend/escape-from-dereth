@@ -307,18 +307,24 @@ namespace ACE.Server.WorldObjects
         {
             IsProcessingHellgate = true;
 
-            var hellgateLocation = HellgateManager.CreateHellGate(player, rules);
-            if (hellgateLocation != null)
-            {
-                Destroy();
-                foreach (var member in player.Fellowship.GetFellowshipMembers().Values.ToList())
-                {
+            var hellgate = HellgateManager.CreateHellgate(player, rules);
 
-                    WorldManager.ThreadSafeTeleport(member, hellgateLocation, false, new ActionEventDelegate(() =>
-                    {
-                        log.Info($"Player {member.Name} has entered hellgate {hellgateLocation.Instance}");
-                    }));
-                }
+            if (hellgate == null)
+            {
+                IsProcessingHellgate = false;
+                return new ActivationResult(false);
+            }
+
+            var hellgateLocation = hellgate.DropPosition;
+
+            Destroy();
+            foreach (var member in hellgate.Players)
+            {
+
+                WorldManager.ThreadSafeTeleport(member, hellgateLocation, false, new ActionEventDelegate(() =>
+                {
+                    log.Info($"Player {member.Name} has entered hellgate {hellgateLocation.Instance}");
+                }));
             }
 
             IsProcessingHellgate = false;

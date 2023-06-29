@@ -876,7 +876,7 @@ namespace ACE.Server.Entity
 
             var hellgate = HellgateManager.GetHellgate(creature.Location.Instance);
 
-            var distanceMultiplier = TownManager.GetTownDistanceMultiplier(creature.RealmRuleset, hellgate.LeaderPosition);
+            var distanceMultiplier = TownManager.GetTownDistanceMultiplier(creature.RealmRuleset, hellgate.ExitPosition);
 
             creature.DeathTreasureType = 464;
 
