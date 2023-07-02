@@ -851,14 +851,15 @@ namespace ACE.Server.Entity
         {
             AddWorldObjectInternal(wo);
         }
-        public HashSet<uint> RealmTreasureTypes = new HashSet<uint>()
+        /* public HashSet<uint> RealmTreasureTypes = new HashSet<uint>()
         {
             453,    // tier 1
             464,    // tier 5
             1000,   // tier 7
             1005    // tier 8
-        };
-        private void MutateDeathTreasureTypeByTownDistance(WorldObject wo)
+        };*/
+
+        private void MutateDeathTreasureTypeByTier(WorldObject wo)
         {
             if (!(wo is Creature) || wo.IsGenerator)
                 return;
@@ -867,26 +868,26 @@ namespace ACE.Server.Entity
                 return;
 
             var creature = wo as Creature;
-            if (!HellgateManager.PositionIsHellgate(creature.Location))
+            var instance = creature.Location.Instance;
+            var hellgate = HellgateManager.GetHellgate(instance);
+            if (hellgate == null)
             {
                 creature.DeathTreasureType = 453;
                 creature.SaveBiotaToDatabase();
                 return;
             }
 
-            var hellgate = HellgateManager.GetHellgate(creature.Location.Instance);
-
-            var distanceMultiplier = TownManager.GetTownDistanceMultiplier(creature.RealmRuleset, hellgate.ExitPosition);
+            var tier = hellgate.Tier;
 
             creature.DeathTreasureType = 464;
 
-            if (distanceMultiplier >= 300)
+            if (tier == 4)
                 creature.DeathTreasureType = 1000;
 
-            if (distanceMultiplier >= 400)
+            if (tier == 5)
                 creature.DeathTreasureType = 1005;
 
-            wo.SaveBiotaToDatabase();
+            creature.SaveBiotaToDatabase();
         }
 
         private bool AddWorldObjectInternal(WorldObject wo)
@@ -926,7 +927,7 @@ namespace ACE.Server.Entity
 
             wo.Location.Instance = Instance;
 
-            MutateDeathTreasureTypeByTownDistance(wo);
+            MutateDeathTreasureTypeByTier(wo);
 
             if (wo.PhysicsObj == null)
                 wo.InitPhysicsObj();

@@ -15,6 +15,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
         public readonly uint Instance;
         public uint HellgateGroup;
         public double Expiration;
+        public int Tier;
 
         public double TimeRemaining
         {
@@ -58,12 +59,13 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
         }
 
 
-        public Hellgate(HellgateLandblock landblock, HashSet<Player> players, double expiration, uint hellgateGroup, uint instance)
+        public Hellgate(HellgateLandblock landblock, HashSet<Player> players, double expiration, uint hellgateGroup, int tier, uint instance)
         {
             Players = players;
             Landblock = landblock;
             Expiration = expiration;
             HellgateGroup = hellgateGroup;
+            Tier = tier;
             Instance = instance;
         }
 
