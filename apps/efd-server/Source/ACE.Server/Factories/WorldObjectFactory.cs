@@ -194,7 +194,7 @@ namespace ACE.Server.Factories
         {
             var hasMonsters = ruleset.GetProperty(RealmPropertyBool.HasMonsters);
             var isVendorNpcOnly = ruleset.GetProperty(RealmPropertyBool.IsVendorNpcOnly);
-            var rollForHellgate = true;
+            var rollForGatekeeper = weenie.WeenieClassId != 602001;
 
             if (HellgateManager.PositionIsHellgate(location))
             {
@@ -202,7 +202,7 @@ namespace ACE.Server.Factories
                 if (hellgate != null)
                 {
                     location = new Position(hellgate.ExitPosition);
-                    rollForHellgate = false;
+                    rollForGatekeeper = false;
                 }
             }
 
@@ -214,7 +214,7 @@ namespace ACE.Server.Factories
             if (creature.IsMonster && hasMonsters)
             {
                 creature.Destroy();
-                return CreateMonsterOrHellgate(ruleset, location, rollForHellgate);
+                return CreateMonsterOrGatekeeper(ruleset, location, rollForGatekeeper);
             }
 
             if (!isVendorNpcOnly)
@@ -226,32 +226,29 @@ namespace ACE.Server.Factories
             }
         }
 
-        private static WorldObject CreateMonsterOrHellgate(AppliedRuleset ruleset, Position location, bool rollForHellgate)
+        private static WorldObject CreateMonsterOrGatekeeper(AppliedRuleset ruleset, Position location, bool rollForGatekeeper)
         {
-            var hellgateRoll = ThreadSafeRandom.Next(1, 100);
+            var gatekeeperRoll = ThreadSafeRandom.Next(1, 100);
             // ideally we spawn a boss mob that spawns a portal on death, for now we will randomly spawn a hellgate portal instead of a creature 
-            if (rollForHellgate && hellgateRoll <= 20) // 20% chance of spawning a hellgate instead of a monster
+            if (rollForGatekeeper && gatekeeperRoll < 20) // 20% chance of spawning a hellgate instead of a monster
             {
-                var hellgatePortal = CreateNewWorldObject(600003, ruleset, location); // create Hellgate
-                if (hellgatePortal != null)
-                {
-                    hellgatePortal.Lifespan = (int)(HellgateManager.CurrentHellgateGroup.TimeRemaining);
-                    return hellgatePortal;
-                }
+                var hellgatePortal = CreateNewWorldObject(602001, ruleset, location); // create Hellgate
+                return hellgatePortal;
             }
 
-            var distanceMultiplier = TownManager.GetTownDistanceMultiplier(ruleset, location);
+            var hellgate = HellgateManager.GetHellgate(location.Instance);
+            var tier = hellgate != null ? hellgate.Tier : TownManager.GetMonsterTierByDistance(location);
 
-            if (distanceMultiplier <= 100)
+            if (tier == 1)
                 return CreateNewWorldObject(601001, ruleset, location); // create a Forgotten Leech if this is short distance
 
-            if (distanceMultiplier <= 200)
+            if (tier == 2)
                 return CreateNewWorldObject(601002, ruleset, location); // create a Forgotten Revenant if this is a medium distance
 
-            if (distanceMultiplier <= 300)
+            if (tier == 3)
                 return CreateNewWorldObject(601003, ruleset, location); // create a Forgotten Demilich if this is a long distance
 
-            if (distanceMultiplier <= 400)
+            if (tier == 4)
                 return CreateNewWorldObject(601004, ruleset, location); // create a Forgotten Olthoi Slayer if this is a long distance
 
             return CreateNewWorldObject(601005, ruleset, location); // create a Forgotten Champion if this is an extreme distance

@@ -5,6 +5,7 @@ using ACE.Server.Entity;
 using ACE.Server.Entity.Actions;
 using ACE.Server.EscapeFromDereth.Common;
 using ACE.Server.EscapeFromDereth.Hellgates.Entity;
+using ACE.Server.EscapeFromDereth.Towns;
 using ACE.Server.Managers;
 using ACE.Server.WorldObjects;
 using log4net;
@@ -112,7 +113,10 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
         {
             if (pos == null) return false;
 
+            lock (hellgateLock)
+            {
                 return pos.IsEphemeralRealm && GetHellgate(pos.Instance) != null;
+            }
         }
 
         public static void Tick(double currentUnixTime)
@@ -224,7 +228,8 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             var instance = ephemeralRealm.Instance;
             var expiration = hellgateGroup.HellgateGroupExpiration;
             var groupGuid = hellgateGroup.Guid.Full;
-            var hellgate = new Hellgate(hellgateGroup.HellgateLandblock, allowedPlayers, expiration, groupGuid, instance);
+            var tier = TownManager.GetMonsterTierByDistance(leader.Location);
+            var hellgate = new Hellgate(hellgateGroup.HellgateLandblock, allowedPlayers, expiration, groupGuid, tier, instance);
 
             hellgateGroup.AddHellgate(hellgate.Instance);
 

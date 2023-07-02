@@ -3,6 +3,8 @@ using ACE.Entity;
 using ACE.Entity.Enum.Properties;
 using ACE.Server.Entity;
 using ACE.Server.EscapeFromDereth.Common;
+using ACE.Server.EscapeFromDereth.Towns.Entity;
+using ACE.Server.Network.GameMessages.Messages;
 using ACE.Server.Realms;
 using ACE.Server.WorldObjects;
 using log4net;
@@ -39,30 +41,6 @@ namespace ACE.Server.EscapeFromDereth.Towns
         private static HashSet<Town> ClosedTowns = new HashSet<Town>();
 
         // This should probably be moved to ACE.Entity
-        public class Town
-        {
-            public string name { get; private set; }
-            public Position position { get; private set; }
-            public bool isClosed { get; private set; } = false;
-            public Position bootLocation { get; private set; }
-
-            public Town(string name, Position position, Position bootLocation)
-            {
-                this.name = name;
-                this.position = position;
-                this.bootLocation = bootLocation;
-            }
-
-            internal void close()
-            {
-                isClosed = true;
-            }
-
-            internal void open()
-            {
-                isClosed = false;
-            }
-        }
 
         public bool closeTown(Town town)
         {
@@ -112,12 +90,27 @@ namespace ACE.Server.EscapeFromDereth.Towns
             });
         }
 
-        public static float GetTownDistanceMultiplier(AppliedRuleset ruleset, Position location)
+        public static int GetMonsterTierByDistance(Position location)
+        {
+            var multiplier = GetTownDistance(location);
+
+            if (multiplier <= 400)
+                return 1;
+            if (multiplier <= 800)
+                return 2;
+            if (multiplier <= 1200)
+                return 3;
+            if (multiplier <= 1600)
+                return 4;
+
+            return 5;
+        }
+
+        public static float GetTownDistance(Position location)
         {
             var town = GetClosestTownFromPosition(location);
             var distance = town.position.DistanceTo(location);
-            var townDistanceMultiplier = ruleset.GetProperty(RealmPropertyFloat.TownDistanceMultiplier);
-            return (float)(distance * townDistanceMultiplier);
+            return distance;
         }
     }
 }
