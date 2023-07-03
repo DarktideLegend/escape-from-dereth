@@ -61,14 +61,14 @@ namespace ACE.Server.WorldObjects
         /// <summary>
         /// A new biota be created taking all of its values from weenie.
         /// </summary>
-        public Creature(Weenie weenie, ObjectGuid guid, AppliedRuleset ruleset, Position location = null) : base(weenie, guid)
+        public Creature(Weenie weenie, ObjectGuid guid, AppliedRuleset ruleset) : base(weenie, guid)
         {
             InitializePropertyDictionaries();
-            RealmMutate(ruleset, location);
+            RealmMutate(ruleset);
             SetEphemeralValues();
         }
 
-        private void RealmMutate(AppliedRuleset ruleset, Position location = null)
+        private void RealmMutate(AppliedRuleset ruleset)
         {
             if (WeenieType == WeenieType.Creature)
             {

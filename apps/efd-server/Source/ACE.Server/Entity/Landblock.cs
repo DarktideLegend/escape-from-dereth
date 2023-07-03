@@ -30,6 +30,7 @@ using Position = ACE.Entity.Position;
 using ACE.Server.Realms;
 using ACE.Server.EscapeFromDereth.Hellgates;
 using ACE.Server.EscapeFromDereth.Towns;
+using ACE.Common;
 
 namespace ACE.Server.Entity
 {
@@ -927,7 +928,7 @@ namespace ACE.Server.Entity
 
             wo.Location.Instance = Instance;
 
-            MutateDeathTreasureTypeByTier(wo);
+            MutateCustomContent(wo);
 
             if (wo.PhysicsObj == null)
                 wo.InitPhysicsObj();
@@ -984,6 +985,40 @@ namespace ACE.Server.Entity
             }
 
             return true;
+        }
+
+        private void MutateCustomContent(WorldObject wo)
+        {
+            if (!(wo is Player) && wo is Creature && (wo as Creature).IsMonster)
+            {
+                MutateDeathTreasureTypeByTier(wo);
+
+                if (!wo.IsInHellgate && ThreadSafeRandom.Next(1, 100) < 20) // 20% chance of spawning a Gatekeeper instead of a monster
+                {
+                    MutateGatekeeper(wo);
+                }
+
+                wo.SaveBiotaToDatabase();
+            }
+
+        }
+
+        private void MutateGatekeeper(WorldObject wo)
+        {
+            var tier = TownManager.GetMonsterTierByDistance(wo.Location);
+
+            if (wo.Biota?.PropertiesAttribute2nd?.ContainsKey(PropertyAttribute2nd.MaxHealth) == true)
+            {
+                var initLevel = wo.Biota.PropertiesAttribute2nd[PropertyAttribute2nd.MaxHealth].InitLevel += 1000;
+                var level = (uint)(initLevel * tier);
+                wo.Biota.PropertiesAttribute2nd[PropertyAttribute2nd.MaxHealth].InitLevel = level;
+                wo.Biota.PropertiesAttribute2nd[PropertyAttribute2nd.MaxHealth].CurrentLevel = level;
+            }
+
+            wo.SpawnHellgateOnDeath = true;
+            wo.SetProperty(PropertyFloat.DefaultScale, 1.25 * tier); // scale the gatekeeper size by 1.25 * tier
+            wo.Name = $"{wo.Name} Gatekeeper";
+
         }
 
         public void RemoveWorldObject(ObjectGuid objectId, bool adjacencyMove = false, bool fromPickup = false, bool showError = true)

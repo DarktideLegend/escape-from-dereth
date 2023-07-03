@@ -92,15 +92,15 @@ namespace ACE.Server.EscapeFromDereth.Towns
 
         public static int GetMonsterTierByDistance(Position location)
         {
-            var multiplier = GetTownDistance(location);
+            var distance = GetTownDistance(location);
 
-            if (multiplier <= 400)
+            if (distance <= 400)
                 return 1;
-            if (multiplier <= 800)
+            if (distance <= 800)
                 return 2;
-            if (multiplier <= 1200)
+            if (distance <= 1200)
                 return 3;
-            if (multiplier <= 1600)
+            if (distance <= 1600)
                 return 4;
 
             return 5;
