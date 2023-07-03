@@ -17,7 +17,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
 
         private HashSet<uint> Hellgates = new HashSet<uint>();
 
-        private bool IsOpen = false;
+        public bool IsOpen { get; set; } = false;
 
         private TimeSpan HellgateTimer { get; }
 
@@ -27,6 +27,8 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
 
         public double HellgateGroupExpiration { get; private set; }
         public double HellgateBossSpawnExpiration { get; }
+
+        private Hellgate GroupTail;
 
         public double TimeRemaining
         {
@@ -52,11 +54,23 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
             }
         }
 
-        public void AddHellgate(uint instance)
+        public void AddHellgate(Hellgate hellgate)
         {
+            if (HasReachedCapacity)
+                return;
 
+            if (IsOpen)
+            {
+                if (GroupTail != null)
+                {
+                    GroupTail.Next = hellgate;
+                    GroupTail = hellgate;
+                }
+                else
+                    GroupTail = hellgate;
+            } 
 
-            Hellgates.Add(instance);
+            Hellgates.Add(hellgate.Instance);
         }
 
         internal HashSet<uint> GetAllHellgates()
@@ -67,6 +81,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
         internal void Destroy()
         {
             Hellgates.Clear();
+            GroupTail = null;
             GuidManager.RecycleDynamicGuid(Guid);
         }
 
@@ -77,7 +92,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
             HellgateLandblock = hellgateLandblock;
             MaxActiveHellgates = maxActiveHellgates;
             HellgateTimer = TimeSpan.FromMinutes(timespan);
-            HellgateBossTimer = TimeSpan.FromMinutes(timespan - timespan * 0.25);
+            HellgateBossTimer = TimeSpan.FromMinutes(timespan * 0.25); // boss spawns after a quarter of time has elapsed in hellgate
             HellgateGroupExpiration = Time.GetUnixTime() + HellgateTimer.TotalSeconds;
             HellgateBossSpawnExpiration = Time.GetUnixTime() + HellgateBossTimer.TotalSeconds;
         }

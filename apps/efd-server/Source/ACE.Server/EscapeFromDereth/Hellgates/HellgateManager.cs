@@ -94,6 +94,8 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
                     timespan = 30; // hellgates are open for 30 minutes
 
                 var hellgateGroup = new HellgateGroup(landblock, timespan, maxHellgates, GuidManager.NewDynamicGuid());
+
+                hellgateGroup.IsOpen = true;
                 CurrentHellgateGroup = hellgateGroup;
                 HellgateGroups.Enqueue(hellgateGroup);
 
@@ -132,7 +134,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
 
             var hellgateGroup = HellgateGroups.Peek();
 
-            while(hellgateGroup != null && hellgateGroup.ShouldDestroy)
+            while (hellgateGroup != null && hellgateGroup.ShouldDestroy)
             {
                 CleanupHellgateGroup(HellgateGroups.Dequeue());
 
@@ -148,7 +150,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
         {
             foreach (var hellgate in ActiveHellgates.Values)
             {
-                foreach(var player in hellgate.Players)
+                foreach (var player in hellgate.Players)
                 {
                     if (player != null)
                     {
@@ -171,7 +173,9 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
                 boss.Location = hellgate.BossPosition;
                 boss?.EnterWorld();
 
-                var exitPosition = hellgate.ExitPosition;
+                var exitPortal = WorldObjectFactory.CreateNewWorldObject(600004, hellgate.Ruleset, hellgate.ExitPosition);
+                exitPortal.Location = hellgate.ExitPosition;
+                exitPortal?.EnterWorld();
             }
 
         }
@@ -198,18 +202,18 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
 
             foreach (var instance in hellgateGroup.GetAllHellgates())
             {
-                if(ActiveHellgates.TryGetValue(instance, out Hellgate hellgate))
                 {
+                    var hellgate = GetHellgate(instance);
                     foreach (var player in hellgate.Players)
                     {
                         if (player != null)
-                            RemovePlayerFromHellgate(player, instance);
+                            RemovePlayerFromHellgate(player, hellgate.Instance);
                     }
 
                     ActiveHellgates.TryRemove(hellgate.Instance, out _);
                     hellgate.Destroy();
                     var actionChain = new ActionChain();
-                    var lb = LandblockManager.GetLandblockUnsafe(hellgate.Landblock.DropLocation.LandblockId, instance);
+                    var lb = LandblockManager.GetLandblockUnsafe(hellgate.Landblock.DropLocation.LandblockId, hellgate.Instance);
                     actionChain.AddAction(WorldManager.ActionQueue, () =>
                     {
                         if (lb != null)
@@ -230,7 +234,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             if (!CreateHellgateValidator(leader))
                 return null;
 
-            lock(hellgateLock)
+            lock (hellgateLock)
             {
 
                 if (CurrentHellgateGroup.ShouldDestroy || CurrentHellgateGroup.HasReachedCapacity)
@@ -248,11 +252,12 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             var instance = ephemeralRealm.Instance;
             var expiration = hellgateGroup.HellgateGroupExpiration;
             var bossExpiration = hellgateGroup.HellgateBossSpawnExpiration;
+            var isOpen = hellgateGroup.IsOpen;
             var groupGuid = hellgateGroup.Guid.Full;
             var tier = TownManager.GetMonsterTierByDistance(leader.Location);
-            var hellgate = new Hellgate(hellgateGroup.HellgateLandblock, allowedPlayers, expiration, bossExpiration, groupGuid, tier, ephemeralRealm.RealmRuleset, instance);
+            var hellgate = new Hellgate(hellgateGroup.HellgateLandblock, allowedPlayers, expiration, bossExpiration, groupGuid, isOpen, tier, ephemeralRealm.RealmRuleset, instance);
 
-            hellgateGroup.AddHellgate(hellgate.Instance);
+            hellgateGroup.AddHellgate(hellgate);
 
             ActiveHellgates.TryAdd(instance, hellgate);
 
@@ -304,6 +309,22 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             }
 
             return true;
+        }
+
+        public static void HellgateExitTransition(Player player, Hellgate hellgate)
+        {
+            if (hellgate.Next == null)
+            {
+                RemovePlayerFromHellgate(player, hellgate.Instance);
+            }
+            else
+            {
+                hellgate.Next.AddPlayer(player);
+                WorldManager.ThreadSafeTeleport(player, hellgate.Next.DropPosition, true, new ActionEventDelegate(() =>
+                {
+                    hellgate.RemovePlayer(player);
+                }));
+            }
         }
     }
 }

@@ -778,14 +778,6 @@ namespace ACE.Server.WorldObjects
             var prevrealm = RealmManager.GetRealm(prevRealmId);
             var newRealm = RealmManager.GetRealm(newRealmId);
 
-            // if leaving a purgatory
-            if (prevRealmId == 1017)
-                HellgateManager.RemovePlayerFromHellgate(this);
-
-            // if leaving a hellgate and not into a purgatory
-            if (prevRealmId == 1016 && newRealmId != 1017)
-                HellgateManager.RemovePlayerFromHellgate(this);
-
             // if we are transitioning to Hideout, stamp our current location with an offset 
             if (newRealmId == 0x7FFF)
                 SetPosition(PositionType.HomeRealmExitTo, new Position(Location.InFrontOf(-5f, true)));

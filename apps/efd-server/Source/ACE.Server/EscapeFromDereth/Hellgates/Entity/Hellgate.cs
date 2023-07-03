@@ -18,7 +18,9 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
         public double BossExpiration;
         public bool BossSpawned = false;
         public int Tier;
+        public bool IsOpen;
         public AppliedRuleset Ruleset;
+        public Hellgate Next;
         public double TimeRemaining
         {
             get
@@ -85,7 +87,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
 
         }
 
-        public Hellgate(HellgateLandblock landblock, HashSet<Player> players, double expiration, double bossExpiration, uint hellgateGroup, int tier, AppliedRuleset ruleset, uint instance)
+        public Hellgate(HellgateLandblock landblock, HashSet<Player> players, double expiration, double bossExpiration, uint hellgateGroup, bool isOpen, int tier, AppliedRuleset ruleset, uint instance)
         {
             Players = players;
             Landblock = landblock;
@@ -94,6 +96,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
             HellgateGroup = hellgateGroup;
             Tier = tier;
             Instance = instance;
+            IsOpen = isOpen;
             Ruleset = ruleset;
         }
 
