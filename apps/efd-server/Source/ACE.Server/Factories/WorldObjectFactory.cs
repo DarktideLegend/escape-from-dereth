@@ -194,19 +194,12 @@ namespace ACE.Server.Factories
         {
             var hasMonsters = ruleset.GetProperty(RealmPropertyBool.HasMonsters);
             var isVendorNpcOnly = ruleset.GetProperty(RealmPropertyBool.IsVendorNpcOnly);
-            var rollForGatekeeper = weenie.WeenieClassId != 602001;
 
-            if (HellgateManager.PositionIsHellgate(location))
-            {
-                var hellgate = HellgateManager.GetHellgate(location.Instance);
-                if (hellgate != null)
-                {
-                    location = new Position(hellgate.ExitPosition);
-                    rollForGatekeeper = false;
-                }
-            }
+            var hellgate = HellgateManager.GetHellgate(location.Instance);
+            var isHellgateInstance = hellgate != null;
+            var tier = isHellgateInstance ? hellgate.Tier : TownManager.GetMonsterTierByDistance(location);
 
-            var creature = new Creature(weenie, guid, ruleset, location);
+            var creature = new Creature(weenie, guid, ruleset);
 
             if (shouldOverride)
                 return creature;
@@ -214,7 +207,7 @@ namespace ACE.Server.Factories
             if (creature.IsMonster && hasMonsters)
             {
                 creature.Destroy();
-                return CreateMonsterOrGatekeeper(ruleset, location, rollForGatekeeper);
+                return CreateMonster(ruleset, location, tier);
             }
 
             if (!isVendorNpcOnly)
@@ -226,19 +219,8 @@ namespace ACE.Server.Factories
             }
         }
 
-        private static WorldObject CreateMonsterOrGatekeeper(AppliedRuleset ruleset, Position location, bool rollForGatekeeper)
+        private static WorldObject CreateMonster(AppliedRuleset ruleset, Position location, int tier)
         {
-            var gatekeeperRoll = ThreadSafeRandom.Next(1, 100);
-            // ideally we spawn a boss mob that spawns a portal on death, for now we will randomly spawn a hellgate portal instead of a creature 
-            if (rollForGatekeeper && gatekeeperRoll < 20) // 20% chance of spawning a hellgate instead of a monster
-            {
-                var hellgatePortal = CreateNewWorldObject(602001, ruleset, location); // create Hellgate
-                return hellgatePortal;
-            }
-
-            var hellgate = HellgateManager.GetHellgate(location.Instance);
-            var tier = hellgate != null ? hellgate.Tier : TownManager.GetMonsterTierByDistance(location);
-
             if (tier == 1)
                 return CreateNewWorldObject(601001, ruleset, location); // create a Forgotten Leech if this is short distance
 

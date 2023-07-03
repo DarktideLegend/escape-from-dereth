@@ -29,8 +29,10 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
             get
             {
                 var dropLocation = Landblock.DropLocation;
-                var position = new Position(dropLocation);
-                position.Instance = Instance;
+                var position = new Position(dropLocation)
+                {
+                    Instance = Instance
+                };
                 return position;
             }
         }
@@ -40,8 +42,10 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
             get
             {
                 var bossLocation = Landblock.BossLocation;
-                var position = new Position(bossLocation);
-                position.Instance = Instance;
+                var position = new Position(bossLocation)
+                {
+                    Instance = Instance
+                };
                 return position;
             }
 
@@ -51,8 +55,10 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
             get
             {
                 var exitLocation = Landblock.ExitLocation;
-                var position = new Position(exitLocation);
-                position.Instance = Instance;
+                var position = new Position(exitLocation)
+                {
+                    Instance = Instance
+                };
                 return position;
             }
 
