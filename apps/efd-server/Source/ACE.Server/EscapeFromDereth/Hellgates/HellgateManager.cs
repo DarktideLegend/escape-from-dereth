@@ -108,15 +108,11 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             return null;
         }
 
-
         public static bool PositionIsHellgate(Position pos)
         {
             if (pos == null) return false;
 
-            lock (hellgateLock)
-            {
-                return pos.IsEphemeralRealm && GetHellgate(pos.Instance) != null;
-            }
+            return pos.IsEphemeralRealm && GetHellgate(pos.Instance) != null;
         }
 
         public static void Tick(double currentUnixTime)
