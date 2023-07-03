@@ -12,14 +12,6 @@ namespace ACE.Server.WorldObjects
 {
     partial class Player
     {
-        public bool IsInHellgate
-        {
-            get
-            {
-                return HellgateManager.PositionIsHellgate(Location);
-            }
-        }
-
         public void Hellgate_Tick(Hellgate hellgate)
         {
             if (hellgate.Instance != Location.Instance) 
@@ -31,7 +23,7 @@ namespace ACE.Server.WorldObjects
                 var timeRemaining = TimeSpan.FromMinutes(hellgate.TimeRemaining);
 
                 var dungeonName = hellgate.Landblock.Name;
-                Session.Network.EnqueueSend(new GameMessageSystemChat($"Player_Hellgate_Heartbeat [instance] = {instance} [group] = {hellgateGroup} [dungeon] = {dungeonName} [time_remaining] = {timeRemaining}", ChatMessageType.System));
+                Session.Network.EnqueueSend(new GameMessageSystemChat($"Hellgate: [instance] = {instance} [group] = {hellgateGroup} [dungeon] = {dungeonName} [time_remaining] = {timeRemaining}", ChatMessageType.System));
             }
         }
     }

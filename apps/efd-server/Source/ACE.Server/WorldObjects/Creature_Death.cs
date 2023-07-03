@@ -50,9 +50,21 @@ namespace ACE.Server.WorldObjects
             if (!IsOnNoDeathXPLandblock)
                 OnDeath_GrantXP();
 
+            if (SpawnHellgateOnDeath) // if Gatekeeper
+                OnDeath_SummonHellgate();
+
             return GetDeathMessage(lastDamager, damageType, criticalHit);
         }
 
+        private void OnDeath_SummonHellgate()
+        {
+            var pos = new Position(Location);
+            var wo = WorldObjectFactory.CreateNewWorldObject(600003, RealmRuleset, new Position(Location));
+            wo.Location = pos;
+
+            if (wo != null)
+                wo.EnterWorld();
+        }
 
         public DeathMessage GetDeathMessage(DamageHistoryInfo lastDamagerInfo, DamageType damageType, bool criticalHit = false)
         {
