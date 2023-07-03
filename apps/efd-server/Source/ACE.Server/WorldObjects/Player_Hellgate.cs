@@ -21,9 +21,13 @@ namespace ACE.Server.WorldObjects
                 var instance = hellgate.Instance;
                 var hellgateGroup = hellgate.HellgateGroup;
                 var timeRemaining = TimeSpan.FromMinutes(hellgate.TimeRemaining);
+                var bossCountdown = TimeSpan.FromMinutes(hellgate.BossSpawnRemaining);
 
                 var dungeonName = hellgate.Landblock.Name;
-                Session.Network.EnqueueSend(new GameMessageSystemChat($"Hellgate: [instance] = {instance} [group] = {hellgateGroup} [dungeon] = {dungeonName} [time_remaining] = {timeRemaining}", ChatMessageType.System));
+                Session.Network.EnqueueSend(new GameMessageSystemChat($"Hellgate: [instance] = {instance} [group] = {hellgateGroup} [dungeon] = {dungeonName}", ChatMessageType.System));
+                Session.Network.EnqueueSend(new GameMessageSystemChat($"Hellgate: [time_remaining] = {timeRemaining}", ChatMessageType.System));
+                if (hellgate.BossSpawnRemaining > 0)
+                    Session.Network.EnqueueSend(new GameMessageSystemChat($"Hellgate: [boss_countdown] = {bossCountdown}", ChatMessageType.System));
             }
         }
     }

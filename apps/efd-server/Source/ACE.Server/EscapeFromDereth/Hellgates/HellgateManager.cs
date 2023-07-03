@@ -6,7 +6,9 @@ using ACE.Server.Entity.Actions;
 using ACE.Server.EscapeFromDereth.Common;
 using ACE.Server.EscapeFromDereth.Hellgates.Entity;
 using ACE.Server.EscapeFromDereth.Towns;
+using ACE.Server.Factories;
 using ACE.Server.Managers;
+using ACE.Server.Realms;
 using ACE.Server.WorldObjects;
 using log4net;
 using System;
@@ -120,7 +122,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             if (NextHeartbeatTime > currentUnixTime)
                 return;
 
-            if (CurrentHellgateGroup.TimeRemaining <= 0)
+            if (CurrentHellgateGroup.ShouldDestroy)
                 CreateHellgateGroup();
 
             var timeRemaining = TimeSpan.FromMinutes(CurrentHellgateGroup.TimeRemaining);
@@ -130,21 +132,22 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
 
             var hellgateGroup = HellgateGroups.Peek();
 
-            while(hellgateGroup != null && hellgateGroup.TimeRemaining <= 0)
+            while(hellgateGroup != null && hellgateGroup.ShouldDestroy)
             {
                 CleanupHellgateGroup(HellgateGroups.Dequeue());
 
                 hellgateGroup = HellgateGroups.Count > 0 ? HellgateGroups.Peek() : null;
             }
 
-            TickHellgatePlayers();
+            TickHellgates();
 
             NextHeartbeatTime = currentUnixTime + HeartbeatInterval;
         }
 
-        private static void TickHellgatePlayers()
+        private static void TickHellgates()
         {
             foreach (var hellgate in ActiveHellgates.Values)
+            {
                 foreach(var player in hellgate.Players)
                 {
                     if (player != null)
@@ -152,6 +155,25 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
                         player.Hellgate_Tick(hellgate);
                     }
                 }
+
+                if (!hellgate.BossSpawned)
+                    TickHellgateBoss(hellgate);
+
+            }
+        }
+
+        private static void TickHellgateBoss(Hellgate hellgate)
+        {
+            if (hellgate.ShouldSpawnBoss && !hellgate.BossSpawned)
+            {
+                hellgate.BossSpawned = true;
+                var boss = WorldObjectFactory.CreateNewWorldObject(4000226, hellgate.Ruleset, hellgate.BossPosition);
+                boss.Location = hellgate.BossPosition;
+                boss?.EnterWorld();
+
+                var exitPosition = hellgate.ExitPosition;
+            }
+
         }
 
         public static void RemovePlayerFromHellgate(Player player, uint instance = 0)
@@ -201,6 +223,8 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             hellgateGroup.Destroy();
         }
 
+
+
         public static Hellgate CreateHellgate(Player leader, List<Realm> appliedRulesets)
         {
             if (!CreateHellgateValidator(leader))
@@ -209,7 +233,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             lock(hellgateLock)
             {
 
-                if (CurrentHellgateGroup.TimeRemaining <= 0 || CurrentHellgateGroup.HasReachedCapacity)
+                if (CurrentHellgateGroup.ShouldDestroy || CurrentHellgateGroup.HasReachedCapacity)
                     CreateHellgateGroup();
 
                 var allowedPlayers = leader.Fellowship.GetFellowshipMembers().Values.ToHashSet();
@@ -223,9 +247,10 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             var ephemeralRealm = RealmManager.GetNewEphemeralLandblock(hellgateGroup.HellgateLandblock.DropLocation.LandblockId, leader, appliedRulesets, allowedPlayers);
             var instance = ephemeralRealm.Instance;
             var expiration = hellgateGroup.HellgateGroupExpiration;
+            var bossExpiration = hellgateGroup.HellgateBossSpawnExpiration;
             var groupGuid = hellgateGroup.Guid.Full;
             var tier = TownManager.GetMonsterTierByDistance(leader.Location);
-            var hellgate = new Hellgate(hellgateGroup.HellgateLandblock, allowedPlayers, expiration, groupGuid, tier, instance);
+            var hellgate = new Hellgate(hellgateGroup.HellgateLandblock, allowedPlayers, expiration, bossExpiration, groupGuid, tier, ephemeralRealm.RealmRuleset, instance);
 
             hellgateGroup.AddHellgate(hellgate.Instance);
 

@@ -15,8 +15,10 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
         public readonly uint Instance;
         public uint HellgateGroup;
         public double Expiration;
+        public double BossExpiration;
+        public bool BossSpawned = false;
         public int Tier;
-
+        public AppliedRuleset Ruleset;
         public double TimeRemaining
         {
             get
@@ -24,6 +26,25 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
                 return Expiration - Time.GetUnixTime();
             }
         }
+        public double BossSpawnRemaining
+        {
+            get
+            {
+                return BossExpiration - Time.GetUnixTime();
+            }
+        }
+
+        public bool ShouldSpawnBoss
+        {
+            get
+            {
+                var expiration = BossSpawnRemaining;
+                return expiration <= 0;
+            }
+        }
+
+
+
         public Position DropPosition
         {
             get
@@ -64,15 +85,16 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
 
         }
 
-
-        public Hellgate(HellgateLandblock landblock, HashSet<Player> players, double expiration, uint hellgateGroup, int tier, uint instance)
+        public Hellgate(HellgateLandblock landblock, HashSet<Player> players, double expiration, double bossExpiration, uint hellgateGroup, int tier, AppliedRuleset ruleset, uint instance)
         {
             Players = players;
             Landblock = landblock;
             Expiration = expiration;
+            BossExpiration = bossExpiration;
             HellgateGroup = hellgateGroup;
             Tier = tier;
             Instance = instance;
+            Ruleset = ruleset;
         }
 
         public void Destroy()
