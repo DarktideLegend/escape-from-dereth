@@ -1016,9 +1016,8 @@ namespace ACE.Server.Entity
             }
 
             wo.SpawnHellgateOnDeath = true;
-            wo.SetProperty(PropertyFloat.DefaultScale, 1.25 * tier); // scale the gatekeeper size by 1.25 * tier
+            wo.SetProperty(PropertyFloat.DefaultScale, 1.5 * tier); // scale the gatekeeper size by 1.5 * tier
             wo.Name = $"{wo.Name} Gatekeeper";
-
         }
 
         public void RemoveWorldObject(ObjectGuid objectId, bool adjacencyMove = false, bool fromPickup = false, bool showError = true)

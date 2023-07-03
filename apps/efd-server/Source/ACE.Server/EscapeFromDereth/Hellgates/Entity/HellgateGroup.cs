@@ -17,17 +17,30 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
 
         private HashSet<uint> Hellgates = new HashSet<uint>();
 
-        private TimeSpan HellgateTimer;
+        private bool IsOpen = false;
+
+        private TimeSpan HellgateTimer { get; }
+
+        public TimeSpan HellgateBossTimer { get; }
 
         private int MaxActiveHellgates;
 
         public double HellgateGroupExpiration { get; private set; }
+        public double HellgateBossSpawnExpiration { get; }
 
         public double TimeRemaining
         {
             get
             {
                 return HellgateGroupExpiration - Time.GetUnixTime();
+            }
+        }
+
+        public bool ShouldDestroy
+        {
+            get
+            {
+                return TimeRemaining <= 0;
             }
         }
 
@@ -62,9 +75,11 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
 
             Guid = guid;
             HellgateLandblock = hellgateLandblock;
-            HellgateTimer = TimeSpan.FromMinutes(timespan);
             MaxActiveHellgates = maxActiveHellgates;
+            HellgateTimer = TimeSpan.FromMinutes(timespan);
+            HellgateBossTimer = TimeSpan.FromMinutes(timespan - timespan * 0.25);
             HellgateGroupExpiration = Time.GetUnixTime() + HellgateTimer.TotalSeconds;
+            HellgateBossSpawnExpiration = Time.GetUnixTime() + HellgateBossTimer.TotalSeconds;
         }
     }
 }
