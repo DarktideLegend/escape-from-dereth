@@ -261,6 +261,24 @@ namespace ACE.Server.WorldObjects
                 return new ActivationResult(false);
             }
 
+            if (WeenieClassId == 600004) // to hellgate exit 
+            {
+                if (IsProcessingHellgate)
+                    return new ActivationResult(false);
+
+                IsProcessingHellgate = true;
+
+                var hellgate = HellgateManager.GetHellgate(Location.Instance);
+                if (hellgate != null)
+                {
+                    HellgateManager.HellgateExitTransition(player, hellgate);
+                }
+
+                IsProcessingHellgate = false;
+                return new ActivationResult(false);
+
+            }
+
             if (WeenieClassId == 600003) // to hellgate (ephemeral realm)
             {
 

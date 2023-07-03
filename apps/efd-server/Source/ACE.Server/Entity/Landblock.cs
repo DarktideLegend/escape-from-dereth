@@ -1009,14 +1009,13 @@ namespace ACE.Server.Entity
 
             if (wo.Biota?.PropertiesAttribute2nd?.ContainsKey(PropertyAttribute2nd.MaxHealth) == true)
             {
-                var initLevel = wo.Biota.PropertiesAttribute2nd[PropertyAttribute2nd.MaxHealth].InitLevel += 1000;
-                var level = (uint)(initLevel * tier);
+                var level = (uint)(5000 * tier);
                 wo.Biota.PropertiesAttribute2nd[PropertyAttribute2nd.MaxHealth].InitLevel = level;
                 wo.Biota.PropertiesAttribute2nd[PropertyAttribute2nd.MaxHealth].CurrentLevel = level;
             }
 
             wo.SpawnHellgateOnDeath = true;
-            wo.SetProperty(PropertyFloat.DefaultScale, 1.5 * tier); // scale the gatekeeper size by 1.5 * tier
+            wo.SetProperty(PropertyFloat.DefaultScale, 3); // scale the gatekeeper to have 3x size
             wo.Name = $"{wo.Name} Gatekeeper";
         }
 
