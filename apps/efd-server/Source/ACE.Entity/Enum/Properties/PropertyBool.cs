@@ -210,10 +210,10 @@ namespace ACE.Entity.Enum.Properties
 
         /// If IsOverridable is set in your realm, this guarantees your object will bypass the blacklist filter
         [ServerOnly]
-        IsCustomContent                     = 42003,
+        IsCustomContent                  = 42003,
 
         [ServerOnly]
-        SpawnHellgateOnDeath                = 42004
+        SpawnHellgateOnDeath             = 42004
     }
 
     public static class PropertyBoolExtensions

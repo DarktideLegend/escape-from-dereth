@@ -1058,12 +1058,28 @@ namespace ACE.Server.Command.Handlers
             AddWeeniesToInventory(session, weenieIds);
         }
 
-        [CommandHandler("currency", AccessLevel.Developer, CommandHandlerFlag.RequiresWorld, 0, "Creates some currency items in your inventory for testing.")]
+        [CommandHandler("currency", AccessLevel.Player, CommandHandlerFlag.RequiresWorld, 0, "Creates some currency items in your inventory for testing.")]
         public static void HandleCurrency(Session session, params string[] parameters)
         {
-            HashSet<uint> weenieIds = new HashSet<uint> { 273 };
+            var account = DatabaseManager.Authentication.GetAccountById(session.AccountId);
 
-            AddWeeniesToInventory(session, weenieIds);
+            if (account == null)
+            {
+                CommandHandlerHelper.WriteOutputInfo(session, $"Account {session.Account} ({session.AccountId}) wasn't found in the database! How are you in world without a valid account?", ChatMessageType.Broadcast);                
+                return;
+            }
+
+            if (account.HasCurrencyKit || account.AccessLevel == (uint)AccessLevel.Admin)
+            {
+                HashSet<uint> weenieIds = new HashSet<uint> { 273, 20630 };
+                AddWeeniesToInventory(session, weenieIds, 1);
+                account.HasCurrencyKit = false;
+                DatabaseManager.Authentication.UpdateAccount(account);
+
+                CommandHandlerHelper.WriteOutputInfo(session, "Your free Currency Kit has been deposited to your inventory! You might want to mule it before someone else does!.", ChatMessageType.Broadcast);
+            } else {
+                CommandHandlerHelper.WriteOutputInfo(session, "You have used your free Currency Kit for this account.", ChatMessageType.Broadcast);
+            }
         }
 
         [CommandHandler("cirand", AccessLevel.Developer, CommandHandlerFlag.RequiresWorld, 1, "Creates random objects in your inventory.", "type (string or number) <num to create> defaults to 10 if omitted, max 50")]

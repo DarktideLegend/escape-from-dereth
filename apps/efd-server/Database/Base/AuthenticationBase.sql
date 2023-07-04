@@ -66,6 +66,7 @@ CREATE TABLE `account` (
   `banned_By_Account_Id` int unsigned DEFAULT NULL,
   `ban_Expire_Time` datetime DEFAULT NULL,
   `ban_Reason` varchar(1000) DEFAULT NULL,
+  `has_currency_kit` boolean DEFAULT true,
   PRIMARY KEY (`accountId`),
   UNIQUE KEY `accountName_uidx` (`accountName`),
   KEY `accesslevel_idx` (`accessLevel`),
