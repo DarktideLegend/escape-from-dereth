@@ -12,7 +12,7 @@
     "HasLifestones": true,
     "HasDoors": false,
     "HasRecalls": false,
-    "HasRebuffs": true,
+    "HasRebuffs": false,
     "HasHousing": false,
     "HasBindstones": false,
     "IsVendorNpcOnly": true,
