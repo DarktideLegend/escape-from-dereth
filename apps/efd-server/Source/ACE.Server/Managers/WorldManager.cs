@@ -302,7 +302,6 @@ namespace ACE.Server.Managers
                     PlayerFactoryEx.DisableSpellComponentRequirement(player);
                     PlayerFactoryEx.LoadDefaultSpellBars(player);
                     PlayerFactoryEx.LoadSkillSpecificDefaultSpellBar(player);
-                    DeveloperCommands.HandleCurrency(session);
                     session.Network.EnqueueSend(new GameEventPopupString(session, AppendLines(popup_header, popup_motd, popup_welcome)));
                 }
             }
@@ -322,6 +321,10 @@ namespace ACE.Server.Managers
                 session.Network.EnqueueSend(new GameMessageSystemChat("You have returned to the Olthoi Queen to serve the hive.", ChatMessageType.Broadcast));
             else if (playerLoggedInOnNoLogLandblock) // see http://acpedia.org/wiki/Mount_Elyrii_Hive
                 session.Network.EnqueueSend(new GameMessageSystemChat("The currents of portal space cannot return you from whence you came. Your previous location forbids login.", ChatMessageType.Broadcast));            
+
+            var account = DatabaseManager.Authentication.GetAccountById(character.AccountId);
+            if (account.HasCurrencyKit && !player.IsOlthoiPlayer)
+                session.Network.EnqueueSend(new GameMessageSystemChat("You have an unused free Currency Kit, type /currency to claim it!", ChatMessageType.Broadcast));
         }
 
         private static string AppendLines(params string[] lines)

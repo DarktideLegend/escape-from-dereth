@@ -133,6 +133,10 @@ namespace ACE.Database.Models.Auth
 
                 entity.Property(e => e.TotalTimesLoggedIn).HasColumnName("total_Times_Logged_In");
 
+                entity.Property(e => e.HasCurrencyKit)
+                .HasDefaultValue(true)
+                .HasColumnName("has_currency_kit");
+
                 entity.HasOne(d => d.AccessLevelNavigation)
                     .WithMany(p => p.Account)
                     .HasForeignKey(d => d.AccessLevel)
