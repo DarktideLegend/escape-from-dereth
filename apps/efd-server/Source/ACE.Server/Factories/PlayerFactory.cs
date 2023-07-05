@@ -399,10 +399,7 @@ namespace ACE.Server.Factories
                 player.Location = homeRealmStarterLocation;
                 player.Instantiation = homeRealmStarterLocation;
                 player.Sanctuary = homeRealmStarterLocation;
-                player.PlayerKillerStatus = realm.StandardRules.GetProperty(RealmPropertyBool.IsPKOnly) ? PlayerKillerStatus.PK : PlayerKillerStatus.NPK;
 
-
-                /*
                 if (PropertyManager.GetBool("pk_server").Item)
                     player.SetProperty(PropertyInt.PlayerKillerStatus, (int)PlayerKillerStatus.PK);
                 else if (PropertyManager.GetBool("pkl_server").Item)
@@ -413,7 +410,6 @@ namespace ACE.Server.Factories
                     player.SetProperty(PropertyFloat.MinimumTimeSincePk, -PropertyManager.GetDouble("pk_new_character_grace_period").Item);
                     player.SetProperty(PropertyInt.PlayerKillerStatus, (int)PlayerKillerStatus.NPK);
                 }
-                */
             }
 
             if (player is Sentinel || player is Admin)
