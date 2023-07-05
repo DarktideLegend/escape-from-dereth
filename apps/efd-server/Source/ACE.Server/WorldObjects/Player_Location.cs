@@ -42,7 +42,7 @@ namespace ACE.Server.WorldObjects
         {
             get { return new Position(0x7308001Fu, 80f, 163.4f, 12.004999f, 0f, 0f, 0.4475889f, 0.8942394f, HideoutInstanceId); }
         }
-        
+
         public Position GetCurrentHideout()
         {
             if (HideoutCurrent != null) return HideoutCurrent;
@@ -66,7 +66,7 @@ namespace ACE.Server.WorldObjects
             HideoutInstance = player.DefaultHideout.Instance;
             HideoutCurrent = player.DefaultHideout;
         }
-        
+
         public void SetDefaultHideout()
         {
             HideoutInstance = HideoutInstanceId;
@@ -824,18 +824,6 @@ namespace ACE.Server.WorldObjects
                 SetPosition(PositionType.EphemeralRealmLastEnteredDrop, null);
             }
 
-            var pk = false;
-            if (newLocation.IsEphemeralRealm)
-            {
-                var lb = LandblockManager.GetLandblockUnsafe(newLocation.LandblockId, newLocation.Instance);
-                if (lb.RealmHelpers.IsDuel || lb.RealmHelpers.IsPkOnly)
-                    pk = true;
-            }
-
-            if (newRealm.StandardRules.GetProperty(RealmPropertyBool.IsPKOnly))
-                pk = true;
-
-            PlayerKillerStatus = pk ? PlayerKillerStatus.PK : PlayerKillerStatus.NPK;
             EnqueueBroadcast(new GameMessagePublicUpdatePropertyInt(this, PropertyInt.PlayerKillerStatus, (int)PlayerKillerStatus));
 
             if (newLocation.IsEphemeralRealm)
