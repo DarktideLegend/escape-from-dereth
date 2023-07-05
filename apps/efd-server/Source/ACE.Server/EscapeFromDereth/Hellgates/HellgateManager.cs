@@ -82,7 +82,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             NextHeartbeatTime = currentUnixTime + HeartbeatInterval;
         }
 
-        private static HellgateGroup CreateHellgateGroup(int timespan = 3, int maxHellgates = 2)
+        private static HellgateGroup CreateHellgateGroup(int timespan = 0, int maxHellgates = 3)
         {
             lock (hellgateLock)
             {
@@ -95,7 +95,9 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
 
                 var hellgateGroup = new HellgateGroup(landblock, timespan, maxHellgates, GuidManager.NewDynamicGuid());
 
-                hellgateGroup.IsOpen = true;
+                if (ThreadSafeRandom.Next(1, 100) <= 30)
+                    hellgateGroup.IsOpen = true;
+
                 CurrentHellgateGroup = hellgateGroup;
                 HellgateGroups.Enqueue(hellgateGroup);
 
