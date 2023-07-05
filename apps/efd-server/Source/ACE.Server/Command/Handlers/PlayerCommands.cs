@@ -14,6 +14,7 @@ using ACE.Server.Network;
 using ACE.Server.Network.GameEvent.Events;
 using ACE.Server.Network.GameMessages.Messages;
 using ACE.Server.WorldObjects;
+using ACE.Database.Models.Shard;
 
 
 namespace ACE.Server.Command.Handlers
@@ -522,6 +523,86 @@ namespace ACE.Server.Command.Handlers
             msg += "\n\n\n\n";
 
             session.Network.EnqueueSend(new GameMessageSystemChat(msg, ChatMessageType.AdminTell));
+        }
+
+        /// <summary>
+        /// Command to bind to another player's hideout. The other player must
+        /// be online and you must be on their friends list.
+        /// /set-hideout {characterName}
+        /// </summary>
+        /// <param name="session"></param>
+        /// <param name="parameters"></param>
+        [CommandHandler("set-hideout", AccessLevel.Player, CommandHandlerFlag.RequiresWorld,
+            "Command related to assigning your hideout.", "{ info }")]
+        public static void HandleSetHideout(Session session, params string[] parameters)
+        {
+
+            string characterName = "";
+
+            // if parameters are greater then 1, we may have a space in a character name
+            if (parameters.Length > 1)
+            {
+                foreach (string name in parameters)
+                {
+                    // adds a space back inbetween each parameter
+                    if (characterName.Length > 0)
+                        characterName += " " + name;
+                    else
+                        characterName = name;
+                }
+            }
+            // if there are no spaces, just set the characterName to the first paramter
+            else
+                characterName = parameters[0];
+
+            if (characterName  == null)
+            {
+                session.Network.EnqueueSend(new GameMessageSystemChat("Please provide a {characterName} from your friends list.", ChatMessageType.Broadcast));
+                return;
+            }
+
+            var friend = PlayerManager.FindByName(characterName, out bool isOnline);
+
+            if (friend == null)
+            {
+                session.Network.EnqueueSend(new GameMessageSystemChat($"Character {characterName} does not exist.", ChatMessageType.Broadcast));
+                return;
+            }
+
+            if (friend.Guid.Full == session.Player.Guid.Full)
+            {
+                session.Player.SetDefaultHideout();
+                session.Network.EnqueueSend(new GameMessageSystemChat($"You have successfuly assigned your hideout destination to your default hideout location.", ChatMessageType.Broadcast));
+                return;
+            }
+
+
+            DatabaseManager.Shard.GetCharacter(friend.Guid.Full, character =>
+            {
+                if (character != null)
+                {
+                    var hasFriend = character.HasAsFriend(session.Player.Guid.Full, session.Player.CharacterDatabaseLock);
+
+                    if (!hasFriend)
+                    {
+                        session.Network.EnqueueSend(new GameMessageSystemChat($"Character {characterName} does not have you on their friends list.", ChatMessageType.Broadcast));
+                        return;
+                    }
+
+
+                    if (!isOnline)
+                    {
+                        session.Network.EnqueueSend(new GameMessageSystemChat($"Character {characterName} must be online for you to set your hideout to theirs.", ChatMessageType.Broadcast));
+                        return;
+                    }
+
+                    var player = PlayerManager.GetOnlinePlayer(friend.Guid.Full);
+                    session.Player.SetHideoutFromPlayer(player);
+                    session.Network.EnqueueSend(new GameMessageSystemChat($"You have successfully assigned your hideout destination to {characterName}'s default hideout location.", ChatMessageType.Broadcast));
+                    return;
+                }
+
+            });
         }
     }
 }

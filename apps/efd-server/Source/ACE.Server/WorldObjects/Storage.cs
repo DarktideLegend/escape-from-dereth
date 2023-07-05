@@ -53,7 +53,9 @@ namespace ACE.Server.WorldObjects
             if (activator is Admin)
                 return new ActivationResult(true);
 
-            if (player.HideoutLocation.RealmID == 0x7FFF && player.Location.Instance == player.HideoutLocation.Instance)
+            var hideout = player.GetCurrentHideout();
+
+            if (hideout.RealmID == 0x7FFF && player.Location.Instance == hideout.Instance)
                 return new ActivationResult(true);
 
             var baseRequirements = base.CheckUseRequirements(activator);

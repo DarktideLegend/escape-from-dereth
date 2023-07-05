@@ -1351,5 +1351,14 @@ namespace ACE.Server.WorldObjects
             get => GetProperty(PropertyInt.ImbueSuccesses) ?? 0;
             set { if (value == 0) RemoveProperty(PropertyInt.ImbueSuccesses); else SetProperty(PropertyInt.ImbueSuccesses, value); }
         }
+        public uint HideoutInstance
+        {
+            get
+            {
+                return GetProperty(PropertyDataId.HideoutInstance) ?? HideoutInstanceId;
+            }
+
+            set { if (value == 0) RemoveProperty(PropertyDataId.HideoutInstance); else SetProperty(PropertyDataId.HideoutInstance, value); }
+        }
     }
 }
