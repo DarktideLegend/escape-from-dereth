@@ -26,7 +26,7 @@ namespace ACE.Server.WorldObjects
     {
         private static readonly Position MarketplaceDrop = DatabaseManager.World.GetCachedWeenie("portalmarketplace")?.GetPosition(PositionType.Destination) ?? new Position(0x016C01BC, 49.206f, -31.935f, 0.005f, 0, 0, -0.707107f, 0.707107f, 0);
 
-        private uint HideoutInstanceId
+        public uint HideoutInstanceId
         {
             get
             {
@@ -36,10 +36,41 @@ namespace ACE.Server.WorldObjects
             }
         }
 
-        public Position HideoutLocation => UlgrimsHideout;
-        private Position UlgrimsHideout
+        private Position HideoutCurrent = null;
+
+        public Position DefaultHideout // Ulgrims hideout
         {
             get { return new Position(0x7308001Fu, 80f, 163.4f, 12.004999f, 0f, 0f, 0.4475889f, 0.8942394f, HideoutInstanceId); }
+        }
+        
+        public Position GetCurrentHideout()
+        {
+            if (HideoutCurrent != null) return HideoutCurrent;
+
+            if (HideoutInstance != HideoutInstanceId)
+            {
+                var position = new Position(DefaultHideout);
+                position.Instance = HideoutInstance;
+                HideoutCurrent = position;
+                return position;
+            } else
+            {
+                HideoutCurrent = DefaultHideout;
+            }
+
+            return DefaultHideout;
+        }
+
+        public void SetHideoutFromPlayer(Player player)
+        {
+            HideoutInstance = player.DefaultHideout.Instance;
+            HideoutCurrent = player.DefaultHideout;
+        }
+        
+        public void SetDefaultHideout()
+        {
+            HideoutInstance = HideoutInstanceId;
+            HideoutCurrent = DefaultHideout;
         }
         
         public bool DebugLoc { get; set; }
@@ -880,7 +911,7 @@ namespace ACE.Server.WorldObjects
                 return;
             }
 
-            WorldManager.ThreadSafeTeleport(this, HideoutLocation, false);
+            WorldManager.ThreadSafeTeleport(this, GetCurrentHideout(), false);
         }
 
         public bool ValidatePlayerRealmPosition(Position newPosition)
@@ -899,8 +930,6 @@ namespace ACE.Server.WorldObjects
                             return false;
                         return shortInstanceId == Account.AccountId;
                     case ReservedRealm.hideout:
-                        if (shortInstanceId != Account.AccountId)
-                            return false;
                         if (!homerealm.StandardRules.GetProperty(RealmPropertyBool.HideoutEnabled))
                             return false;
                         return new ushort[] { 0x7308, 0x7309 }.Contains((ushort)newPosition.LandblockShort); //Ulgrims only, todo: add other landblocks

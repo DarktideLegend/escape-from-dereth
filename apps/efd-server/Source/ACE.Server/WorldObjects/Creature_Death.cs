@@ -508,7 +508,7 @@ namespace ACE.Server.WorldObjects
                 !RealmRuleset.GetProperty(RealmPropertyBool.IsFullLootOnDeath))
             {
                 atHideout = true;
-                var loc = player.HideoutLocation;
+                var loc = player.GetCurrentHideout();
                 //Randomize the location of the corpse within a small square
                 loc = new Position(loc.Cell,
                     loc.Pos.X + (float)Common.ThreadSafeRandom.Next(-2f, 2f),
