@@ -74,6 +74,11 @@ namespace ACE.Server.WorldObjects
                 {
                     msg += $"{(isLockpick ? "have" : "has")} {unlocker.Structure} use{(unlocker.Structure > 1 ? "s" : "")} left.";
                 }
+
+                unlocker.Value -= unlocker.StructureUnitValue;
+
+                if (unlocker.Value < 0) // fix negative value
+                    unlocker.Value = 0;
             }
 
             player.Session.Network.EnqueueSend(new GameMessageSystemChat(msg, ChatMessageType.Broadcast));

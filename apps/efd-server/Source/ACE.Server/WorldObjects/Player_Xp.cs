@@ -24,10 +24,18 @@ namespace ACE.Server.WorldObjects
         {
             //Console.WriteLine($"{Name}.EarnXP({amount}, {sharable}, {fixedAmount})");
 
+<<<<<<< HEAD:apps/efd-server/Source/ACE.Server/WorldObjects/Player_Xp.cs
 
             // apply xp modifier
             //var modifier = PropertyManager.GetDouble("xp_modifier").Item;
             var modifier = RealmRuleset?.GetProperty(RealmPropertyFloat.ExperienceMultiplierAll) ?? PropertyManager.GetDouble("xp_modifier").Item;
+=======
+            // apply xp modifiers.  Quest XP is multiplicative with general XP modification
+            var questModifier = PropertyManager.GetDouble("quest_xp_modifier").Item;
+            var modifier = PropertyManager.GetDouble("xp_modifier").Item;
+            if (xpType == XpType.Quest)
+                modifier *= questModifier;
+>>>>>>> 1f6295e61 (Squashed 'apps/efd-server/' changes from 2cce6205c..765027846):Source/ACE.Server/WorldObjects/Player_Xp.cs
 
             // should this be passed upstream to fellowship / allegiance?
             var enchantment = GetXPAndLuminanceModifier(xpType);
