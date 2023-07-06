@@ -123,7 +123,7 @@ namespace ACE.Server.WorldObjects
         public override void Open(Player player)
         {
             // check for looting permission
-            if (!HasPermission(player))
+            if (!IsInHellgate && !HasPermission(player))
             {
                 if (CorpseGeneratedRare)
                     player.Session.Network.EnqueueSend(new GameEventCommunicationTransientString(player.Session, $"You may not loot the {Name} because the {Name} has generated a rare item."));
