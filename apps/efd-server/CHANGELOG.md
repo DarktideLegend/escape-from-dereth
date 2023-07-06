@@ -1,3 +1,45 @@
+## [1.1.0-alpha.27](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.26...efd-server-v1.1.0-alpha.27) (2023-07-06)
+
+
+### Features
+
+* **efd-server:** ✨ add ability to bind to another player's hideout with /set-hideout command ([388f25e](https://github.com/DarktideLegend/escape-from-dereth/commit/388f25ee1204e85b44f59a6a2db5b9dc4100e6a2))
+* **efd-server:** ✨ add BossLocation and ExitLocation to hellgates ([8efddeb](https://github.com/DarktideLegend/escape-from-dereth/commit/8efddeb4f9b44baf53f1411390b2b8787bce0c11))
+* **efd-server:** ✨ add Gatekeeper Mutations ([2618f8c](https://github.com/DarktideLegend/escape-from-dereth/commit/2618f8ca1ccd28b7440ae90e641152e46228813f))
+* **efd-server:** ✨ add hellgate boss spawn ([d2ab32d](https://github.com/DarktideLegend/escape-from-dereth/commit/d2ab32da5be20cfc185e5ce63adb1b0302c3ba54))
+* **efd-server:** ✨ add Hellgate Surface Portal for exits ([a29b367](https://github.com/DarktideLegend/escape-from-dereth/commit/a29b367bb215229bcc120eedf035c444edddf683))
+* **efd-server:** ✨ add linked hellgates ([3c9977f](https://github.com/DarktideLegend/escape-from-dereth/commit/3c9977f7df8d47e683a5f87223103084bf76af36))
+* **efd-server:** ✨ add single use /currency command per account ([e86477c](https://github.com/DarktideLegend/escape-from-dereth/commit/e86477c28e06760242d8e677b6aa5caeef2b2b40))
+* **efd-server:** ✨ add SpawnHellgateOnDeath WorldObject property ([ef6112f](https://github.com/DarktideLegend/escape-from-dereth/commit/ef6112f0ae33ffc5a8f9c2e296379718e05fdeb5))
+* **efd-server:** ✨ add tier system that scales with town distance ([2878e40](https://github.com/DarktideLegend/escape-from-dereth/commit/2878e403f7de890c1f58affd9204c5d48b963c0d))
+* **efd-server:** ✨ Corpses in hellgates do not require looting permissions ([a171760](https://github.com/DarktideLegend/escape-from-dereth/commit/a1717606501d6e1c8f1c654b567d09a6409315fd))
+* **efd-server:** ✨ fellowships may only have 3 players to enter a hellgate ([90e3905](https://github.com/DarktideLegend/escape-from-dereth/commit/90e3905d60fafba0b78ebb5034cd7692e5720b26))
+
+
+### Build System Dependencies
+
+* **efd-server:** 📦️ update Dockerfile to use dotnet 6.0 ([7ddc46f](https://github.com/DarktideLegend/escape-from-dereth/commit/7ddc46f48ef1e89b10ae85a5aa83e205d1722c01))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ add BossPosition and ExitPosition to Hellgate constructor ([30a9227](https://github.com/DarktideLegend/escape-from-dereth/commit/30a92277619ffcf87b8258b32237fc66ccf6f247))
+* **efd-server:** ♻️ add IsCleaningupHellgateGroup flag ([62e8bef](https://github.com/DarktideLegend/escape-from-dereth/commit/62e8beffde1300a86f27fdda749faf566dd915cf))
+* **efd-server:** ♻️ add logging for when adding landblock to DestructionQueue ([20edf37](https://github.com/DarktideLegend/escape-from-dereth/commit/20edf378771d5398d439d05e90a6f05ed72b6f96))
+* **efd-server:** ♻️ change hellgate duration to 30 minutes ([02e5944](https://github.com/DarktideLegend/escape-from-dereth/commit/02e59441f5a6f0973c9b45e9d86eb184d630f098))
+* **efd-server:** ♻️ check IsLoggingOut flag before killing hellgate players logging out ([6cefb2a](https://github.com/DarktideLegend/escape-from-dereth/commit/6cefb2ad34e6261dacd122f63a3625eec65320fc))
+* **efd-server:** ♻️ disable /rebuffs in home realm ([661eb19](https://github.com/DarktideLegend/escape-from-dereth/commit/661eb197ca51d74e7b1d97edc12455de2f328378))
+* **efd-server:** ♻️ handle adding/removing players from hellgate in OnTransitionToNewRealm ([c2030ba](https://github.com/DarktideLegend/escape-from-dereth/commit/c2030ba64f2e7884a7c4e799a0b95bdeab1e2285))
+* **efd-server:** ♻️ move WorldObject mutation logic to WorldObjectFactory ([d9ebeff](https://github.com/DarktideLegend/escape-from-dereth/commit/d9ebeff762ba8176c4ac241441902cfb6959dbbe))
+* **efd-server:** ♻️ remove assigning a player's pk status based on realm ([614d4b5](https://github.com/DarktideLegend/escape-from-dereth/commit/614d4b59bde78c0008874d62f33ae1180398a398))
+* **efd-server:** ♻️ remove HellgatePurgatory ([5af166f](https://github.com/DarktideLegend/escape-from-dereth/commit/5af166fcc1ffa0cfec0543069a8294e973518170))
+* **efd-server:** ♻️ remove HP modifier ruleset for hellgates ([e2ff6bf](https://github.com/DarktideLegend/escape-from-dereth/commit/e2ff6bf7b1c0b252c4c906bfbbfad79ba82ad4da))
+* **efd-server:** ♻️ remove lock for read access of ActiveHellgates ([df5ef09](https://github.com/DarktideLegend/escape-from-dereth/commit/df5ef09fd0cdc4ea70d88033ac66f69580a272cb))
+* **efd-server:** ♻️ set boss spawn timer to half the duration of a hellgate ([649e73c](https://github.com/DarktideLegend/escape-from-dereth/commit/649e73ca33ea342fe5ac9c3ebca803cc65dcbd16))
+* **efd-server:** ♻️ update HellgateGroup cleanup ([d348886](https://github.com/DarktideLegend/escape-from-dereth/commit/d3488869ff04c97a2181352bdb2c98d6d1f4e2fe))
+* **efd-server:** ♻️ update hellgates implementation ([95fb342](https://github.com/DarktideLegend/escape-from-dereth/commit/95fb342ca703f3b5fff864917831bdb0de130282))
+* **efd-server:** ♻️ update Player.Hellgate_Tick ([ee9c87f](https://github.com/DarktideLegend/escape-from-dereth/commit/ee9c87f5cf44dbcbc3f737fec87e002a3e7024a0))
+
 ## [1.1.0-alpha.26](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.25...efd-server-v1.1.0-alpha.26) (2023-06-26)
 
 
