@@ -12,6 +12,9 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
     {
         public readonly HashSet<Player> Players;
         public readonly HellgateLandblock Landblock;
+
+        public AppliedRuleset Ruleset { get; }
+
         public readonly uint Instance;
         public uint HellgateGroup;
         public double Expiration;
@@ -19,7 +22,6 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
         public bool BossSpawned = false;
         public int Tier;
         public bool IsOpen;
-        public AppliedRuleset Ruleset;
         public Hellgate Next;
         public double TimeRemaining
         {
@@ -60,44 +62,23 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
             }
         }
 
-        public Position BossPosition
-        {
-            get
-            {
-                var bossLocation = Landblock.BossLocation;
-                var position = new Position(bossLocation)
-                {
-                    Instance = Instance
-                };
-                return position;
-            }
+        public Position ExitPosition;
 
-        }
-        public Position ExitPosition
-        {
-            get
-            {
-                var exitLocation = Landblock.ExitLocation;
-                var position = new Position(exitLocation)
-                {
-                    Instance = Instance
-                };
-                return position;
-            }
+        public Position BossPosition;
 
-        }
-
-        public Hellgate(HellgateLandblock landblock, HashSet<Player> players, double expiration, double bossExpiration, uint hellgateGroup, bool isOpen, int tier, AppliedRuleset ruleset, uint instance)
+        public Hellgate(HellgateLandblock landblock, HashSet<Player> players, AppliedRuleset ruleset, Position bossPosition, Position exitPosition, double expiration, double bossExpiration, uint hellgateGroup, bool isOpen, int tier, uint instance)
         {
             Players = players;
             Landblock = landblock;
+            Ruleset = ruleset;
             Expiration = expiration;
             BossExpiration = bossExpiration;
             HellgateGroup = hellgateGroup;
             Tier = tier;
             Instance = instance;
             IsOpen = isOpen;
-            Ruleset = ruleset;
+            BossPosition = bossPosition;
+            ExitPosition = exitPosition;
         }
 
         public void Destroy()

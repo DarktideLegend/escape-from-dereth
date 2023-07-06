@@ -256,8 +256,27 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             var bossExpiration = hellgateGroup.HellgateBossSpawnExpiration;
             var isOpen = hellgateGroup.IsOpen;
             var groupGuid = hellgateGroup.Guid.Full;
+
+            var bossPosition = new Position(hellgateGroup.HellgateLandblock.BossLocation);
+            bossPosition.Instance = instance;
+
+            var exitPosition = new Position(hellgateGroup.HellgateLandblock.ExitLocation);
+            exitPosition.Instance = instance;
+
             var tier = TownManager.GetMonsterTierByDistance(leader.Location);
-            var hellgate = new Hellgate(hellgateGroup.HellgateLandblock, allowedPlayers, expiration, bossExpiration, groupGuid, isOpen, tier, ephemeralRealm.RealmRuleset, instance);
+
+            var hellgate = new Hellgate(
+                hellgateGroup.HellgateLandblock,
+                allowedPlayers,
+                ephemeralRealm.RealmRuleset,
+                bossPosition,
+                exitPosition,
+                expiration,
+                bossExpiration,
+                groupGuid,
+                isOpen,
+                tier,
+                instance);
 
             hellgateGroup.AddHellgate(hellgate);
 
