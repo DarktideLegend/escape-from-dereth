@@ -10,6 +10,7 @@ using ACE.Entity.Enum.Properties;
 using ACE.Entity.Models;
 using ACE.Server.Entity;
 using ACE.Server.Entity.Actions;
+using ACE.Server.EscapeFromDereth.Hellgates;
 using ACE.Server.Factories;
 using ACE.Server.Managers;
 using ACE.Server.Network.GameEvent.Events;
@@ -692,7 +693,9 @@ namespace ACE.Server.WorldObjects
             // create death treasure from loot generation factory
             if (DeathTreasure != null)
             {
-                List<WorldObject> items = LootGenerationFactory.CreateRandomLootObjects(DeathTreasure);
+                var isHellgateBoss = WeenieClassId == 4000226;
+                var tier = IsInHellgate ? HellgateManager.GetHellgate(CurrentLandblock.Instance).Tier : 1;
+                List<WorldObject> items = LootGenerationFactory.CreateRandomLootObjects(DeathTreasure, isHellgateBoss, tier);
                 foreach (WorldObject wo in items)
                 {
                     if (corpse != null)
