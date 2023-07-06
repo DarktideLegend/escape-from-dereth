@@ -96,7 +96,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
 
                 var hellgateGroup = new HellgateGroup(landblock, timespan, maxHellgates, GuidManager.NewDynamicGuid());
 
-                if (ThreadSafeRandom.Next(1, 100) <= 30)
+                if (ThreadSafeRandom.Next(1, 100) <= 25)
                     hellgateGroup.IsOpen = true;
 
                 CurrentHellgateGroup = hellgateGroup;
@@ -319,8 +319,15 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
 
         private static bool FellowshipValidator(Fellowship fellowship, Player leader)
         {
-            if (fellowship.FellowshipMembers.Count == 1)
+            var memberCount = fellowship.FellowshipMembers.Count;
+            if (memberCount == 1)
                 return true;
+
+            if (memberCount > 3)
+            {
+                leader.SendMessage($"Fellowships can have no more than 3 players to enter a hellgate.");
+                return false;
+            }
 
             foreach (var member in fellowship.GetFellowshipMembers().Values.ToList())
             {
