@@ -14,11 +14,8 @@ using ACE.DatLoader;
 using ACE.Server.Command;
 using ACE.Server.Managers;
 using ACE.Server.Network.Managers;
-<<<<<<< HEAD:apps/efd-server/Source/ACE.Server/Program.cs
 using ACE.Server.EscapeFromDereth.Hellgates;
-=======
 using ACE.Server.Mods;
->>>>>>> 1f6295e61 (Squashed 'apps/efd-server/' changes from 2cce6205c..765027846):Source/ACE.Server/Program.cs
 
 namespace ACE.Server
 {
