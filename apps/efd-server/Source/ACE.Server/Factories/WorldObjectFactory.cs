@@ -445,7 +445,7 @@ namespace ACE.Server.Factories
             {
                 MutateDeathTreasureTypeByTier(wo);
 
-                if (!wo.IsInHellgate && ThreadSafeRandom.Next(1, 100) < 20) // 20% chance of spawning a Gatekeeper instead of a monster
+                if (!wo.IsInHellgate && ThreadSafeRandom.Next(1, 100) < 8) // 8% chance of spawning a Gatekeeper instead of a monster
                 {
                     MutateGatekeeper(wo);
                 }
@@ -496,7 +496,7 @@ namespace ACE.Server.Factories
 
             wo.SpawnHellgateOnDeath = true;
             wo.SetProperty(PropertyFloat.DefaultScale, 3); // scale the gatekeeper to have 3x size
-            wo.Name = $"{wo.Name} Gatekeeper";
+            wo.Name = $"Forgotten Gatekeeper";
         }
 
 
