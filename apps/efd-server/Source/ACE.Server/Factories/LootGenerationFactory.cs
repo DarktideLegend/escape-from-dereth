@@ -171,21 +171,18 @@ namespace ACE.Server.Factories
                 WorldObject lootWorldObject;
 
                 var loot = new List<WorldObject>();
-
-                if (isHellgateBoss)
-                {
-                    profile.ItemMaxAmount = 10 * tier;
-                    profile.ItemMinAmount = profile.ItemMaxAmount;
-                    profile.MagicItemMaxAmount = 10 * tier;
-                    profile.MagicItemMinAmount = profile.MagicItemMaxAmount;
-                    profile.MundaneItemMaxAmount = 10 * tier;
-                    profile.MundaneItemMinAmount = profile.MundaneItemMaxAmount;
-                }
+                var calculatedItemCount = 50 * tier;
+                var itemMin = isHellgateBoss ? calculatedItemCount : profile.ItemMinAmount;
+                var itemMax = isHellgateBoss ? calculatedItemCount : profile.ItemMaxAmount;
+                var magicMin = isHellgateBoss ? calculatedItemCount : profile.MagicItemMinAmount;
+                var magicMax = isHellgateBoss ? calculatedItemCount : profile.MagicItemMaxAmount;
+                var mundaneMin = isHellgateBoss ? calculatedItemCount : profile.MundaneItemMinAmount;
+                var mundaneMax = isHellgateBoss ? calculatedItemCount : profile.MundaneItemMaxAmount;
 
                 var itemChance = ThreadSafeRandom.Next(1, 100);
                 if (itemChance <= profile.ItemChance)
                 {
-                    numItems = ThreadSafeRandom.Next(profile.ItemMinAmount, profile.ItemMaxAmount);
+                    numItems = ThreadSafeRandom.Next(itemMin, itemMax);
 
                     for (var i = 0; i < numItems; i++)
                     {
@@ -199,7 +196,7 @@ namespace ACE.Server.Factories
                 itemChance = ThreadSafeRandom.Next(1, 100);
                 if (itemChance <= profile.MagicItemChance)
                 {
-                    numItems = ThreadSafeRandom.Next(profile.MagicItemMinAmount, profile.MagicItemMaxAmount);
+                    numItems = ThreadSafeRandom.Next(magicMin, magicMax);
 
                     for (var i = 0; i < numItems; i++)
                     {
@@ -213,7 +210,7 @@ namespace ACE.Server.Factories
                 itemChance = ThreadSafeRandom.Next(1, 100);
                 if (itemChance <= profile.MundaneItemChance)
                 {
-                    numItems = ThreadSafeRandom.Next(profile.MundaneItemMinAmount, profile.MundaneItemMaxAmount);
+                    numItems = ThreadSafeRandom.Next(mundaneMin, mundaneMax);
 
                     for (var i = 0; i < numItems; i++)
                     {
