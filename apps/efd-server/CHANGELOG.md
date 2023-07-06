@@ -1,3 +1,26 @@
+## [1.1.0-alpha.28](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.27...efd-server-v1.1.0-alpha.28) (2023-07-06)
+
+
+### Features
+
+* **efd-server:** ✨ scale the amount of items dropped by hellgate boss using custom tier ([d51b0bd](https://github.com/DarktideLegend/escape-from-dereth/commit/d51b0bdea0d1e4fe02d6ef35e03a224321e21ced))
+* **efd-server:** ✨ use custom tiers when creating loot objects ([a14196c](https://github.com/DarktideLegend/escape-from-dereth/commit/a14196c66a684ecb8ad8b3be6ee36308e9ee68e9))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ add amateur explorer weapons to fitness instructor anthony ([bcc27f4](https://github.com/DarktideLegend/escape-from-dereth/commit/bcc27f4fd232c198db8157d469cff4cb14610e5c))
+* **efd-server:** ♻️ add diamond scarabs to archmage ([c1ee88d](https://github.com/DarktideLegend/escape-from-dereth/commit/c1ee88d5647b3be4970e8593ee915f14e16449d9))
+* **efd-server:** ♻️ characters start at level 80 ([ec64390](https://github.com/DarktideLegend/escape-from-dereth/commit/ec64390bdc52bf9288d6d1039d22d6319721a8f3))
+* **efd-server:** ♻️ reduce gatekeeper spawn chance from 10% to 8% ([cfbc3d0](https://github.com/DarktideLegend/escape-from-dereth/commit/cfbc3d03c19fbe7c1aeacb4e11cac593a1fec3d1))
+* **efd-server:** ♻️ update default server properties ([00d4eb5](https://github.com/DarktideLegend/escape-from-dereth/commit/00d4eb594d2ee6c04ee0841eb7ebc987a07dc29c))
+
+
+### Other changes that don't modify src or test files
+
+* **efd-server:** 🔧 remove merge conflict artifacts ([2146317](https://github.com/DarktideLegend/escape-from-dereth/commit/2146317fe4fa7cfe44e8d87ede98b4923cf2ac26))
+* **efd-server:** 🔧 remove merge conflict artifacts ([e8e0800](https://github.com/DarktideLegend/escape-from-dereth/commit/e8e0800862f7fd9b93aa3d9ad258e782fbee733e))
+
 ## [1.1.0-alpha.27](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.26...efd-server-v1.1.0-alpha.27) (2023-07-06)
 
 
