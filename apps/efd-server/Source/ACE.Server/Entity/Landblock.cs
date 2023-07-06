@@ -852,44 +852,6 @@ namespace ACE.Server.Entity
         {
             AddWorldObjectInternal(wo);
         }
-        /* public HashSet<uint> RealmTreasureTypes = new HashSet<uint>()
-        {
-            453,    // tier 1
-            464,    // tier 5
-            1000,   // tier 7
-            1005    // tier 8
-        };*/
-
-        private void MutateDeathTreasureTypeByTier(WorldObject wo)
-        {
-            if (!(wo is Creature) || wo.IsGenerator)
-                return;
-
-            if (!(wo as Creature).IsMonster)
-                return;
-
-            var creature = wo as Creature;
-            var instance = creature.Location.Instance;
-            var hellgate = HellgateManager.GetHellgate(instance);
-            if (hellgate == null)
-            {
-                creature.DeathTreasureType = 453;
-                creature.SaveBiotaToDatabase();
-                return;
-            }
-
-            var tier = hellgate.Tier;
-
-            creature.DeathTreasureType = 464;
-
-            if (tier == 4)
-                creature.DeathTreasureType = 1000;
-
-            if (tier == 5)
-                creature.DeathTreasureType = 1005;
-
-            creature.SaveBiotaToDatabase();
-        }
 
         private bool AddWorldObjectInternal(WorldObject wo)
         {
@@ -927,8 +889,6 @@ namespace ACE.Server.Entity
             wo.CurrentLandblock = this;
 
             wo.Location.Instance = Instance;
-
-            MutateCustomContent(wo);
 
             if (wo.PhysicsObj == null)
                 wo.InitPhysicsObj();
@@ -985,38 +945,6 @@ namespace ACE.Server.Entity
             }
 
             return true;
-        }
-
-        private void MutateCustomContent(WorldObject wo)
-        {
-            if (!(wo is Player) && wo is Creature && (wo as Creature).IsMonster)
-            {
-                MutateDeathTreasureTypeByTier(wo);
-
-                if (!wo.IsInHellgate && ThreadSafeRandom.Next(1, 100) < 20) // 20% chance of spawning a Gatekeeper instead of a monster
-                {
-                    MutateGatekeeper(wo);
-                }
-
-                wo.SaveBiotaToDatabase();
-            }
-
-        }
-
-        private void MutateGatekeeper(WorldObject wo)
-        {
-            var tier = TownManager.GetMonsterTierByDistance(wo.Location);
-
-            if (wo.Biota?.PropertiesAttribute2nd?.ContainsKey(PropertyAttribute2nd.MaxHealth) == true)
-            {
-                var level = (uint)(5000 * tier);
-                wo.Biota.PropertiesAttribute2nd[PropertyAttribute2nd.MaxHealth].InitLevel = level;
-                wo.Biota.PropertiesAttribute2nd[PropertyAttribute2nd.MaxHealth].CurrentLevel = level;
-            }
-
-            wo.SpawnHellgateOnDeath = true;
-            wo.SetProperty(PropertyFloat.DefaultScale, 3); // scale the gatekeeper to have 3x size
-            wo.Name = $"{wo.Name} Gatekeeper";
         }
 
         public void RemoveWorldObject(ObjectGuid objectId, bool adjacencyMove = false, bool fromPickup = false, bool showError = true)
