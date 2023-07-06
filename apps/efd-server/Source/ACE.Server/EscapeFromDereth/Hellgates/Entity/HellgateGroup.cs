@@ -92,7 +92,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
             HellgateLandblock = hellgateLandblock;
             MaxActiveHellgates = maxActiveHellgates;
             HellgateTimer = TimeSpan.FromMinutes(timespan);
-            HellgateBossTimer = TimeSpan.FromMinutes(timespan * 0.25); // boss spawns after a quarter of time has elapsed in hellgate
+            HellgateBossTimer = TimeSpan.FromMinutes(timespan * 0.5); // after half the duration has expired spawn a hellgate boss/surface portal
             HellgateGroupExpiration = Time.GetUnixTime() + HellgateTimer.TotalSeconds;
             HellgateBossSpawnExpiration = Time.GetUnixTime() + HellgateBossTimer.TotalSeconds;
         }
