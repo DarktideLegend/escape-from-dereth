@@ -69,6 +69,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
         private static readonly Queue<HellgateGroup> HellgateGroups = new Queue<HellgateGroup>();
 
         public static HellgateGroup CurrentHellgateGroup { get; private set; }
+        public static bool IsCleaningupHellgateGroup { get; private set; }
 
         public static void Initialize()
         {
@@ -124,6 +125,9 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
         public static void Tick(double currentUnixTime)
         {
             if (NextHeartbeatTime > currentUnixTime)
+                return;
+
+            if (IsCleaningupHellgateGroup)
                 return;
 
             if (CurrentHellgateGroup.ShouldDestroy)
@@ -200,6 +204,8 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
 
         private static void CleanupHellgateGroup(HellgateGroup hellgateGroup)
         {
+            IsCleaningupHellgateGroup = true;
+
             log.Info($"CleanupHellgateGroup - {hellgateGroup.Guid}");
 
             foreach (var instance in hellgateGroup.GetAllHellgates())
@@ -227,6 +233,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             }
 
             hellgateGroup.Destroy();
+            IsCleaningupHellgateGroup= false;
         }
 
 
