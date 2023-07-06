@@ -168,6 +168,12 @@ namespace ACE.Server.WorldObjects
             NumDeaths++;
             suicideInProgress = false;
 
+            // todo: since we are going to be using 'time since Player last died to an OlthoiPlayer'
+            // as a factor in slag generation, this will eventually be moved to after the slag generation
+
+            //if (topDamager != null && topDamager.IsOlthoiPlayer)
+                //OlthoiLootTimestamp = (int)Time.GetUnixTime();
+
             if (CombatMode == CombatMode.Magic && MagicState.IsCasting)
                 FailCast(false);
 
@@ -200,6 +206,8 @@ namespace ACE.Server.WorldObjects
                 Session.Network.EnqueueSend(msgSelfInflictedDeath);
             }
 
+            var hadVitae = HasVitae;
+
             // update vitae
             // players who died in a PKLite fight do not accrue vitae
             var duelRealm = RealmManager.GetRealm(HomeRealm)?.StandardRules?.GetProperty(RealmPropertyBool.IsDuelingRealm) == true ||
@@ -224,7 +232,7 @@ namespace ACE.Server.WorldObjects
             dieChain.AddAction(this, () =>
             {
                 if (!duelRealm)
-                    CreateCorpse(topDamager);
+                    CreateCorpse(topDamager, hadVitae);
 
                 ThreadSafeTeleportOnDeath(); // enter portal space
 
@@ -1078,6 +1086,71 @@ namespace ACE.Server.WorldObjects
                 destroyedItems.Add(destroyItem);
             }
             return destroyedItems;
+        }
+
+        private static Database.Models.World.TreasureDeath OlthoiDeathTreasureType => Database.DatabaseManager.World.GetCachedDeathTreasure(2222) ?? new()
+        {
+            TreasureType = 2222,
+            Tier = 8,
+            LootQualityMod = 0,
+            UnknownChances = 19,
+            ItemChance = 100,
+            ItemMinAmount = 1,
+            ItemMaxAmount = 2,
+            ItemTreasureTypeSelectionChances = 8,
+            MagicItemChance = 100,
+            MagicItemMinAmount = 2,
+            MagicItemMaxAmount = 3,
+            MagicItemTreasureTypeSelectionChances = 8,
+            MundaneItemChance = 100,
+            MundaneItemMinAmount = 0,
+            MundaneItemMaxAmount = 1,
+            MundaneItemTypeSelectionChances = 7
+        };
+
+        /// <summary>
+        /// Determines the amount of slag to drop on a Player corpse when killed by an OlthoiPlayer or the loot to drop when an OlthoiPlayer is killed by a Player Killer
+        /// </summary>
+        public List<WorldObject> CalculateDeathItems_Olthoi(Corpse corpse, bool hadVitae, bool killerIsOlthoiPlayer, bool killerIsPkPlayer)
+        {
+            if (killerIsOlthoiPlayer)
+            {
+                var slag = LootGenerationFactory.RollSlag(this, hadVitae);
+
+                if (slag == null)
+                    return new();
+
+                if (!corpse.TryAddToInventory(slag))
+                    log.Warn($"CalculateDeathItems_Olthoi: couldn't add item to {Name}'s corpse: {slag.Name}");
+
+                return new() { slag };
+            }
+            else if (killerIsPkPlayer)
+            {
+                if (hadVitae)
+                    return new();
+
+                var items = LootGenerationFactory.CreateRandomLootObjects(OlthoiDeathTreasureType);
+
+                var gland = LootGenerationFactory.RollGland(this, hadVitae);
+
+                if (gland != null)
+                {
+                    items.Add(gland);
+                }
+
+                foreach (WorldObject wo in items)
+                {
+                    if (!corpse.TryAddToInventory(wo))
+                        log.Warn($"CalculateDeathItems_Olthoi: couldn't add item to {Name}'s corpse: {wo.Name}");
+                }
+
+                return items;
+            }
+            else
+            {
+                return new();
+            }
         }
     }
 }

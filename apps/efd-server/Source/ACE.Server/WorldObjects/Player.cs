@@ -266,7 +266,7 @@ namespace ACE.Server.WorldObjects
 
             if (wo == null)
             {
-                log.Debug($"{Name}.HandleActionIdentifyObject({objectGuid:X8}): couldn't find object");
+                //log.Debug($"{Name}.HandleActionIdentifyObject({objectGuid:X8}): couldn't find object");
                 Session.Network.EnqueueSend(new GameEventIdentifyObjectResponse(Session, objectGuid));
                 return;
             }
@@ -598,14 +598,15 @@ namespace ACE.Server.WorldObjects
 
                     EnqueueBroadcastPhysicsState();
 
-                    var logout = new Motion(MotionStance.NonCombat, MotionCommand.LogOut);
-                    EnqueueBroadcastMotion(logout);                    
+                    var motionCommand = MotionCommand.LogOut;
+                    var motion = new Motion(this, motionCommand);
+                    var stanceNonCombat = MotionStance.NonCombat;
+                    var animLength = Physics.Animation.MotionTable.GetAnimationLength(MotionTableId, stanceNonCombat, motionCommand);
 
                     var logoutChain = new ActionChain();
 
-                    var motionTable = DatManager.PortalDat.ReadFromDat<MotionTable>((uint) MotionTableId);
-                    float logoutAnimationLength = motionTable.GetAnimationLength(MotionCommand.LogOut);
-                    logoutChain.AddDelaySeconds(logoutAnimationLength);
+                    logoutChain.AddAction(this, () => SendMotionAsCommands(motionCommand, stanceNonCombat));
+                    logoutChain.AddDelaySeconds(animLength);
 
                     // remove the player from landblock management -- after the animation has run
                     logoutChain.AddAction(WorldManager.ActionQueue, () =>
@@ -656,6 +657,8 @@ namespace ACE.Server.WorldObjects
             SetPropertiesAtLogOut();
             SavePlayerToDatabase();
             PlayerManager.SwitchPlayerFromOnlineToOffline(this);
+
+            log.Debug($"[LOGOUT] Account {Account.AccountName} exited the world with character {Name} (0x{Guid}) at {DateTime.Now}.");
         }
 
         public void HandleMRT()
@@ -759,7 +762,7 @@ namespace ACE.Server.WorldObjects
             var wo = FindObject(itemGuid, SearchLocations.Everywhere);
             if (wo == null)
             {
-                log.Debug($"HandleActionForceObjDescSend() - couldn't find object {itemGuid:X8}");
+                //log.Debug($"HandleActionForceObjDescSend() - couldn't find object {itemGuid:X8}");
                 return;
             }
             Session.Network.EnqueueSend(new GameMessageObjDescEvent(wo));
@@ -975,9 +978,17 @@ namespace ACE.Server.WorldObjects
                 PhysicsObj.calc_acceleration();
                 PhysicsObj.set_on_walkable(false);
                 PhysicsObj.set_local_velocity(jump.Velocity, false);
+                PhysicsObj.RemoveLinkAnimations();      // matches MotionInterp.LeaveGround more closely
+                PhysicsObj.MovementManager.MotionInterpreter.PendingMotions.Clear();        //hack
+                PhysicsObj.IsAnimating = false;
 
                 if (CombatMode == CombatMode.Magic && MagicState.IsCasting)
+                {
+                    // clear possible CastMotion out of InterpretedMotionState.ForwardCommand
+                    PhysicsObj.MovementManager.MotionInterpreter.StopCompletely();
+
                     FailCast();
+                }
             }
             else
             {
@@ -988,10 +999,13 @@ namespace ACE.Server.WorldObjects
                 //PhysicsObj.set_velocity(glob_velocity, true);
 
                 // perform jump in physics engine
-                PhysicsObj.TransientState &= ~(Physics.TransientStateFlags.Contact | Physics.TransientStateFlags.WaterContact);
+                PhysicsObj.TransientState &= ~(TransientStateFlags.Contact | TransientStateFlags.WaterContact);
                 PhysicsObj.calc_acceleration();
                 PhysicsObj.set_on_walkable(false);
                 PhysicsObj.set_local_velocity(jump.Velocity, false);
+                PhysicsObj.RemoveLinkAnimations();      // matches MotionInterp.LeaveGround more closely
+                PhysicsObj.MovementManager.MotionInterpreter.PendingMotions.Clear();        //hack
+                PhysicsObj.IsAnimating = false;
             }
 
             // this shouldn't be needed, but without sending this update motion / simulated movement event beforehand,

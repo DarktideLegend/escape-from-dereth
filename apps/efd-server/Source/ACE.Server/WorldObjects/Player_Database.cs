@@ -25,6 +25,16 @@ namespace ACE.Server.WorldObjects
         public bool CharacterChangesDetected { get; set; }
 
         /// <summary>
+        /// Set to true when SaveCharacter() returns a failure
+        /// </summary>
+        public bool CharacterSaveFailed { get; set; }
+
+        /// <summary>
+        /// Set to true when SaveBiotaToDatabase() returns a failure
+        /// </summary>
+        public bool BiotaSaveFailed { get; set; }
+
+        /// <summary>
         /// The time period between automatic saving of player character changes
         /// </summary>
         public long PlayerSaveIntervalSecs
@@ -90,7 +100,16 @@ namespace ACE.Server.WorldObjects
 
             var requestedTime = DateTime.UtcNow;
 
-            DatabaseManager.Shard.SaveBiotasInParallel(biotas, result => log.Debug($"{Name} has been saved. It took {(DateTime.UtcNow - requestedTime).TotalMilliseconds:N0} ms to process the request."));
+            DatabaseManager.Shard.SaveBiotasInParallel(biotas, result =>
+            {
+                log.Debug($"{Name} has been saved. It took {(DateTime.UtcNow - requestedTime).TotalMilliseconds:N0} ms to process the request.");
+
+                if (!result)
+                {
+                    // This will trigger a boot on next player tick
+                    BiotaSaveFailed = true;
+                }
+            });
         }
 
         public void SaveCharacterToDatabase()
@@ -105,8 +124,8 @@ namespace ACE.Server.WorldObjects
                 {
                     if (this is Player player)
                     {
-                        //todo: remove this later?
-                        player.Session.Network.EnqueueSend(new GameMessageSystemChat("WARNING: A database save for this character has failed. As a result of this failure, it is possible for future saves to also fail. In order to avoid a potentially significant character rollback, please find a safe place, log out of the game and then reconnect & re-login. This error has also been logged to be further reviewed by ACEmulator team.", ChatMessageType.WorldBroadcast));
+                        // This will trigger a boot on next player tick
+                        CharacterSaveFailed = true;
                     }
                 }
             });

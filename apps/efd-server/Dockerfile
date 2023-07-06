@@ -1,7 +1,10 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+<<<<<<< HEAD:apps/efd-server/Dockerfile
 
 ADD Content /ace/Content
 
+=======
+>>>>>>> 1f6295e61 (Squashed 'apps/efd-server/' changes from 2cce6205c..765027846):Dockerfile
 WORKDIR /Source
 
 # copy csproj and restore as distinct layers
@@ -23,13 +26,13 @@ COPY . ../.
 RUN dotnet publish ./ACE.Server/ACE.Server.csproj -c release -o /ace --no-restore
 
 # final stage/image
-FROM mcr.microsoft.com/dotnet/runtime:5.0-buster-slim
+FROM mcr.microsoft.com/dotnet/runtime:6.0-bullseye-slim
 ARG DEBIAN_FRONTEND="noninteractive"
 WORKDIR /ace
 
 # install net-tools (netstat for health check) & cleanup
 RUN apt-get update && \
-    apt-get install -y \
+    apt-get install --no-install-recommends -y \
     net-tools && \
     apt-get clean && \
     rm -rf \

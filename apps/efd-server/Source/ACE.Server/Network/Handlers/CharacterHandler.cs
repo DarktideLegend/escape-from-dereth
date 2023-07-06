@@ -69,9 +69,7 @@ namespace ACE.Server.Network.Handlers
                 }
             });
 
-            // Disable OlthoiPlay characters for now. They're not implemented yet.
-            // FIXME: Restore OlthoiPlay characters when properly handled.
-            if ((characterCreateInfo.Heritage == HeritageGroup.Olthoi || characterCreateInfo.Heritage == HeritageGroup.OlthoiAcid) && !PropertyManager.GetBool("olthoi_play_enabled").Item)
+            if ((characterCreateInfo.Heritage == HeritageGroup.Olthoi || characterCreateInfo.Heritage == HeritageGroup.OlthoiAcid) && PropertyManager.GetBool("olthoi_play_disabled").Item)
             {
                 SendCharacterCreateResponse(session, CharacterGenerationVerificationResponse.Pending);
                 return;
@@ -138,7 +136,7 @@ namespace ACE.Server.Network.Handlers
             {
                 if (result == PlayerFactory.CreateResult.ClientServerSkillsMismatch)
                 {
-                    session.Terminate(SessionTerminationReason.ClientOutOfDate, new GameMessageBootAccount(" because your client is not the correct version for this server. Please visit http://play.emu.ac/ to update to latest client"));
+                    session.Terminate(SessionTerminationReason.ClientVersionIncorrect, new GameMessageBootAccount(" because your client is not the correct version for this server. Please visit http://play.emu.ac/ to update to latest client"));
                     return;
                 }
 
@@ -254,6 +252,12 @@ namespace ACE.Server.Network.Handlers
             if (offlinePlayer.IsDeleted || offlinePlayer.IsPendingDeletion)
             {
                 session.SendCharacterError(CharacterError.EnterGameCharacterNotOwned);
+                return;
+            }
+
+            if ((offlinePlayer.Heritage == (int)HeritageGroup.Olthoi || offlinePlayer.Heritage == (int)HeritageGroup.OlthoiAcid) && PropertyManager.GetBool("olthoi_play_disabled").Item)
+            {
+                session.SendCharacterError(CharacterError.EnterGameCouldntPlaceCharacter);
                 return;
             }
 
