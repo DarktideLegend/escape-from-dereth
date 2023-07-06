@@ -12,7 +12,7 @@ namespace ACE.Server.WorldObjects
 {
     partial class Player
     {
-        public void Hellgate_Tick(Hellgate hellgate)
+        public void PrintHellgateInfo(Hellgate hellgate)
         {
             if (hellgate.Instance != Location.Instance) 
                 Session.Network.EnqueueSend(new GameMessageSystemChat($"Your location instance and hellgate instance do not match.", ChatMessageType.System));
@@ -20,15 +20,23 @@ namespace ACE.Server.WorldObjects
             {
                 var instance = hellgate.Instance;
                 var hellgateGroup = hellgate.HellgateGroup;
-                var timeRemaining = TimeSpan.FromMinutes(hellgate.TimeRemaining);
-                var bossCountdown = TimeSpan.FromMinutes(hellgate.BossSpawnRemaining);
+                var hellgateTimeRemaining = TimeSpan.FromSeconds(hellgate.TimeRemaining);
+                var hellgateCountdown = hellgateTimeRemaining.ToString(@"hh\:mm\:ss");
+                var bossTimeRemaining = TimeSpan.FromSeconds(hellgate.BossSpawnRemaining);
+                var bossCountdown = bossTimeRemaining.ToString(@"hh\:mm\:ss");
 
                 var dungeonName = hellgate.Landblock.Name;
                 Session.Network.EnqueueSend(new GameMessageSystemChat($"Hellgate: [instance] = {instance} [group] = {hellgateGroup} [dungeon] = {dungeonName}", ChatMessageType.System));
-                Session.Network.EnqueueSend(new GameMessageSystemChat($"Hellgate: [time_remaining] = {timeRemaining}", ChatMessageType.System));
+                Session.Network.EnqueueSend(new GameMessageSystemChat($"Hellgate: [is-open] = {hellgate.IsOpen}", ChatMessageType.System));
+                Session.Network.EnqueueSend(new GameMessageSystemChat($"Hellgate: [hellgate_countdown] = {hellgateCountdown}", ChatMessageType.System));
                 if (hellgate.BossSpawnRemaining > 0)
                     Session.Network.EnqueueSend(new GameMessageSystemChat($"Hellgate: [boss_countdown] = {bossCountdown}", ChatMessageType.System));
             }
+        }
+
+        public void Hellgate_Tick(Hellgate hellgate)
+        {
+            PrintHellgateInfo(hellgate);
         }
     }
 }
