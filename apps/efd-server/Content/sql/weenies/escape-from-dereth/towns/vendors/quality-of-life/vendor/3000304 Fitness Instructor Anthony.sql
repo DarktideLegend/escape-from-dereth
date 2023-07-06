@@ -226,7 +226,34 @@ VALUES (3000304, 4,  6597, -1, 0, 0, False) /* Create Greater Koujia Shadow Brea
      , (3000304, 4, 24205, -1, 0, 0, False) /* Create Weeping Staff (24205) for Shop */
      , (3000304, 4, 24206, -1, 0, 0, False) /* Create Weeping Sword (24206) for Shop */
      , (3000304, 4, 41638, -1, 0, 0, False) /* Create Weeping Two Handed (41638) for Shop */
-     , (3000304, 4, 35593, -1, 0, 0, False) /* Create  (35593) Drudge Orb for Shop */;
+     , (3000304, 4, 35593, -1, 0, 0, False) /* Create  (35593) Drudge Orb for Shop */
+     , (3000304, 4, 45907, -1, 0, 0, False) /* Create Amateur Explorer Compound Bow (45907) for Shop */
+     , (3000304, 4, 45916, -1, 0, 0, False) /* Create  (45916) for Shop */
+     , (3000304, 4, 70206, -1, 0, 0, False) /* Create Amateur Explorer Arbalest (70206) for Shop */
+     , (3000304, 4, 45918, -1, 0, 0, False) /* Create  (45918) for Shop */
+     , (3000304, 4, 70207, -1, 0, 0, False) /* Create Amateur Explorer Slingshot (70207) for Shop */
+     , (3000304, 4, 45919, -1, 0, 0, False) /* Create Amateur Explorer Ken (45919) for Shop */
+     , (3000304, 4, 45957, -1, 0, 0, False) /* Create Amateur Explorer Nether Staff (45957) for Shop */
+     , (3000304, 4, 45921, -1, 0, 0, False) /* Create Amateur Explorer Simi (45921) for Shop */
+     , (3000304, 4, 45959, -1, 0, 0, False) /* Create Amateur Explorer Baton (45959) for Shop */
+     , (3000304, 4, 45922, -1, 0, 0, False) /* Create  (45922) for Shop */
+     , (3000304, 4, 45945, -1, 0, 0, False) /* Create  (45945) for Shop */
+     , (3000304, 4, 70212, -1, 0, 0, False) /* Create Amateur Explorer Knife (70212) for Shop */
+     , (3000304, 4, 70214, -1, 0, 0, False) /* Create Amateur Explorer Silifi (70214) for Shop */
+     , (3000304, 4, 70254, -1, 0, 0, False) /* Create Amateur Explorer Greataxe (70254) for Shop */
+     , (3000304, 4, 70216, -1, 0, 0, False) /* Create Amateur Explorer Budiaq (70216) for Shop */
+     , (3000304, 4, 70246, -1, 0, 0, False) /* Create Amateur Explorer Tungi (70246) for Shop */
+     , (3000304, 4, 70242, -1, 0, 0, False) /* Create Amateur Explorer Spiked Club (70242) for Shop */
+     , (3000304, 4, 70224, -1, 0, 0, False) /* Create Amateur Explorer Claw (70224) for Shop */
+     , (3000304, 4, 70252, -1, 0, 0, False) /* Create Amateur Explorer Morning Star (70252) for Shop */
+     , (3000304, 4, 70226, -1, 0, 0, False) /* Create Amateur Explorer Quarter Staff (70226) for Shop */
+     , (3000304, 4, 70250, -1, 0, 0, False) /* Create Amateur Explorer Katar (70250) for Shop */
+     , (3000304, 4, 70240, -1, 0, 0, False) /* Create Amateur Explorer Khanjar (70240) for Shop */
+     , (3000304, 4, 70228, -1, 0, 0, False) /* Create Amateur Explorer Dirk (70228) for Shop */
+     , (3000304, 4, 70230, -1, 0, 0, False) /* Create Amateur Explorer Hand Axe (70230) for Shop */
+     , (3000304, 4, 70238, -1, 0, 0, False) /* Create Amateur Explorer Board with Nail (70238) for Shop */
+     , (3000304, 4, 70232, -1, 0, 0, False) /* Create Amateur Explorer Trident (70232) for Shop */
+     , (3000304, 4, 70234, -1, 0, 0, False) /* Create Amateur Explorer Stick (70234) for Shop */;
 
 
 /* Lifestoned Changelog:
