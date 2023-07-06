@@ -168,12 +168,22 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
         private static void SpawnHellgateBoss(Hellgate hellgate)
         {
             hellgate.BossSpawned = true;
+            var lifespan = (int)hellgate.TimeRemaining;
             var boss = WorldObjectFactory.CreateNewWorldObject(4000226, hellgate.Ruleset, hellgate.BossPosition); // Darkbeat temporarily 
-            if (boss != null) boss.Location = hellgate.BossPosition;
-            boss?.EnterWorld();
+            if (boss != null)
+            {
+               boss.Location = hellgate.BossPosition;
+               boss.Lifespan = lifespan;
+               boss?.EnterWorld();
+            }
+
             var exitPortal = WorldObjectFactory.CreateNewWorldObject(600004, hellgate.Ruleset, hellgate.ExitPosition);
-            if (exitPortal != null) exitPortal.Location = hellgate.ExitPosition;
-            exitPortal?.EnterWorld();
+            if (exitPortal != null)
+            {
+                exitPortal.Location = hellgate.ExitPosition;
+                exitPortal.Lifespan = lifespan;
+                exitPortal?.EnterWorld();
+            } 
         }
 
         public static void AddPlayerToHellgate(Player player, uint instance)
@@ -267,6 +277,9 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             var exitPosition = new Position(hellgateGroup.HellgateLandblock.ExitLocation);
             exitPosition.Instance = instance;
 
+            var dropPosition = new Position(hellgateGroup.HellgateLandblock.DropLocation);
+            dropPosition.Instance = instance;
+
             var tier = TownManager.GetMonsterTierByDistance(leader.Location);
 
             var hellgate = new Hellgate(
@@ -275,12 +288,13 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
                 ephemeralRealm.RealmRuleset,
                 bossPosition,
                 exitPosition,
+                dropPosition,
                 expiration,
                 bossExpiration,
                 groupGuid,
                 isOpen,
                 tier,
-                instance);
+                instance); ;
 
             hellgateGroup.AddHellgate(hellgate);
 

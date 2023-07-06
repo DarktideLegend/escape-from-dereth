@@ -47,24 +47,13 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
             }
         }
 
-        public Position DropPosition
-        {
-            get
-            {
-                var dropLocation = Landblock.DropLocation;
-                var position = new Position(dropLocation)
-                {
-                    Instance = Instance
-                };
-                return position;
-            }
-        }
+        public Position DropPosition;
 
         public Position ExitPosition;
 
         public Position BossPosition;
 
-        public Hellgate(HellgateLandblock landblock, HashSet<Player> players, AppliedRuleset ruleset, Position bossPosition, Position exitPosition, double expiration, double bossExpiration, uint hellgateGroup, bool isOpen, int tier, uint instance)
+        public Hellgate(HellgateLandblock landblock, HashSet<Player> players, AppliedRuleset ruleset, Position bossPosition, Position exitPosition, Position dropPosition, double expiration, double bossExpiration, uint hellgateGroup, bool isOpen, int tier, uint instance)
         {
             Players = players;
             Landblock = landblock;
@@ -77,6 +66,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
             IsOpen = isOpen;
             BossPosition = bossPosition;
             ExitPosition = exitPosition;
+            DropPosition = dropPosition;
         }
 
         public void Destroy()
