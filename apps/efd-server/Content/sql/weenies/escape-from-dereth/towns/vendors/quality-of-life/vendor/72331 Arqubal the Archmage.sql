@@ -136,6 +136,7 @@ VALUES (72331, 2,  5852,  0, 93, 0, True) /* Create Dho Vest and Robe (5852) for
      , (72331, 4,  5910, -1, 0, 0, False) /* Create Dho War Master Robe (5910) for Shop */
      , (72331, 4,  5916, -1, 0, 0, False) /* Create Dho Creature Master Robe (5916) for Shop */
      , (72331, 4,  5913, -1, 0, 0, False) /* Create Dho Item Master Robe (5913) for Shop */
+     , (72331, 4,   7299, -1, 0, 0, False) /* Create Diamond Scarab (691) for Shop */
      , (72331, 4,   691, -1, 0, 0, False) /* Create Lead Scarab (691) for Shop */
      , (72331, 4,   689, -1, 0, 0, False) /* Create Iron Scarab (689) for Shop */
      , (72331, 4,   686, -1, 0, 0, False) /* Create Copper Scarab (686) for Shop */
