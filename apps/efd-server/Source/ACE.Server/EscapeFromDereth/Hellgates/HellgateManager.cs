@@ -8,10 +8,8 @@ using ACE.Server.EscapeFromDereth.Hellgates.Entity;
 using ACE.Server.EscapeFromDereth.Towns;
 using ACE.Server.Factories;
 using ACE.Server.Managers;
-using ACE.Server.Realms;
 using ACE.Server.WorldObjects;
 using log4net;
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -83,7 +81,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             NextHeartbeatTime = currentUnixTime + HeartbeatInterval;
         }
 
-        private static HellgateGroup CreateHellgateGroup(int timespan = 0, int maxHellgates = 3)
+        private static HellgateGroup CreateHellgateGroup(int timespan = 0, int maxHellgates = 3, int openChance = 25)
         {
             lock (hellgateLock)
             {
@@ -133,11 +131,6 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             if (CurrentHellgateGroup.ShouldDestroy)
                 CreateHellgateGroup();
 
-            var timeRemaining = TimeSpan.FromMinutes(CurrentHellgateGroup.TimeRemaining);
-            log.Info($"Current HellgateGroup [{CurrentHellgateGroup.Guid}] - [TimeRemaining] = {timeRemaining}");
-            log.Info($"Current Active Hellgate Count [{ActiveHellgates.Count}]");
-            log.Info($"Current Hellgate Group Count [{HellgateGroups.Count}]");
-
             var hellgateGroup = HellgateGroups.Peek();
 
             while (hellgateGroup != null && hellgateGroup.ShouldDestroy)
@@ -164,41 +157,46 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
                     }
                 }
 
-                if (!hellgate.BossSpawned)
-                    TickHellgateBoss(hellgate);
+                if (hellgate.BossSpawned || !hellgate.ShouldSpawnBoss)
+                    continue;
+
+                SpawnHellgateBoss(hellgate);
 
             }
         }
 
-        private static void TickHellgateBoss(Hellgate hellgate)
+        private static void SpawnHellgateBoss(Hellgate hellgate)
         {
-            if (hellgate.ShouldSpawnBoss && !hellgate.BossSpawned)
-            {
-                hellgate.BossSpawned = true;
-                var boss = WorldObjectFactory.CreateNewWorldObject(4000226, hellgate.Ruleset, hellgate.BossPosition);
-                boss.Location = hellgate.BossPosition;
-                boss?.EnterWorld();
-
-                var exitPortal = WorldObjectFactory.CreateNewWorldObject(600004, hellgate.Ruleset, hellgate.ExitPosition);
-                exitPortal.Location = hellgate.ExitPosition;
-                exitPortal?.EnterWorld();
-            }
-
+            hellgate.BossSpawned = true;
+            var boss = WorldObjectFactory.CreateNewWorldObject(4000226, hellgate.Ruleset, hellgate.BossPosition); // Darkbeat temporarily 
+            if (boss != null) boss.Location = hellgate.BossPosition;
+            boss?.EnterWorld();
+            var exitPortal = WorldObjectFactory.CreateNewWorldObject(600004, hellgate.Ruleset, hellgate.ExitPosition);
+            if (exitPortal != null) exitPortal.Location = hellgate.ExitPosition;
+            exitPortal?.EnterWorld();
         }
 
-        public static void RemovePlayerFromHellgate(Player player, uint instance = 0)
+        public static void AddPlayerToHellgate(Player player, uint instance)
         {
-            lock (hellgateLock)
+            if (ActiveHellgates.TryGetValue(instance, out Hellgate hellgate))
             {
-                var iid = instance > 0 ? instance : player.Location.Instance;
+                hellgate.AddPlayer(player);
 
-                if (ActiveHellgates.TryGetValue(iid, out Hellgate hellgate))
-                {
-                    hellgate.RemovePlayer(player);
-                    player.ExitInstance();
-                    log.Info($"Removed {player.Name} from hellgate - {hellgate.Instance} ");
-                    return;
-                }
+                log.Info($"Added {player.Name} from hellgate - {hellgate.Instance} ");
+                return;
+            }
+        }
+
+        public static void RemovePlayerFromHellgate(Player player, uint instance)
+        {
+
+
+            if (ActiveHellgates.TryGetValue(instance, out Hellgate hellgate))
+            {
+                hellgate.RemovePlayer(player);
+
+                log.Info($"Removed {player.Name} from hellgate - {hellgate.Instance} ");
+                return;
             }
         }
 
@@ -212,22 +210,23 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             {
                 {
                     var hellgate = GetHellgate(instance);
+                    if (hellgate == null)
+                        continue;
+
                     foreach (var player in hellgate.Players)
                     {
                         if (player != null)
-                            RemovePlayerFromHellgate(player, hellgate.Instance);
+                            player.HandleActionDie();
                     }
-
-                    ActiveHellgates.TryRemove(hellgate.Instance, out _);
-                    hellgate.Destroy();
                     var actionChain = new ActionChain();
-                    var lb = LandblockManager.GetLandblockUnsafe(hellgate.Landblock.DropLocation.LandblockId, hellgate.Instance);
+                    actionChain.AddDelaySeconds(60); // give enough time for hellgate to be destroyed
                     actionChain.AddAction(WorldManager.ActionQueue, () =>
                     {
+                        var lb = LandblockManager.GetLandblockUnsafe(hellgate.Landblock.DropLocation.LandblockId, hellgate.Instance);
                         if (lb != null)
                             LandblockManager.AddToDestructionQueue(lb);
+                        hellgate.Destroy();
                     });
-                    actionChain.AddDelaySeconds(1);
                     actionChain.EnqueueChain();
                 }
             }
@@ -350,15 +349,11 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
         {
             if (hellgate.Next == null)
             {
-                RemovePlayerFromHellgate(player, hellgate.Instance);
+                player.ExitInstance();
             }
             else
             {
-                hellgate.Next.AddPlayer(player);
-                WorldManager.ThreadSafeTeleport(player, hellgate.Next.DropPosition, true, new ActionEventDelegate(() =>
-                {
-                    hellgate.RemovePlayer(player);
-                }));
+                WorldManager.ThreadSafeTeleport(player, hellgate.Next.DropPosition, true);
             }
         }
     }
