@@ -232,9 +232,9 @@ namespace ACE.Server.Factories
 
         public static void LevelUpPlayer(Player player)
         {
-            player.AvailableExperience += 55919623;
-            player.TotalExperience += 55919623;
-            player.Level = 50;
+            player.AvailableExperience += 493005039;
+            player.TotalExperience += 493005039;
+            player.Level = 80;
             player.SaveBiotaToDatabase();
         }
 
