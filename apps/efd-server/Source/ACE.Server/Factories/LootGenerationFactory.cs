@@ -35,10 +35,10 @@ namespace ACE.Server.Factories
             InitClothingColors();
         }
 
-        public static List<WorldObject> CreateRandomLootObjects(TreasureDeath profile)
+        public static List<WorldObject> CreateRandomLootObjects(TreasureDeath profile, bool isHellgateBoss = false, int tier = 1)
         {
             if (!PropertyManager.GetBool("legacy_loot_system").Item)
-                return CreateRandomLootObjects_New(profile);
+                return CreateRandomLootObjects_New(profile, isHellgateBoss, tier);
 
             stopwatch.Value.Restart();
 
@@ -161,7 +161,7 @@ namespace ACE.Server.Factories
             }
         }
 
-        public static List<WorldObject> CreateRandomLootObjects_New(TreasureDeath profile)
+        public static List<WorldObject> CreateRandomLootObjects_New(TreasureDeath profile, bool isHellgateBoss = false, int tier = 1)
         {
             stopwatch.Value.Restart();
 
@@ -171,6 +171,16 @@ namespace ACE.Server.Factories
                 WorldObject lootWorldObject;
 
                 var loot = new List<WorldObject>();
+
+                if (isHellgateBoss)
+                {
+                    profile.ItemMaxAmount = 10 * tier;
+                    profile.ItemMinAmount = profile.ItemMaxAmount;
+                    profile.MagicItemMaxAmount = 10 * tier;
+                    profile.MagicItemMinAmount = profile.MagicItemMaxAmount;
+                    profile.MundaneItemMaxAmount = 10 * tier;
+                    profile.MundaneItemMinAmount = profile.MundaneItemMaxAmount;
+                }
 
                 var itemChance = ThreadSafeRandom.Next(1, 100);
                 if (itemChance <= profile.ItemChance)
