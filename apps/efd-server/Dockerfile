@@ -1,10 +1,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
-<<<<<<< HEAD:apps/efd-server/Dockerfile
 
 ADD Content /ace/Content
 
-=======
->>>>>>> 1f6295e61 (Squashed 'apps/efd-server/' changes from 2cce6205c..765027846):Dockerfile
 WORKDIR /Source
 
 # copy csproj and restore as distinct layers
