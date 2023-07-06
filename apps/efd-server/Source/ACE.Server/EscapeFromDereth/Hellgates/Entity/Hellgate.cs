@@ -47,8 +47,6 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
             }
         }
 
-
-
         public Position DropPosition
         {
             get

@@ -189,8 +189,6 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
 
         public static void RemovePlayerFromHellgate(Player player, uint instance)
         {
-
-
             if (ActiveHellgates.TryGetValue(instance, out Hellgate hellgate))
             {
                 hellgate.RemovePlayer(player);
