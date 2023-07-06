@@ -813,6 +813,12 @@ namespace ACE.Server.WorldObjects
             if (newRealmId == 0x7FFF)
                 SetPosition(PositionType.HomeRealmExitTo, new Position(Location.InFrontOf(-5f, true)));
 
+            if (prevrealm.Realm.Id == 1016) // if leaving hellgate
+                HellgateManager.RemovePlayerFromHellgate(this, Location.Instance);
+
+            if (newRealm.Realm.Id == 1016) // if entering a hellgate
+                HellgateManager.AddPlayerToHellgate(this, newLocation.Instance);
+
             if (newLocation.IsEphemeralRealm && !Location.IsEphemeralRealm)
             {
                 SetPosition(PositionType.EphemeralRealmExitTo, new Position(Location));
