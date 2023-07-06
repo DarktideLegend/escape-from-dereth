@@ -1,3 +1,10 @@
+## [1.1.0-alpha.29](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.28...efd-server-v1.1.0-alpha.29) (2023-07-06)
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ add lifespan to hellgate surface portal ([7aad37f](https://github.com/DarktideLegend/escape-from-dereth/commit/7aad37f09f98c399ba9503f59431f226dfc49f19))
+
 ## [1.1.0-alpha.28](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.27...efd-server-v1.1.0-alpha.28) (2023-07-06)
 
 
