@@ -677,7 +677,6 @@ namespace ACE.Server.Managers
 
         public static readonly ReadOnlyDictionary<string, Property<string>> DefaultStringProperties =
             DictOf(
-<<<<<<< HEAD:apps/efd-server/Source/ACE.Server/Managers/PropertyManager.cs
                 ("content_folder", new Property<string>("C:\\Users\\node_\\projects\\escape-from-dereth\\apps\\efd-server\\Content", "for content creators to live edit weenies. defaults to Content folder found in same directory as ACE.Server.dll")),
                 ("dat_warning_msg", new Property<string>("Your DAT files are incomplete.\nACEmulator does not support dynamic DAT updating at this time.\nPlease visit https://emulator.ac/how-to-play to download the complete DAT files.", "Warning message displayed (if show_dat_warning is true) to player if client attempts DAT download from server")),
                 ("dat_older_warning_msg", new Property<string>("Your DAT files are incomplete.\nThis server does not support dynamic DAT updating at this time.\nPlease visit https://emulator.ac/how-to-play to download the complete DAT files.", "Warning message displayed (if show_dat_warning is true) to player if client attempts DAT download from server")),

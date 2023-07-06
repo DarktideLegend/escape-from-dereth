@@ -2249,9 +2249,6 @@ namespace ACE.Server.WorldObjects
                 return;
             }
 
-<<<<<<< HEAD:apps/efd-server/Source/ACE.Server/WorldObjects/Player_Inventory.cs
-            if ((stackRootOwner == this && containerRootOwner != this) || (stackRootOwner != this && containerRootOwner == this)) // Movement is between the player and the world
-=======
             if (stack.IsAttunedOrContainsAttuned && stackRootOwner == this && containerRootOwner != this)
             {
                 Session.Network.EnqueueSend(new GameEventInventoryServerSaveFailed(Session, stackId));
@@ -2259,7 +2256,6 @@ namespace ACE.Server.WorldObjects
             }
 
             if ((stackRootOwner == this && containerRootOwner != this)  || (stackRootOwner != this && containerRootOwner == this)) // Movement is between the player and the world
->>>>>>> 1f6295e61 (Squashed 'apps/efd-server/' changes from 2cce6205c..765027846):Source/ACE.Server/WorldObjects/Player_Inventory.cs
             {
                 if (stackRootOwner is Vendor)
                 {
@@ -2905,9 +2901,6 @@ namespace ACE.Server.WorldObjects
                 }
             }
 
-<<<<<<< HEAD:apps/efd-server/Source/ACE.Server/WorldObjects/Player_Inventory.cs
-            if ((sourceStackRootOwner == this && targetStackRootOwner != this) || (sourceStackRootOwner != this && targetStackRootOwner == this)) // Movement is between the player and the world
-=======
             if (sourceStack.IsAttunedOrContainsAttuned && sourceStackRootOwner == this && targetStackRootOwner != this)
             {
                 Session.Network.EnqueueSend(new GameEventInventoryServerSaveFailed(Session, sourceStack.Guid.Full));
@@ -2915,7 +2908,6 @@ namespace ACE.Server.WorldObjects
             }
 
             if ((sourceStackRootOwner == this && targetStackRootOwner != this)  || (sourceStackRootOwner != this && targetStackRootOwner == this)) // Movement is between the player and the world
->>>>>>> 1f6295e61 (Squashed 'apps/efd-server/' changes from 2cce6205c..765027846):Source/ACE.Server/WorldObjects/Player_Inventory.cs
             {
                 if (sourceStackRootOwner is Vendor)
                 {
@@ -3377,13 +3369,8 @@ namespace ACE.Server.WorldObjects
             }
             else
             {
-<<<<<<< HEAD:apps/efd-server/Source/ACE.Server/WorldObjects/Player_Inventory.cs
-                if (item.WeenieType == WeenieType.Deed && target.AiAcceptEverything) // http://acpedia.org/wiki/Housing_FAQ#House_deeds
-                {
-=======
                 if (item.WeenieType == WeenieType.Deed && target.AllowGive && target.AiAcceptEverything) // http://acpedia.org/wiki/Housing_FAQ#House_deeds
                 {                    
->>>>>>> 1f6295e61 (Squashed 'apps/efd-server/' changes from 2cce6205c..765027846):Source/ACE.Server/WorldObjects/Player_Inventory.cs
                     var stackSize = item.StackSize ?? 1;
 
                     var stackMsg = stackSize != 1 ? $"{stackSize} " : "";
