@@ -1,3 +1,15 @@
+## [1.1.0-alpha.30](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.29...efd-server-v1.1.0-alpha.30) (2023-07-07)
+
+
+### Bug Fixes
+
+* **efd-server:** 🐛 check if realm is overridable when weenie has custom content ([a9b1234](https://github.com/DarktideLegend/escape-from-dereth/commit/a9b1234434165addaed6a13f91b67882a3bd7fd6))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ add better logging when adding landblock to destruction queue ([52df338](https://github.com/DarktideLegend/escape-from-dereth/commit/52df33818541891ce8dded3864d8d914ac0f14aa))
+
 ## [1.1.0-alpha.29](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.28...efd-server-v1.1.0-alpha.29) (2023-07-06)
 
 
