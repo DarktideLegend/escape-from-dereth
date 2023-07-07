@@ -44,6 +44,11 @@ namespace ACE.Server.Factories
             var isCustomContentOnly = ruleset.GetProperty(RealmPropertyBool.IsCustomContentOnly);
             var hasCustomContent = weenie.GetProperty(PropertyBool.IsCustomContent) ?? false;
 
+            // if this weenie has custom content but this realm isn't overridable, return nothing
+            if (hasCustomContent && !isOverridable)
+                return null;
+
+            // if this is strictly a custom content only realm, return nothing unless it's a corpse
             if (isCustomContentOnly && !hasCustomContent && weenie.WeenieType != WeenieType.Corpse)
                 return null;
 
@@ -546,6 +551,12 @@ namespace ACE.Server.Factories
 
             if (ruleset == RealmManager.DefaultRuleset)
                 return null;
+
+            if (location != null && ruleset != null)
+            {
+                if (location.RealmID != ruleset.Realm.Id)
+                    return null;
+            }
 
             var wo = CreateNewWorldObject(weenie, ruleset, location);
             if (wo != null)
