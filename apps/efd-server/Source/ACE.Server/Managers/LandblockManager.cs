@@ -605,7 +605,7 @@ namespace ACE.Server.Managers
         public static void AddToDestructionQueue(Landblock landblock)
         {
             destructionQueue.Add(landblock);
-            log.Info($"Added landblock: {landblock} to the DestructionQueue");
+            log.Info($"Added landblock: {landblock.Id.Raw:X}, instance: {landblock.Instance} to the DestructionQueue");
         }
 
         private static readonly System.Diagnostics.Stopwatch swTrySplitEach = new System.Diagnostics.Stopwatch();
