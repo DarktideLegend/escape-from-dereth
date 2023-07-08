@@ -82,7 +82,6 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
         {
             Hellgates.Clear();
             GroupTail = null;
-            GuidManager.RecycleDynamicGuid(Guid);
         }
 
         public HellgateGroup(HellgateLandblock hellgateLandblock, int timespan, int maxActiveHellgates, ObjectGuid guid)

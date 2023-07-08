@@ -240,6 +240,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             }
 
             hellgateGroup.Destroy();
+            GuidManager.RecycleDynamicGuid(hellgateGroup.Guid);
             IsCleaningupHellgateGroup= false;
         }
 
