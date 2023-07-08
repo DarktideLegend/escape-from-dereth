@@ -128,8 +128,8 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             if (IsCleaningupHellgateGroup)
                 return;
 
-            if (CurrentHellgateGroup.ShouldDestroy)
-                CreateHellgateGroup();
+            if (HellgateGroups.Count == 0)
+                return;
 
             var hellgateGroup = HellgateGroups.Peek();
 
