@@ -549,15 +549,6 @@ namespace ACE.Server.Factories
             if (weenie == null)
                 return null;
 
-            if (ruleset == RealmManager.DefaultRuleset)
-                return null;
-
-            if (location != null && ruleset != null)
-            {
-                if (location.RealmID != ruleset.Realm.Id)
-                    return null;
-            }
-
             var wo = CreateNewWorldObject(weenie, ruleset, location);
             if (wo != null)
             {
