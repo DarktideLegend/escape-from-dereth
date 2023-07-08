@@ -38,6 +38,14 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
             }
         }
 
+        public bool IsClosed
+        {
+            get
+            {
+                return TimeRemaining <= (60 * 20); // prevent players from being added if the hellgate has less than 20 minutes left
+            }
+        }
+
         public bool ShouldDestroy
         {
             get
