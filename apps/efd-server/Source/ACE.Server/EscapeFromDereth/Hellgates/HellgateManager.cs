@@ -90,7 +90,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
                 var landblock = HellgateLandblocks[landblockShort];
 
                 if (timespan == 0)
-                    timespan = 30; // hellgates are open for 30 minutes
+                    timespan = 60; // by default, hellgates are open for an hour
 
                 var hellgateGroup = new HellgateGroup(landblock, timespan, maxHellgates, GuidManager.NewDynamicGuid());
 
@@ -295,7 +295,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
                 groupGuid,
                 isOpen,
                 tier,
-                instance); ;
+                instance); 
 
             hellgateGroup.AddHellgate(hellgate);
 
