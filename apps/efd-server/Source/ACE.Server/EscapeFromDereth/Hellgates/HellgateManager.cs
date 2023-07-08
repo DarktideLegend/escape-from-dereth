@@ -254,7 +254,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             lock (hellgateLock)
             {
 
-                if (CurrentHellgateGroup.ShouldDestroy || CurrentHellgateGroup.HasReachedCapacity)
+                if (CurrentHellgateGroup.HasReachedCapacity || CurrentHellgateGroup.IsClosed)
                     CreateHellgateGroup();
 
                 var allowedPlayers = leader.Fellowship.GetFellowshipMembers().Values.ToHashSet();
