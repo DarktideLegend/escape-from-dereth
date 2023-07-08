@@ -1,3 +1,14 @@
+## [1.1.0-alpha.31](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.30...efd-server-v1.1.0-alpha.31) (2023-07-08)
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ create new hellgate group if countdown is less than 20 minutes ([f52eef9](https://github.com/DarktideLegend/escape-from-dereth/commit/f52eef99701fc171a35edf8d590d6cc4c84a6636))
+* **efd-server:** ♻️ hellgates are open for an hour by default ([b24e29d](https://github.com/DarktideLegend/escape-from-dereth/commit/b24e29db7fb57a5589781a23b76d13080ef07a39))
+* **efd-server:** ♻️ if HellgateGroups is empty exit HellgateManager.Tick ([2fe14eb](https://github.com/DarktideLegend/escape-from-dereth/commit/2fe14eb9501fd19e960f7b6e2ff0b1550a5b6c4f))
+* **efd-server:** ♻️ recycle hellgate group guid outside of HellgateGroup entity ([fdb0b27](https://github.com/DarktideLegend/escape-from-dereth/commit/fdb0b27dc20b949ff816d02e84ee49416a3b6994))
+* **efd-server:** ♻️ remove old validation logic from CreateNewWorldObject ([10fdf9d](https://github.com/DarktideLegend/escape-from-dereth/commit/10fdf9d54e59306bc888ec6dc1b63a50059929ce))
+
 ## [1.1.0-alpha.30](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.29...efd-server-v1.1.0-alpha.30) (2023-07-07)
 
 
