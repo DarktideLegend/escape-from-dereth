@@ -1,3 +1,16 @@
+## [1.1.0-alpha.32](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.31...efd-server-v1.1.0-alpha.32) (2023-07-10)
+
+
+### Features
+
+* **efd-server:** ✨ add HasPvpSummoners ruleset ([8d9061a](https://github.com/DarktideLegend/escape-from-dereth/commit/8d9061a2923421c014ec08d8c613e877b84b1aa0))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️  add capitalized properties for Town/TownManager ([35d7ccb](https://github.com/DarktideLegend/escape-from-dereth/commit/35d7ccb23cfe8b8b48b1962e7e115df5ca35e5ed))
+* **efd-server:** ♻️ combat pets cannot be mutated into a Gatekeeper ([94d8e17](https://github.com/DarktideLegend/escape-from-dereth/commit/94d8e179b165ba26cf2b37fc41cec21863d11d3d))
+
 ## [1.1.0-alpha.31](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.30...efd-server-v1.1.0-alpha.31) (2023-07-08)
 
 
