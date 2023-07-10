@@ -5,26 +5,29 @@ namespace ACE.Server.EscapeFromDereth.Towns.Entity
 {
     public class Town
     {
-        public string name { get; private set; }
-        public Position position { get; private set; }
-        public bool isClosed { get; private set; } = false;
-        public Position bootLocation { get; private set; }
+        public string Name { get; private set; }
+        public Position Location { get; private set; }
+        public bool IsClosed { get; private set; } = false;
+        public Position BootLocation { get; private set; }
+
+        public Position BindstoneLocation { get; private set; }
 
         public Town(string name, Position position, Position bootLocation)
         {
-            this.name = name;
-            this.position = position;
-            this.bootLocation = bootLocation;
+            Name = name;
+            Location = position;
+            BootLocation = bootLocation;
+            //BindstoneLocation = bindstoneLocation;
         }
 
-        internal void close()
+        internal void Close()
         {
-            isClosed = true;
+            IsClosed = true;
         }
 
-        internal void open()
+        internal void Open()
         {
-            isClosed = false;
+            IsClosed = false;
         }
     }
 }
