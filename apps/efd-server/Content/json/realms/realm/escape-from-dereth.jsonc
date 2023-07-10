@@ -14,7 +14,8 @@
     "HasRecalls": false,
     "HasRebuffs": false,
     "HasHousing": false,
-    "HasBindstones": false,
+    "HasPvpSummoners": true,
+    "HasBindstones": true,
     "IsVendorNpcOnly": true,
     "UseWieldRequirements": false
   }

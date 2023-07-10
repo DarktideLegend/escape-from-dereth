@@ -87,7 +87,10 @@ namespace ACE.Entity.Enum.Properties
         HasBindstones,
 
         [RealmPropertyBool(true)]
-        UseWieldRequirements
+        UseWieldRequirements,
+
+        [RealmPropertyBool(false)]
+        HasPvpSummoners
     }
 
 
