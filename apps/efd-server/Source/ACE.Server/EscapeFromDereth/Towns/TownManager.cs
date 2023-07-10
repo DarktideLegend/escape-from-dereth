@@ -48,7 +48,7 @@ namespace ACE.Server.EscapeFromDereth.Towns
                 return false;
 
             ClosedTowns.Add(town);
-            town.close();
+            town.Close();
             return true;
         }
 
@@ -57,7 +57,7 @@ namespace ACE.Server.EscapeFromDereth.Towns
         {
             if (ClosedTowns.TryGetValue(town, out var closedTown))
             {
-                closedTown.open();
+                closedTown.Open();
                 return ClosedTowns.Remove(town);
             }
 
@@ -74,7 +74,7 @@ namespace ACE.Server.EscapeFromDereth.Towns
             {
                 random = ThreadSafeRandom.Next(0, TownsList.Count - 1);
                 town = TownsList[random];
-            } while (town.isClosed);
+            } while (town.IsClosed);
 
             return town;
         }
@@ -83,7 +83,7 @@ namespace ACE.Server.EscapeFromDereth.Towns
         {
             return TownsList.Aggregate((previous, next) =>
             {
-                if (previous.position.DistanceTo(position) <= next.position.DistanceTo(position))
+                if (previous.Location.DistanceTo(position) <= next.Location.DistanceTo(position))
                     return previous;
                 else
                     return next;
@@ -109,7 +109,7 @@ namespace ACE.Server.EscapeFromDereth.Towns
         public static float GetTownDistance(Position location)
         {
             var town = GetClosestTownFromPosition(location);
-            var distance = town.position.DistanceTo(location);
+            var distance = town.Location.DistanceTo(location);
             return distance;
         }
     }

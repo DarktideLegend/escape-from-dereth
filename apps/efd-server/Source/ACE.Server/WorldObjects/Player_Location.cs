@@ -1092,9 +1092,9 @@ namespace ACE.Server.WorldObjects
             {
                 CurrentLandblock?.SetActive();
 
-                if (!CurrentLandblock.IsDungeon && TownManager.Towns.TryGetValue(CurrentLandblock.Id.Landblock, out var town) && town.isClosed) 
+                if (!CurrentLandblock.IsDungeon && TownManager.Towns.TryGetValue(CurrentLandblock.Id.Landblock, out var town) && town.IsClosed) 
                 {
-                    WorldManager.ThreadSafeTeleport(this, town.bootLocation, false);
+                    WorldManager.ThreadSafeTeleport(this, town.BootLocation, false);
                 }
             }
 
