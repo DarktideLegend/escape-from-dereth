@@ -450,7 +450,7 @@ namespace ACE.Server.Factories
             {
                 MutateDeathTreasureTypeByTier(wo);
 
-                if (!wo.IsInHellgate && ThreadSafeRandom.Next(1, 100) < 8) // 8% chance of spawning a Gatekeeper instead of a monster
+                if (!wo.IsInHellgate && !(wo is CombatPet) && ThreadSafeRandom.Next(1, 100) < 8) // 8% chance of spawning a Gatekeeper instead of a monster
                 {
                     MutateGatekeeper(wo);
                 }
