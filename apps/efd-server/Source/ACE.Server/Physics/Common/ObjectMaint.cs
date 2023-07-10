@@ -405,7 +405,15 @@ namespace ACE.Server.Physics.Common
             else if (type == VisibleObjectType.AttackTargets)
             {
                 if (PhysicsObj.WeenieObj.IsCombatPet)
-                    results = objs.Where(i => i.WeenieObj.IsMonster && i.WeenieObj.PlayerKillerStatus != PlayerKillerStatus.PK);    // combat pets cannot attack pk-only creatures (ie. faction banners)
+                {
+                    var ruleset = PhysicsObj.WeenieObj.WorldObject.RealmRuleset;
+                    var hasPvpSummoners = ruleset != null && ruleset.GetProperty(ACE.Entity.Enum.Properties.RealmPropertyBool.HasPvpSummoners);
+                    if (hasPvpSummoners)
+                        results = objs.Where((i) => i.WeenieObj.IsMonster || i.WeenieObj.IsPK());
+                    else
+                        // combat pets cannot attack pk-only creatures (ie. faction banners)
+                        results = objs.Where(i => i.WeenieObj.IsMonster && i.WeenieObj.PlayerKillerStatus != PlayerKillerStatus.PK);    
+                }
                 else if (PhysicsObj.WeenieObj.IsFactionMob)
                     results = objs.Where(i => i.IsPlayer || i.WeenieObj.IsCombatPet || i.WeenieObj.IsMonster && !i.WeenieObj.SameFaction(PhysicsObj));
                 else
@@ -915,11 +923,31 @@ namespace ACE.Server.Physics.Common
         {
             if (PhysicsObj.WeenieObj.IsCombatPet)
             {
-                // only tracking monsters
-                if (!obj.WeenieObj.IsMonster)
+                var ruleset = PhysicsObj.WeenieObj.WorldObject.RealmRuleset;
+                var hasPvpSummoners = ruleset != null && ruleset.GetProperty(ACE.Entity.Enum.Properties.RealmPropertyBool.HasPvpSummoners);
+
+                if (hasPvpSummoners)
                 {
-                    Console.WriteLine($"{PhysicsObj.Name}.ObjectMaint.AddVisibleTarget({obj.Name}): tried to add a non-monster");
-                    return false;
+                    var isPk = obj.WeenieObj.IsPK();
+
+                    if (!obj.WeenieObj.IsMonster && !isPk)
+                    {
+                        Console.WriteLine($"{PhysicsObj.Name}.ObjectMaint.AddVisibleTarget({obj.Name}): tried to add a non-monster");
+                        return false;
+                    }
+
+                    if (obj.WeenieObj.IsPetOwner(PhysicsObj.WeenieObj.WorldObject))
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    if (!obj.WeenieObj.IsMonster)
+                    {
+                        Console.WriteLine($"{PhysicsObj.Name}.ObjectMaint.AddVisibleTarget({obj.Name}): tried to add a non-monster");
+                        return false;
+                    }
                 }
             }
             else if (PhysicsObj.WeenieObj.IsFactionMob)

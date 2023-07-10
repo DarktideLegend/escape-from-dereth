@@ -403,7 +403,7 @@ namespace ACE.Server.WorldObjects
                 {
                     var mobAwarenessMultiplier = RealmRuleset.GetProperty(RealmPropertyInt.CreatureMobAwarenessMultiplier);
                     var visualAwarenessRange = (float)((VisualAwarenessRange ??
-                        VisualAwarenessRange_Default) * PropertyManager.GetDouble("mob_awareness_range").Item * mobAwarenessMultiplier);
+                        VisualAwarenessRange_Default) * (PropertyManager.GetDouble("mob_awareness_range").Item * (!(this is CombatPet) ? mobAwarenessMultiplier : 1)));
 
                     _visualAwarenessRangeSq = visualAwarenessRange * visualAwarenessRange;
                 }

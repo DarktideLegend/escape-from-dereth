@@ -14,6 +14,7 @@ using ACE.Server.Factories;
 using ACE.Server.Managers;
 using ACE.Server.Network.GameEvent.Events;
 using ACE.Server.Network.GameMessages.Messages;
+using ACE.Server.Realms;
 
 namespace ACE.Server.WorldObjects
 {
@@ -142,7 +143,7 @@ namespace ACE.Server.WorldObjects
 
         public bool? SummonCreature(Player player, uint wcid)
         {
-            var wo = WorldObjectFactory.CreateNewWorldObject(wcid);
+            var wo = WorldObjectFactory.CreateNewWorldObject(wcid, player.RealmRuleset, new Position(player.Location));
 
             if (wo == null)
             {

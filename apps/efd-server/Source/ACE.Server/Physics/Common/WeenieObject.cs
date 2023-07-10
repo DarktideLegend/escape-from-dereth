@@ -54,6 +54,20 @@ namespace ACE.Server.Physics.Common
             PlayerKillerStatus = creature.PlayerKillerStatus;
         }
 
+        public bool IsPetOwner(WorldObject pet)
+        {
+            if (!(WorldObject is Player player))
+                return false;
+
+            if (!(pet is CombatPet combatPet))
+                return false;
+
+            if (combatPet.P_PetOwner == player)
+                return true;
+
+            return false;
+        }
+
         public bool SameFaction(PhysicsObj obj)
         {
             return (Faction1Bits & obj.WeenieObj.Faction1Bits) != 0;

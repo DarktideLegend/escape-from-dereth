@@ -94,14 +94,16 @@ namespace ACE.Server.WorldObjects
 
         public void HandlePKDeathBroadcast(DamageHistoryInfo lastDamager, DamageHistoryInfo topDamager)
         {
-            if (topDamager == null || !topDamager.IsPlayer)
+            var isSummonerDeath = IsSummonerDeath(topDamager);
+
+            if ((topDamager == null || !topDamager.IsPlayer) && !isSummonerDeath)
                 return;
 
-            var pkPlayer = topDamager.TryGetAttacker() as Player;
+            var pkPlayer = topDamager.TryGetPetOwnerOrAttacker() as Player;
             if (pkPlayer == null)
                 return;
 
-            if (IsPKDeath(topDamager))
+            if (isSummonerDeath || IsPKDeath(topDamager))
             {
                 pkPlayer.PkTimestamp = Time.GetUnixTime();
                 pkPlayer.PlayerKillsPk++;
@@ -122,6 +124,14 @@ namespace ACE.Server.WorldObjects
             }
             else if (IsPKLiteDeath(topDamager))
                 pkPlayer.PlayerKillsPkl++;
+        }
+
+        private bool IsSummonerDeath(DamageHistoryInfo topDamager)
+        {
+            var ruleset = RealmRuleset;
+            var hasPvpSummoners = ruleset != null && ruleset.GetProperty(ACE.Entity.Enum.Properties.RealmPropertyBool.HasPvpSummoners);
+            var petOwner = topDamager.PetOwner;
+            return hasPvpSummoners && petOwner != null;
         }
 
         /// <summary>
@@ -215,7 +225,7 @@ namespace ACE.Server.WorldObjects
             if (!duelRealm && !IsPKLiteDeath(topDamager))
                 InflictVitaePenalty();
 
-            if (!duelRealm && IsPKDeath(topDamager) || AugmentationSpellsRemainPastDeath == 0)
+            if (!duelRealm && (IsSummonerDeath(topDamager) || IsPKDeath(topDamager)) || AugmentationSpellsRemainPastDeath == 0)
             {
                 var msgPurgeEnchantments = new GameEventMagicPurgeEnchantments(Session);
                 EnchantmentManager.RemoveAllEnchantments();
@@ -236,7 +246,7 @@ namespace ACE.Server.WorldObjects
 
                 ThreadSafeTeleportOnDeath(); // enter portal space
 
-                if (IsPKDeath(topDamager) || IsPKLiteDeath(topDamager))
+                if (IsSummonerDeath(topDamager) || IsPKDeath(topDamager) || IsPKLiteDeath(topDamager))
                     SetMinimumTimeSincePK();
 
                 IsBusy = false;
@@ -1027,7 +1037,7 @@ namespace ACE.Server.WorldObjects
             if (MinimumTimeSincePk == null || (PropertyManager.GetBool("pk_server_safe_training_academy").Item && RecallsDisabled))
                 return;
 
-            if (PkLevel == PKLevel.NPK && !RealmRuleset.GetProperty(RealmPropertyBool.IsPKOnly) && !PropertyManager.GetBool("pkl_server").Item)
+            if (PkLevel == PKLevel.NPK && !RealmRuleset.GetProperty(RealmPropertyBool.IsPKOnly) && !PropertyManager.GetBool("pk_server").Item && !PropertyManager.GetBool("pkl_server").Item)
             {
                 MinimumTimeSincePk = null;
                 return;
@@ -1043,7 +1053,7 @@ namespace ACE.Server.WorldObjects
             var werror = WeenieError.None;
             var pkLevel = PkLevel;
 
-            if (RealmRuleset.GetProperty(RealmPropertyBool.IsPKOnly))
+            if (RealmRuleset.GetProperty(RealmPropertyBool.IsPKOnly) || PropertyManager.GetBool("pk_server").Item)
                 pkLevel = PKLevel.PK;
             else if (PropertyManager.GetBool("pkl_server").Item)
                 pkLevel = PKLevel.PKLite;
