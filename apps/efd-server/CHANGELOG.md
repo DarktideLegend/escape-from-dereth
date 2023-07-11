@@ -1,3 +1,10 @@
+## [1.1.0-alpha.33](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.32...efd-server-v1.1.0-alpha.33) (2023-07-11)
+
+
+### Features
+
+* **efd-server:** ✨ add player level average xp modifier ([902e0ae](https://github.com/DarktideLegend/escape-from-dereth/commit/902e0aec14c945828d2dc457be31203cbe7a75af))
+
 ## [1.1.0-alpha.32](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.31...efd-server-v1.1.0-alpha.32) (2023-07-10)
 
 
