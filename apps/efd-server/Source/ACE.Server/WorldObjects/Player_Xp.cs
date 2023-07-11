@@ -24,19 +24,18 @@ namespace ACE.Server.WorldObjects
         {
             //Console.WriteLine($"{Name}.EarnXP({amount}, {sharable}, {fixedAmount})");
 
-            /*var questModifier = PropertyManager.GetDouble("quest_xp_modifier").Item;
+            var questModifier = PropertyManager.GetDouble("quest_xp_modifier").Item;
             var modifier = PropertyManager.GetDouble("xp_modifier").Item;
             if (xpType == XpType.Quest)
-                modifier *= questModifier;*/
-            //var modifier = PropertyManager.GetDouble("xp_modifier").Item;
-            var modifier = RealmRuleset?.GetProperty(RealmPropertyFloat.ExperienceMultiplierAll) ?? PropertyManager.GetDouble("xp_modifier").Item;
+                modifier *= questModifier;
 
-
+            var playerLevelModifier = GetPlayerLevelXpModifier();
+            var multiplierAll = RealmRuleset?.GetProperty(RealmPropertyFloat.ExperienceMultiplierAll) ?? 1;
 
             // should this be passed upstream to fellowship / allegiance?
             var enchantment = GetXPAndLuminanceModifier(xpType);
 
-            var m_amount = (long)Math.Round(amount * enchantment * modifier);
+            var m_amount = (long)Math.Round(amount * enchantment * modifier * playerLevelModifier * multiplierAll);
 
             if (m_amount < 0)
             {
@@ -46,6 +45,12 @@ namespace ACE.Server.WorldObjects
             }
 
             GrantXP(m_amount, xpType, shareType);
+        }
+
+        public double GetPlayerLevelXpModifier()
+        {
+            var playerLevelAverage = PlayerManager.PlayerLevelAverage;
+            return (double)playerLevelAverage / (double)Level;
         }
 
         /// <summary>

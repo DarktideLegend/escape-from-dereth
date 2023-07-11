@@ -32,6 +32,16 @@ namespace ACE.Server.Command.Handlers
             CommandHandlerHelper.WriteOutputInfo(session, $"Current world population: {PlayerManager.GetOnlineCount():N0}", ChatMessageType.Broadcast);
         }
 
+        [CommandHandler("myxp", AccessLevel.Player, CommandHandlerFlag.None, 0,
+            "Show your xp modifier based on global average",
+            "")]
+        public static void HandleMyXp(Session session, params string[] parameters)
+        {
+            var modifier = session.Player.GetPlayerLevelXpModifier();
+            CommandHandlerHelper.WriteOutputInfo(session, $"The average player level of the server: {PlayerManager.PlayerLevelAverage}", ChatMessageType.Broadcast);
+            CommandHandlerHelper.WriteOutputInfo(session, $"Your current calculated xp modifier based on average is: {(float)modifier}", ChatMessageType.Broadcast);
+        }
+
         // quest info (uses GDLe formatting to match plugin expectations)
         [CommandHandler("myquests", AccessLevel.Player, CommandHandlerFlag.RequiresWorld, "Shows your quest log")]
         public static void HandleQuests(Session session, params string[] parameters)
