@@ -45,6 +45,8 @@ namespace ACE.Server.Managers
 
         private static DateTime lastDatabaseSave = DateTime.MinValue;
 
+        public static int PlayerLevelAverage = 80; // starting level is 80
+
         /// <summary>
         /// This will load all the players from the database into the OfflinePlayers dictionary. It should be called before WorldManager is initialized.
         /// </summary>
@@ -77,6 +79,8 @@ namespace ACE.Server.Managers
                         log.Error($"PlayerManager.Initialize: couldn't find account for player {offlinePlayer.Name} ({offlinePlayer.Guid})");
                 }
             });
+
+            GetPlayerLevelAverage();
         }
 
         private static readonly LinkedList<Player> playersPendingLogoff = new LinkedList<Player>();
@@ -91,7 +95,10 @@ namespace ACE.Server.Managers
         {
             // Database Save
             if (lastDatabaseSave + databaseSaveInterval <= DateTime.UtcNow)
+            {
                 SaveOfflinePlayersWithChanges();
+                GetPlayerLevelAverage();
+            }
 
             var currentUnixTime = Time.GetUnixTime();
 
@@ -230,6 +237,19 @@ namespace ACE.Server.Managers
             allPlayers.AddRange(onlinePlayers);
 
             return allPlayers;
+        }
+
+
+        public static void GetPlayerLevelAverage()
+        {
+            var accounts = DatabaseManager.Authentication.GetListofAccountsByAccessLevel(AccessLevel.Player);
+            var levels = accounts
+                .Select(DatabaseManager.Authentication.GetAccountByName)
+                .Select(account => GetAccountPlayers(account.AccountId).Values.OrderByDescending(player => player.Level).FirstOrDefault())
+                .Select(player => player.Level);
+
+            if (levels.Any())
+                PlayerLevelAverage = (int)levels.Average();
         }
 
         public static Dictionary<uint, IPlayer> GetAccountPlayers(uint accountId)
