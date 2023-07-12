@@ -18,7 +18,6 @@ VALUES (23356,   1,          2) /* ItemType - Armor */
      , (23356,  36,       9999) /* ResistMagic */
      , (23356,  51,          4) /* CombatUse - Shield */
      , (23356,  93,       1044) /* PhysicsState - Ethereal, IgnoreCollisions, Gravity */
-     , (23356, 114,          0) /* Attuned - Normal */
      , (23356, 150,        103) /* HookPlacement - Hook */
      , (23356, 151,          2) /* HookType - Wall */
      , (23356, 179,  536870912) /* ImbuedEffect - IgnoreSomeMagicProjectileDamage */;
