@@ -239,16 +239,25 @@ namespace ACE.Server.Managers
             return allPlayers;
         }
 
-
         public static void GetPlayerLevelAverage()
         {
-            var accounts = DatabaseManager.Authentication.GetListofAccountsByAccessLevel(AccessLevel.Player);
-            var levels = accounts
-                .Select(DatabaseManager.Authentication.GetAccountByName)
-                .Select(account => GetAccountPlayers(account.AccountId).Values.OrderByDescending(player => player.Level).FirstOrDefault())
-                .Select(player => player.Level);
+            var levels = new List<int>();
+            var accountNames = DatabaseManager.Authentication.GetListofAccountsByAccessLevel(AccessLevel.Player);
+            var accounts = accountNames.Select(DatabaseManager.Authentication.GetAccountByName);
+            var accountIds = accounts.Select(account => account.AccountId);
+            var accountPlayers = accountIds.Select(GetAccountPlayers);
 
-            if (levels.Any())
+            foreach (var account in accountPlayers)
+            {
+                if (account != null)
+                {
+                    var highestLevelPlayer = account.Values.MaxBy(player => player.Level);
+                    if (highestLevelPlayer != null)
+                        levels.Add((int)highestLevelPlayer.Level);
+                }
+            }
+
+            if (levels.Count > 0)
                 PlayerLevelAverage = (int)levels.Average();
         }
 
