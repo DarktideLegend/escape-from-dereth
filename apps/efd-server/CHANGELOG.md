@@ -1,3 +1,10 @@
+## [1.1.0-alpha.35](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.34...efd-server-v1.1.0-alpha.35) (2023-07-12)
+
+
+### Bug Fixes
+
+* **efd-server:** 🐛  add null checks to GetPlayerLevelAverage ([880639c](https://github.com/DarktideLegend/escape-from-dereth/commit/880639cca9fd32014fba7369987ea93246199c05))
+
 ## [1.1.0-alpha.34](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.33...efd-server-v1.1.0-alpha.34) (2023-07-12)
 
 
