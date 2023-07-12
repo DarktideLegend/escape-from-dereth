@@ -1,3 +1,10 @@
+## [1.1.0-alpha.34](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.33...efd-server-v1.1.0-alpha.34) (2023-07-12)
+
+
+### Bug Fixes
+
+* **efd-server:** 🐛 remove duplicate attuned property for sanguinary aegis ([5546ad8](https://github.com/DarktideLegend/escape-from-dereth/commit/5546ad8d0cc0845d7c6d349cfa2f081951f9c97b))
+
 ## [1.1.0-alpha.33](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.32...efd-server-v1.1.0-alpha.33) (2023-07-11)
 
 
