@@ -201,6 +201,11 @@ namespace ACE.Server.WorldObjects
             if (!(activator is Player player))
                 return new ActivationResult(true);
 
+            var useWieldRequirements = RealmRuleset.GetProperty(RealmPropertyBool.UseWieldRequirements);
+
+            if (!useWieldRequirements)
+                return new ActivationResult(true);
+                
             // verify arcane lore requirement
             if (ItemDifficulty != null)
             {
