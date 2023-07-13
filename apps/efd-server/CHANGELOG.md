@@ -1,3 +1,15 @@
+## [1.1.0-alpha.36](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.35...efd-server-v1.1.0-alpha.36) (2023-07-13)
+
+
+### Bug Fixes
+
+* **efd-server:** 🐛 remove summoning mastery requirements ([1d3f500](https://github.com/DarktideLegend/escape-from-dereth/commit/1d3f500c028aeaaa8c96b51559ba251d00a2f1c1))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ add wield requirements check for all world objects ([a657a50](https://github.com/DarktideLegend/escape-from-dereth/commit/a657a50c8d12aaa8111aced4e1022fea4a18334b))
+
 ## [1.1.0-alpha.35](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.34...efd-server-v1.1.0-alpha.35) (2023-07-12)
 
 
