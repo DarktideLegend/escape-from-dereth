@@ -106,11 +106,11 @@ namespace ACE.Server.WorldObjects
                 return baseRequirements;
 
             // verify summoning mastery
-            if (SummoningMastery != null && player.SummoningMastery != SummoningMastery)
+            /*if (SummoningMastery != null && player.SummoningMastery != SummoningMastery)
             {
                 player.Session.Network.EnqueueSend(new GameMessageSystemChat($"You must be a {SummoningMastery} to use the {Name}", ChatMessageType.Broadcast));
                 return new ActivationResult(false);
-            }
+            }*/
 
             // duplicating some of this verification logic here from Pet.Init()
             // since the PetDevice owner and the summoned Pet are separate objects w/ potentially different heartbeat offsets,
