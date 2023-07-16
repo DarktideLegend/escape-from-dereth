@@ -19,6 +19,8 @@ using ACE.Server.Managers;
 using ACE.Server.WorldObjects;
 
 using WeenieClassName = ACE.Server.Factories.Enum.WeenieClassName;
+using ACE.Server.Realms;
+using ACE.Server.Entity;
 
 namespace ACE.Server.Factories
 {
@@ -35,10 +37,10 @@ namespace ACE.Server.Factories
             InitClothingColors();
         }
 
-        public static List<WorldObject> CreateRandomLootObjects(TreasureDeath profile, bool isHellgateBoss = false, int tier = 1)
+        public static List<WorldObject> CreateRandomLootObjects(TreasureDeath profile)
         {
             if (!PropertyManager.GetBool("legacy_loot_system").Item)
-                return CreateRandomLootObjects_New(profile, isHellgateBoss, tier);
+                return CreateRandomLootObjects_New(profile);
 
             stopwatch.Value.Restart();
 
@@ -161,7 +163,7 @@ namespace ACE.Server.Factories
             }
         }
 
-        public static List<WorldObject> CreateRandomLootObjects_New(TreasureDeath profile, bool isHellgateBoss = false, int tier = 1)
+        public static List<WorldObject> CreateRandomLootObjects_New(TreasureDeath profile)
         {
             stopwatch.Value.Restart();
 
@@ -171,18 +173,11 @@ namespace ACE.Server.Factories
                 WorldObject lootWorldObject;
 
                 var loot = new List<WorldObject>();
-                var calculatedItemCount = 50 * tier;
-                var itemMin = isHellgateBoss ? calculatedItemCount : profile.ItemMinAmount;
-                var itemMax = isHellgateBoss ? calculatedItemCount : profile.ItemMaxAmount;
-                var magicMin = isHellgateBoss ? calculatedItemCount : profile.MagicItemMinAmount;
-                var magicMax = isHellgateBoss ? calculatedItemCount : profile.MagicItemMaxAmount;
-                var mundaneMin = isHellgateBoss ? calculatedItemCount : profile.MundaneItemMinAmount;
-                var mundaneMax = isHellgateBoss ? calculatedItemCount : profile.MundaneItemMaxAmount;
 
                 var itemChance = ThreadSafeRandom.Next(1, 100);
                 if (itemChance <= profile.ItemChance)
                 {
-                    numItems = ThreadSafeRandom.Next(itemMin, itemMax);
+                    numItems = ThreadSafeRandom.Next(profile.ItemMinAmount, profile.MagicItemMaxAmount);
 
                     for (var i = 0; i < numItems; i++)
                     {
@@ -196,7 +191,7 @@ namespace ACE.Server.Factories
                 itemChance = ThreadSafeRandom.Next(1, 100);
                 if (itemChance <= profile.MagicItemChance)
                 {
-                    numItems = ThreadSafeRandom.Next(magicMin, magicMax);
+                    numItems = ThreadSafeRandom.Next(profile.MagicItemMinAmount, profile.MagicItemMaxAmount);
 
                     for (var i = 0; i < numItems; i++)
                     {
@@ -210,7 +205,7 @@ namespace ACE.Server.Factories
                 itemChance = ThreadSafeRandom.Next(1, 100);
                 if (itemChance <= profile.MundaneItemChance)
                 {
-                    numItems = ThreadSafeRandom.Next(mundaneMin, mundaneMax);
+                    numItems = ThreadSafeRandom.Next(profile.MundaneItemMinAmount, profile.MundaneItemMaxAmount);
 
                     for (var i = 0; i < numItems; i++)
                     {
@@ -1094,7 +1089,7 @@ namespace ACE.Server.Factories
             return wo;
         }
 
-        public static WorldObject CreateAndMutateWcid(TreasureDeath treasureDeath, TreasureRoll treasureRoll, bool isMagical)
+        public static WorldObject CreateAndMutateWcid(TreasureDeath treasureDeath, TreasureRoll treasureRoll, bool isMagical, AppliedRuleset ruleset = null)
         {
             WorldObject wo = null;
 

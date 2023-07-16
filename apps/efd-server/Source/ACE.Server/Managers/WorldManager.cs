@@ -211,7 +211,9 @@ namespace ACE.Server.Managers
             // If the client is missing a location, we start them off in the starter town they chose
             if (session.Player.Location == null)
             {
-                if (session.Player.Instantiation != null)
+                if (session.Player.Sanctuary != null)
+                    session.Player.Location = new Position(session.Player.Sanctuary);
+                else if (session.Player.Instantiation != null)
                     session.Player.Location = new Position(session.Player.Instantiation);
                 else
                     session.Player.Location = new Position(0xA9B40019, 84, 7.1f, 94, 0, 0, -0.0784591f, 0.996917f, 0);  // ultimate fallback

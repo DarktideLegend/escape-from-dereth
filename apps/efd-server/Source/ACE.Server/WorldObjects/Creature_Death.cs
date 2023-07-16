@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using ACE.Common;
 using ACE.Database;
 using ACE.Database.Models.World;
 using ACE.Entity;
@@ -61,7 +61,7 @@ namespace ACE.Server.WorldObjects
         private void OnDeath_SummonHellgate()
         {
             var pos = new Position(Location);
-            var wo = WorldObjectFactory.CreateNewWorldObject(600003, RealmRuleset, new Position(Location));
+            var wo = WorldObjectFactory.CreateNewWorldObject(600003);
             wo.Location = pos;
 
             if (wo != null)
@@ -458,7 +458,7 @@ namespace ACE.Server.WorldObjects
 
             var cachedWeenie = DatabaseManager.World.GetCachedWeenie("corpse");
 
-            var corpse = WorldObjectFactory.CreateNewWorldObject(cachedWeenie, RealmRuleset) as Corpse;
+            var corpse = WorldObjectFactory.CreateNewWorldObject(cachedWeenie) as Corpse;
 
             var prefix = "Corpse";
 
@@ -693,9 +693,8 @@ namespace ACE.Server.WorldObjects
             // create death treasure from loot generation factory
             if (DeathTreasure != null)
             {
-                var isHellgateBoss = WeenieClassId == 4000226;
-                var tier = IsInHellgate ? HellgateManager.GetHellgate(CurrentLandblock.Instance).Tier : 1;
-                List<WorldObject> items = LootGenerationFactory.CreateRandomLootObjects(DeathTreasure, isHellgateBoss, tier);
+                var profile = CreateDeathTreasureProfile(DeathTreasure);
+                List<WorldObject> items = LootGenerationFactory.CreateRandomLootObjects(profile);
                 foreach (WorldObject wo in items)
                 {
                     if (corpse != null)
@@ -752,6 +751,38 @@ namespace ACE.Server.WorldObjects
             }
 
             return droppedItems;
+        }
+
+        private TreasureDeath CreateDeathTreasureProfile(TreasureDeath profile)
+        {
+            var isHellgateBoss = WeenieClassId == 4000226;
+            var tier = IsInHellgate ? HellgateManager.GetHellgate(CurrentLandblock.Instance).Tier : profile.Tier;
+
+            if (!IsInHellgate && ThreadSafeRandom.Next(0, 100) > 50)
+                tier = 4;
+
+            var deathTreasureProfile = new TreasureDeath()
+            {
+                Tier = tier,
+                UnknownChances = profile.UnknownChances,
+                ItemMaxAmount = profile.ItemMaxAmount,
+                TreasureType = profile.TreasureType,
+                ItemMinAmount = profile.ItemMinAmount,
+                ItemChance = profile.ItemChance,
+                ItemTreasureTypeSelectionChances = profile.ItemTreasureTypeSelectionChances,
+                MagicItemMaxAmount = profile.MagicItemMaxAmount,
+                MagicItemMinAmount = profile.MagicItemMinAmount,
+                MagicItemChance = profile.MagicItemChance,
+                MagicItemTreasureTypeSelectionChances = profile.MagicItemTreasureTypeSelectionChances,
+                MundaneItemMaxAmount = profile.MundaneItemMaxAmount,
+                MundaneItemMinAmount = profile.MundaneItemMinAmount,
+                MundaneItemChance = profile.MundaneItemChance,
+                MundaneItemTypeSelectionChances = profile.MundaneItemTypeSelectionChances,
+                LootQualityMod = profile.LootQualityMod,
+
+            };
+
+            return deathTreasureProfile;
         }
 
         /// <summary>
