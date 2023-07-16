@@ -1,3 +1,22 @@
+## [1.1.0-alpha.37](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.36...efd-server-v1.1.0-alpha.37) (2023-07-16)
+
+
+### Features
+
+* **efd-server:** ✨ monster loot in the home realm has 10% chance to drop its actual tier ([204a728](https://github.com/DarktideLegend/escape-from-dereth/commit/204a72831b0fb29cee841fc3847775a77f4ae83a))
+
+
+### Bug Fixes
+
+* **efd-server:** 🐛 use RealmRuleset from activator ([8d31ebb](https://github.com/DarktideLegend/escape-from-dereth/commit/8d31ebba48f871a44a022813454766ae743a42e8))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ custom mobs in home realm should always have nerfed loot ([b0b6b26](https://github.com/DarktideLegend/escape-from-dereth/commit/b0b6b26a800e89b608aa366a7e0df105f008aa6b))
+* **efd-server:** ♻️ update creature loot generation based on realm ([918e48f](https://github.com/DarktideLegend/escape-from-dereth/commit/918e48f71bc95ad6699475942512e3a71768ff9b))
+* **efd-server:** ♻️ update world object filtering with realms ([3b2d933](https://github.com/DarktideLegend/escape-from-dereth/commit/3b2d9337835474855a1c17486ecdbcac1a1fbaf4))
+
 ## [1.1.0-alpha.36](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.35...efd-server-v1.1.0-alpha.36) (2023-07-13)
 
 
