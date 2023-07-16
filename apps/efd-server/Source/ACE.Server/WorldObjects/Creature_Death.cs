@@ -757,8 +757,12 @@ namespace ACE.Server.WorldObjects
         {
             var isHellgateBoss = WeenieClassId == 4000226;
             var tier = IsInHellgate ? HellgateManager.GetHellgate(CurrentLandblock.Instance).Tier : profile.Tier;
+            var hasCustomContent = Weenie?.GetProperty(PropertyBool.IsCustomContent) ?? false;
 
             if (!IsInHellgate && ThreadSafeRandom.Next(0, 100) > 10)
+                tier = 4;
+
+            if (!IsInHellgate && hasCustomContent)
                 tier = 4;
 
             var deathTreasureProfile = new TreasureDeath()
