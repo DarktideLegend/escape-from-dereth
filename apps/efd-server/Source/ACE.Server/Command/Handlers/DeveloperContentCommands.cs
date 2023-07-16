@@ -1450,7 +1450,7 @@ namespace ACE.Server.Command.Handlers.Processors
             // create and spawn object
             var entityWeenie = Database.Adapter.WeenieConverter.ConvertToEntityWeenie(weenie);
 
-            var wo = WorldObjectFactory.CreateWorldObject(entityWeenie, new ObjectGuid(nextStaticGuid), session.Player.RealmRuleset, loc);
+            var wo = WorldObjectFactory.CreateWorldObject(entityWeenie, new ObjectGuid(nextStaticGuid));
 
             if (wo == null)
             {

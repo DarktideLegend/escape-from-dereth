@@ -2423,7 +2423,7 @@ namespace ACE.Server.Command.Handlers
         /// </summary>
         private static WorldObject CreateObjectForCommand(Session session, Weenie weenie)
         {
-            var obj = WorldObjectFactory.CreateNewWorldObject(weenie, session.Player.RealmRuleset);
+            var obj = WorldObjectFactory.CreateNewWorldObject(weenie);
 
             //if (obj.TimeToRot == null)
             //obj.TimeToRot = double.MaxValue;
@@ -3447,7 +3447,7 @@ namespace ACE.Server.Command.Handlers
 
             var guid = GuidManager.NewPlayerGuid();
 
-            var player = new Player(weenie, guid, session.AccountId, RealmManager.DefaultRuleset);
+            var player = new Player(weenie, guid, session.AccountId);
 
             player.Biota.WeenieType = session.Player.WeenieType;
 
@@ -3484,7 +3484,7 @@ namespace ACE.Server.Command.Handlers
                         if (weenieOfWearable == null)
                             continue;
 
-                        var worldObject = WorldObjectFactory.CreateNewWorldObject(weenieOfWearable, session.Player.RealmRuleset);
+                        var worldObject = WorldObjectFactory.CreateNewWorldObject(weenieOfWearable);
 
                         if (worldObject == null)
                             continue;
@@ -3508,7 +3508,7 @@ namespace ACE.Server.Command.Handlers
                         if (weenieOfWearable == null)
                             continue;
 
-                        var worldObject = WorldObjectFactory.CreateNewWorldObject(weenieOfWearable, session.Player.RealmRuleset);
+                        var worldObject = WorldObjectFactory.CreateNewWorldObject(weenieOfWearable);
 
                         if (worldObject == null)
                             continue;

@@ -30,29 +30,12 @@ namespace ACE.Server.Factories
         /// <summary>
         /// A new biota be created taking all of its values from weenie.
         /// </summary>
-        public static WorldObject CreateWorldObject(Weenie weenie, ObjectGuid guid, AppliedRuleset ruleset = null, Position location = null)
+        public static WorldObject CreateWorldObject(Weenie weenie, ObjectGuid guid)
         {
-            if (ruleset == null)
-                ruleset = RealmManager.DefaultRuleset;
-
             if (weenie == null)
                 return null;
 
             var objWeenieType = weenie.WeenieType;
-
-            var isOverridable = ruleset.GetProperty(RealmPropertyBool.IsOverridable);
-            var isCustomContentOnly = ruleset.GetProperty(RealmPropertyBool.IsCustomContentOnly);
-            var hasCustomContent = weenie.GetProperty(PropertyBool.IsCustomContent) ?? false;
-
-            // if this weenie has custom content but this realm isn't overridable, return nothing
-            if (hasCustomContent && !isOverridable)
-                return null;
-
-            // if this is strictly a custom content only realm, return nothing unless it's a corpse
-            if (isCustomContentOnly && !hasCustomContent && weenie.WeenieType != WeenieType.Corpse)
-                return null;
-
-            var shouldOverride = hasCustomContent && isOverridable;
 
             switch (objWeenieType)
             {
@@ -60,31 +43,25 @@ namespace ACE.Server.Factories
                     log.Warn($"CreateWorldObject: {weenie.GetName()} (0x{guid}:{weenie.WeenieClassId}) - WeenieType is Undef, Object cannot be created.");
                     return null;
                 case WeenieType.LifeStone:
-                    if (!ruleset.GetProperty(RealmPropertyBool.HasLifestones) && !shouldOverride)
-                        return null;
                     return new Lifestone(weenie, guid);
                 case WeenieType.Door:
-                    if (!ruleset.GetProperty(RealmPropertyBool.HasDoors) && !shouldOverride)
-                        return null;
                     return new Door(weenie, guid);
                 case WeenieType.Portal:
-                    if (!ruleset.GetProperty(RealmPropertyBool.HasPortals) && !shouldOverride)
-                        return null;
                     return new Portal(weenie, guid);
                 case WeenieType.Book:
                     return new Book(weenie, guid);
                 case WeenieType.PKModifier:
                     return new PKModifier(weenie, guid);
                 case WeenieType.Cow:
-                    return CreateCreatureObject(weenie, guid, ruleset, location, shouldOverride);
+                    return new Creature(weenie, guid);
                 case WeenieType.Creature:
-                    return CreateCreatureObject(weenie, guid, ruleset, location, shouldOverride);
+                    return new Creature(weenie, guid);
                 case WeenieType.Container:
                     return new Container(weenie, guid);
                 case WeenieType.Scroll:
                     return new Scroll(weenie, guid);
                 case WeenieType.Vendor:
-                    return new Vendor(weenie, guid, ruleset);
+                    return new Vendor(weenie, guid);
                 case WeenieType.Coin:
                     return new Coin(weenie, guid);
                 case WeenieType.Key:
@@ -96,10 +73,8 @@ namespace ACE.Server.Factories
                 case WeenieType.Game:
                     return new Game(weenie, guid);
                 case WeenieType.GamePiece:
-                    return new GamePiece(weenie, guid, ruleset);
+                    return new GamePiece(weenie, guid);
                 case WeenieType.AllegianceBindstone:
-                    if (!ruleset.GetProperty(RealmPropertyBool.HasBindstones) && !shouldOverride)
-                        return null;
                     return new Bindstone(weenie, guid);
                 case WeenieType.Clothing:
                     return new Clothing(weenie, guid);
@@ -138,26 +113,16 @@ namespace ACE.Server.Factories
                 case WeenieType.ManaStone:
                     return new ManaStone(weenie, guid);
                 case WeenieType.House:
-                    if (!ruleset.GetProperty(RealmPropertyBool.HasHousing) && !shouldOverride)
-                        return null;
                     return new House(weenie, guid);
                 case WeenieType.SlumLord:
-                    if (!ruleset.GetProperty(RealmPropertyBool.HasHousing) && !shouldOverride)
-                        return null;
                     return new SlumLord(weenie, guid);
                 case WeenieType.Storage:
-                    return CreateHideoutStorage(weenie, location);
+                    return new Storage(weenie, guid);
                 case WeenieType.Hook:
-                    if (!ruleset.GetProperty(RealmPropertyBool.HasHousing) && !shouldOverride)
-                        return null;
                     return new Hook(weenie, guid);
                 case WeenieType.Hooker:
-                    if (!ruleset.GetProperty(RealmPropertyBool.HasHousing) && !shouldOverride)
-                        return null;
                     return new Hooker(weenie, guid);
                 case WeenieType.HousePortal:
-                    if (!ruleset.GetProperty(RealmPropertyBool.HasHousing) && !shouldOverride)
-                        return null;
                     return new HousePortal(weenie, guid);
                 case WeenieType.SkillAlterationDevice:
                     return new SkillAlterationDevice(weenie, guid);
@@ -166,9 +131,9 @@ namespace ACE.Server.Factories
                 case WeenieType.PetDevice:
                     return new PetDevice(weenie, guid);
                 case WeenieType.Pet:
-                    return new Pet(weenie, guid, ruleset);
+                    return new Pet(weenie, guid);
                 case WeenieType.CombatPet:
-                    return new CombatPet(weenie, guid, ruleset);
+                    return new CombatPet(weenie, guid);
                 case WeenieType.Allegiance:
                     return new Allegiance(weenie, guid);
                 case WeenieType.AugmentationDevice:
@@ -182,63 +147,6 @@ namespace ACE.Server.Factories
                 default:
                     return new GenericObject(weenie, guid);
             }
-        }
-
-        private static WorldObject CreateHideoutStorage(Weenie weenie, Position location)
-        {
-            if (location == null)
-                return null;
-
-            if (location.RealmID != 0x7FFF)
-                return null;
-
-            return HideoutManager.GetHideoutStorage(weenie, location);
-        }
-
-        private static WorldObject CreateCreatureObject(Weenie weenie, ObjectGuid guid, AppliedRuleset ruleset, Position location, bool shouldOverride)
-        {
-            var hasMonsters = ruleset.GetProperty(RealmPropertyBool.HasMonsters);
-            var isVendorNpcOnly = ruleset.GetProperty(RealmPropertyBool.IsVendorNpcOnly);
-
-            var hellgate = HellgateManager.GetHellgate(location.Instance);
-            var isHellgateInstance = hellgate != null;
-            var tier = isHellgateInstance ? hellgate.Tier : TownManager.GetMonsterTierByDistance(location);
-
-            var creature = new Creature(weenie, guid, ruleset);
-
-            if (shouldOverride)
-                return creature;
-
-            if (creature.IsMonster && hasMonsters)
-            {
-                creature.Destroy();
-                return CreateMonster(ruleset, location, tier);
-            }
-
-            if (!isVendorNpcOnly)
-                return creature;
-            else
-            {
-                creature.Destroy();
-                return null;
-            }
-        }
-
-        private static WorldObject CreateMonster(AppliedRuleset ruleset, Position location, int tier)
-        {
-            if (tier == 1)
-                return CreateNewWorldObject(601001, ruleset, location); // create a Forgotten Leech if this is short distance
-
-            if (tier == 2)
-                return CreateNewWorldObject(601002, ruleset, location); // create a Forgotten Revenant if this is a medium distance
-
-            if (tier == 3)
-                return CreateNewWorldObject(601003, ruleset, location); // create a Forgotten Demilich if this is a long distance
-
-            if (tier == 4)
-                return CreateNewWorldObject(601004, ruleset, location); // create a Forgotten Olthoi Slayer if this is a long distance
-
-            return CreateNewWorldObject(601005, ruleset, location); // create a Forgotten Champion if this is an extreme distance
         }
 
         /// <summary>
@@ -395,17 +303,9 @@ namespace ACE.Server.Factories
                 var biota = biotas.FirstOrDefault(b => b.Id == instance.Guid);
                 if (biota == null)
                 {
+                    worldObject = CreateWorldObject(weenie, guid);
 
-                    var location = new Position(instance.ObjCellId, instance.OriginX, instance.OriginY, instance.OriginZ, instance.AnglesX, instance.AnglesY, instance.AnglesZ, instance.AnglesW, iid);
-                    worldObject = CreateWorldObject(weenie, guid, ruleset, location);
-
-                    if (worldObject != null)
-                    {
-
-                        worldObject.Location = location;
-                    }
-
-
+                    worldObject.Location = new Position(instance.ObjCellId, instance.OriginX, instance.OriginY, instance.OriginZ, instance.AnglesX, instance.AnglesY, instance.AnglesZ, instance.AnglesW, iid);
                 }
                 else
                 {
@@ -435,7 +335,6 @@ namespace ACE.Server.Factories
             return results;
         }
 
-
         /* public HashSet<uint> RealmTreasureTypes = new HashSet<uint>()
         {
             453,    // tier 1
@@ -443,66 +342,6 @@ namespace ACE.Server.Factories
             1000,   // tier 7
             1005    // tier 8
         };*/
-
-        private static void MutateCustomContent(WorldObject wo)
-        {
-            if (!(wo is Player) && wo is Creature && (wo as Creature).IsMonster)
-            {
-                MutateDeathTreasureTypeByTier(wo);
-
-                if (!wo.IsInHellgate && !(wo is CombatPet) && ThreadSafeRandom.Next(1, 100) < 8) // 8% chance of spawning a Gatekeeper instead of a monster
-                {
-                    MutateGatekeeper(wo);
-                }
-
-                wo.SaveBiotaToDatabase();
-            }
-
-        }
-
-        private static void MutateDeathTreasureTypeByTier(WorldObject wo)
-        {
-            if (!(wo is Creature) || wo.IsGenerator)
-                return;
-
-            if (!(wo as Creature).IsMonster)
-                return;
-
-            var creature = wo as Creature;
-            var instance = creature.Location.Instance;
-            var hellgate = HellgateManager.GetHellgate(instance);
-            if (hellgate == null)
-            {
-                creature.DeathTreasureType = 453;
-                return;
-            }
-
-            var tier = hellgate.Tier;
-
-            creature.DeathTreasureType = 464;
-
-            if (tier == 4)
-                creature.DeathTreasureType = 1000;
-
-            if (tier == 5)
-                creature.DeathTreasureType = 1005;
-        }
-
-        private static void MutateGatekeeper(WorldObject wo)
-        {
-            var tier = TownManager.GetMonsterTierByDistance(wo.Location);
-
-            if (wo.Biota?.PropertiesAttribute2nd?.ContainsKey(PropertyAttribute2nd.MaxHealth) == true)
-            {
-                var level = (uint)(5000 * tier);
-                wo.Biota.PropertiesAttribute2nd[PropertyAttribute2nd.MaxHealth].InitLevel = level;
-                wo.Biota.PropertiesAttribute2nd[PropertyAttribute2nd.MaxHealth].CurrentLevel = level;
-            }
-
-            wo.SpawnHellgateOnDeath = true;
-            wo.SetProperty(PropertyFloat.DefaultScale, 3); // scale the gatekeeper to have 3x size
-            wo.Name = $"Forgotten Gatekeeper";
-        }
 
 
         /// <summary>
@@ -526,11 +365,11 @@ namespace ACE.Server.Factories
         /// <summary>
         /// This will create a new WorldObject with a new GUID.
         /// </summary>
-        public static WorldObject CreateNewWorldObject(Weenie weenie, AppliedRuleset ruleset, Position location = null)
+        public static WorldObject CreateNewWorldObject(Weenie weenie)
         {
             var guid = GuidManager.NewDynamicGuid();
 
-            var worldObject = CreateWorldObject(weenie, guid, ruleset, location);
+            var worldObject = CreateWorldObject(weenie, guid);
 
             if (worldObject == null)
                 GuidManager.RecycleDynamicGuid(guid);
@@ -542,22 +381,14 @@ namespace ACE.Server.Factories
         /// This will create a new WorldObject with a new GUID.
         /// It will return null if weenieClassId was not found.
         /// </summary>
-        public static WorldObject CreateNewWorldObject(uint weenieClassId, AppliedRuleset ruleset = null, Position location = null)
+        public static WorldObject CreateNewWorldObject(uint weenieClassId)
         {
             var weenie = DatabaseManager.World.GetCachedWeenie(weenieClassId);
 
             if (weenie == null)
                 return null;
 
-            var wo = CreateNewWorldObject(weenie, ruleset, location);
-            if (wo != null)
-            {
-                wo.Location = location;
-                MutateCustomContent(wo);
-                return wo;
-            }
-
-            return null;
+            return CreateNewWorldObject(weenie);
         }
 
         /// <summary>

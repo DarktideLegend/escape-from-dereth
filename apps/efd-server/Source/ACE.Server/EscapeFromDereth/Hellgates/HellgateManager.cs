@@ -169,7 +169,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
         {
             hellgate.BossSpawned = true;
             var lifespan = (int)hellgate.TimeRemaining;
-            var boss = WorldObjectFactory.CreateNewWorldObject(4000226, hellgate.Ruleset, hellgate.BossPosition); // Darkbeat temporarily 
+            var boss = WorldObjectFactory.CreateNewWorldObject(4000226); // Darkbeat temporarily 
             if (boss != null)
             {
                boss.Location = hellgate.BossPosition;
@@ -177,7 +177,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
                boss?.EnterWorld();
             }
 
-            var exitPortal = WorldObjectFactory.CreateNewWorldObject(600004, hellgate.Ruleset, hellgate.ExitPosition);
+            var exitPortal = WorldObjectFactory.CreateNewWorldObject(600004);
             if (exitPortal != null)
             {
                 exitPortal.Location = hellgate.ExitPosition;

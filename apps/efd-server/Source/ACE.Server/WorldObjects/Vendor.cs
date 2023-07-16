@@ -51,7 +51,7 @@ namespace ACE.Server.WorldObjects
         /// <summary>
         /// A new biota be created taking all of its values from weenie.
         /// </summary>
-        public Vendor(Weenie weenie, ObjectGuid guid, AppliedRuleset ruleset) : base(weenie, guid, ruleset)
+        public Vendor(Weenie weenie, ObjectGuid guid) : base(weenie, guid)
         { 
             SetEphemeralValues();
         }
@@ -140,7 +140,7 @@ namespace ACE.Server.WorldObjects
                 {
                     foreach (var realm in RealmManager.Realms.Where(x => x.StandardRules.GetProperty(RealmPropertyBool.CanBeHomeworld)))
                     {
-                        WorldObject wo = WorldObjectFactory.CreateNewWorldObject(weenie.WeenieClassId, RealmRuleset);
+                        WorldObject wo = WorldObjectFactory.CreateNewWorldObject(weenie.WeenieClassId);
                         wo.Name = realm.Realm.Name;
                         wo.Use = realm.StandardRules.GetProperty(RealmPropertyString.Description);
                         wo.LongDesc = realm.StandardRules.DebugOutputString();
@@ -167,7 +167,7 @@ namespace ACE.Server.WorldObjects
                         var rulesets = RealmManager.Rulesets.Where(x => x.StandardRules.GetProperty(RealmPropertyInt.RulesetStampVendorCategory) == rulesetVendorType);
                         foreach (var ruleset in rulesets)
                         {
-                            WorldObject wo = WorldObjectFactory.CreateNewWorldObject(weenie.WeenieClassId, RealmRuleset);
+                            WorldObject wo = WorldObjectFactory.CreateNewWorldObject(weenie.WeenieClassId);
                             wo.Name = ruleset.Realm.Name;
                             wo.Use = ruleset.StandardRules.GetProperty(RealmPropertyString.Description);
                             wo.LongDesc = ruleset.StandardRules.DebugOutputString();
@@ -203,7 +203,7 @@ namespace ACE.Server.WorldObjects
             //if (itemsForSale.ContainsKey(itemProfile))
             //    return;
 
-            var wo = WorldObjectFactory.CreateNewWorldObject(weenieClassId, RealmRuleset);
+            var wo = WorldObjectFactory.CreateNewWorldObject(weenieClassId);
 
             if (wo == null) return;
 
@@ -450,7 +450,7 @@ namespace ACE.Server.WorldObjects
 
             while (remaining > 0)
             {
-                var wo = WorldObjectFactory.CreateNewWorldObject(itemProfile.WeenieClassId, RealmRuleset);
+                var wo = WorldObjectFactory.CreateNewWorldObject(itemProfile.WeenieClassId);
                 wo.ClonePropertiesFrom(worldObjectWithAllProps);
 
                 if (itemProfile.Palette != null)

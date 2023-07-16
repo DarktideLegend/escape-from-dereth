@@ -82,7 +82,7 @@ namespace ACE.Server.WorldObjects
         /// <summary>
         /// A new biota be created taking all of its values from weenie.
         /// </summary>
-        public Player(Weenie weenie, ObjectGuid guid, uint accountId, AppliedRuleset ruleset) : base(weenie, guid, ruleset)
+        public Player(Weenie weenie, ObjectGuid guid, uint accountId) : base(weenie, guid)
         {
             Character = new Character();
             Character.Id = guid.Full;

@@ -143,7 +143,7 @@ namespace ACE.Server.WorldObjects
 
         public bool? SummonCreature(Player player, uint wcid)
         {
-            var wo = WorldObjectFactory.CreateNewWorldObject(wcid, player.RealmRuleset, new Position(player.Location));
+            var wo = WorldObjectFactory.CreateNewWorldObject(wcid);
 
             if (wo == null)
             {
