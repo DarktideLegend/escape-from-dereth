@@ -495,7 +495,7 @@ namespace ACE.Server.WorldObjects
                     if (cachedWeenie == null)
                         return false;
 
-                    var wo = Factories.WorldObjectFactory.CreateNewWorldObject(cachedWeenie, RealmRuleset);
+                    var wo = Factories.WorldObjectFactory.CreateNewWorldObject(cachedWeenie);
                     if (wo == null)
                         return false;
 

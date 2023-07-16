@@ -135,7 +135,7 @@ namespace ACE.Server.Factories
                 "realm-duel-gear-6"
             }.Select(DatabaseManager.World.GetCachedWeenie)
             .Where(w => w != null)
-            .Select(w => WorldObjectFactory.CreateNewWorldObject(w, null))
+            .Select(w => WorldObjectFactory.CreateNewWorldObject(w))
             .ToList();
 
             foreach (var item in gear)
