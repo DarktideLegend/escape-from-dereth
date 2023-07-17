@@ -7,6 +7,6 @@
         "IsFullLootOnDeath": true,
         "ExperienceMultiplierAll": 0.75,
         "IsNeutralZone": true,
-        "HasRecalls": false,
+        "HasRecalls": false
     }
 }
