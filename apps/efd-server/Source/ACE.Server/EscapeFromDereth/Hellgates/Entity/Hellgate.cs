@@ -17,8 +17,8 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
 
         public readonly uint Instance;
         public uint HellgateGroup;
-        public double Expiration;
-        public double BossExpiration;
+        public double Expiration { get; private set; }
+        public double BossExpiration { get; private set; }
         public bool BossSpawned = false;
         public int Tier;
         public bool IsOpen;
@@ -82,6 +82,12 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
         public bool RemovePlayer(Player player)
         {
             return Players.Remove(player);
+        }
+
+        public void ReduceBossExpiration(double seconds)
+        {
+            if ((BossExpiration -= seconds) < 0)
+                BossExpiration = 0;
         }
     }
 }
