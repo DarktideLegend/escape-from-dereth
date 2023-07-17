@@ -40,6 +40,9 @@ namespace ACE.Server.WorldObjects
             IsTurning = false;
             IsMoving = false;
 
+            if (IsInHellgate)
+                HellgateManager.GetHellgate(Location.Instance)?.ReduceBossExpiration(10);
+
             //QuestManager.OnDeath(lastDamager?.TryGetAttacker());
 
             if (KillQuest != null)
