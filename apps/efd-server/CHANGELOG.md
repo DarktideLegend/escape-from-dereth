@@ -1,3 +1,22 @@
+## [1.1.0-alpha.38](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.37...efd-server-v1.1.0-alpha.38) (2023-07-17)
+
+
+### Features
+
+* **efd-server:** ✨ creature deaths in hellgate reduce boss timer by 10 seconds ([82c8227](https://github.com/DarktideLegend/escape-from-dereth/commit/82c8227635c77d1575a2949a5342f4b849fd60ad))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ disable temporary ruleset validation ([873c5de](https://github.com/DarktideLegend/escape-from-dereth/commit/873c5debe2c965347777b0316809e21287c1cdc6))
+* **efd-server:** ♻️ filter world objects in WorldObjectProcessor ([1b1799f](https://github.com/DarktideLegend/escape-from-dereth/commit/1b1799f514c036ed51b2510a2c93f994bd9b7921))
+* **efd-server:** ♻️ gatekeepers spawn increased from 25% to 50% ([351bce1](https://github.com/DarktideLegend/escape-from-dereth/commit/351bce114e409c1e5971a85752638dd23079e88f))
+* **efd-server:** ♻️ hellgate boss drop up to 250 magic items on death ([81aef75](https://github.com/DarktideLegend/escape-from-dereth/commit/81aef752f314b5537cef379e75bfdc8e5febabf0))
+* **efd-server:** ♻️ temporarily open all hellgates ([47e1350](https://github.com/DarktideLegend/escape-from-dereth/commit/47e13502e6a57f23c8b2e41f0d6edc699ed7b32a))
+* **efd-server:** ♻️ update creature death profile generation ([0438a27](https://github.com/DarktideLegend/escape-from-dereth/commit/0438a27ba5b75b477be143b66ddc0e12c82674fb))
+* **efd-server:** ♻️ update hideout storage weenie_class_id ([8e4a8d7](https://github.com/DarktideLegend/escape-from-dereth/commit/8e4a8d792a81e927e6e4262d8b85d85de654f240))
+* **efd-server:** ♻️ use TreasureDeath profile for ItemMax and MundaneMax ([05e50a7](https://github.com/DarktideLegend/escape-from-dereth/commit/05e50a765188f8e7a3ad7e541dd48fd12a7d066b))
+
 ## [1.1.0-alpha.37](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.36...efd-server-v1.1.0-alpha.37) (2023-07-16)
 
 
