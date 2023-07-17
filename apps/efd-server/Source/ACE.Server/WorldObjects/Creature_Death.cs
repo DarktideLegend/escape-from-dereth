@@ -761,6 +761,9 @@ namespace ACE.Server.WorldObjects
             var isHellgateBoss = WeenieClassId == 4000226;
             var tier = profile.Tier;
             var magicMax = isHellgateBoss ? 250: profile.MagicItemMaxAmount;
+            var itemMax = isHellgateBoss ? 250: profile.ItemMaxAmount;
+            var mundaneMax = isHellgateBoss ? 250: profile.MundaneItemMaxAmount;
+
             var hasCustomContent = Weenie?.GetProperty(PropertyBool.IsCustomContent) ?? false;
 
             if (!IsInHellgate && ThreadSafeRandom.Next(0, 100) > 10)
@@ -773,7 +776,7 @@ namespace ACE.Server.WorldObjects
             {
                 Tier = tier,
                 UnknownChances = profile.UnknownChances,
-                ItemMaxAmount = profile.ItemMaxAmount,
+                ItemMaxAmount = itemMax,
                 TreasureType = profile.TreasureType,
                 ItemMinAmount = profile.ItemMinAmount,
                 ItemChance = profile.ItemChance,
@@ -782,7 +785,7 @@ namespace ACE.Server.WorldObjects
                 MagicItemMinAmount = profile.MagicItemMinAmount,
                 MagicItemChance = profile.MagicItemChance,
                 MagicItemTreasureTypeSelectionChances = profile.MagicItemTreasureTypeSelectionChances,
-                MundaneItemMaxAmount = profile.MundaneItemMaxAmount,
+                MundaneItemMaxAmount = mundaneMax,
                 MundaneItemMinAmount = profile.MundaneItemMinAmount,
                 MundaneItemChance = profile.MundaneItemChance,
                 MundaneItemTypeSelectionChances = profile.MundaneItemTypeSelectionChances,
