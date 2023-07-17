@@ -759,7 +759,10 @@ namespace ACE.Server.WorldObjects
         private TreasureDeath CreateDeathTreasureProfile(TreasureDeath profile)
         {
             var isHellgateBoss = WeenieClassId == 4000226;
-            var tier = IsInHellgate ? HellgateManager.GetHellgate(CurrentLandblock.Instance).Tier : profile.Tier;
+            var tier = profile.Tier;
+            var itemMax = isHellgateBoss ? 50 : profile.ItemMaxAmount;
+            var magicMax = isHellgateBoss ? 50: profile.MagicItemMaxAmount;
+            var mundaneMax = isHellgateBoss ? 50 : profile.MundaneItemMaxAmount;
             var hasCustomContent = Weenie?.GetProperty(PropertyBool.IsCustomContent) ?? false;
 
             if (!IsInHellgate && ThreadSafeRandom.Next(0, 100) > 10)
@@ -772,16 +775,16 @@ namespace ACE.Server.WorldObjects
             {
                 Tier = tier,
                 UnknownChances = profile.UnknownChances,
-                ItemMaxAmount = profile.ItemMaxAmount,
+                ItemMaxAmount = itemMax,
                 TreasureType = profile.TreasureType,
                 ItemMinAmount = profile.ItemMinAmount,
                 ItemChance = profile.ItemChance,
                 ItemTreasureTypeSelectionChances = profile.ItemTreasureTypeSelectionChances,
-                MagicItemMaxAmount = profile.MagicItemMaxAmount,
+                MagicItemMaxAmount = magicMax,
                 MagicItemMinAmount = profile.MagicItemMinAmount,
                 MagicItemChance = profile.MagicItemChance,
                 MagicItemTreasureTypeSelectionChances = profile.MagicItemTreasureTypeSelectionChances,
-                MundaneItemMaxAmount = profile.MundaneItemMaxAmount,
+                MundaneItemMaxAmount = mundaneMax,
                 MundaneItemMinAmount = profile.MundaneItemMinAmount,
                 MundaneItemChance = profile.MundaneItemChance,
                 MundaneItemTypeSelectionChances = profile.MundaneItemTypeSelectionChances,
