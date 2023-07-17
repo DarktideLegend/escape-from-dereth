@@ -13,6 +13,7 @@ using ACE.Server.Factories;
 using ACE.Server.Managers;
 using ACE.Server.Physics.Common;
 using ACE.Server.WorldObjects;
+using ACE.Server.EscapeFromDereth;
 
 namespace ACE.Server.Entity
 {
@@ -250,6 +251,8 @@ namespace ACE.Server.Entity
             else
             {
                 var wo = WorldObjectFactory.CreateNewWorldObject(Biota.WeenieClassId);
+                wo.Location = Generator.Location;
+                wo = WorldObjectProcessor.ProcessWorldObject(wo, Generator.RealmRuleset);
                 if (wo == null)
                 {
                     log.Warn($"[GENERATOR] 0x{Generator.Guid}:{Generator.WeenieClassId} {Generator.Name}.Spawn(): failed to create wcid {Biota.WeenieClassId}");

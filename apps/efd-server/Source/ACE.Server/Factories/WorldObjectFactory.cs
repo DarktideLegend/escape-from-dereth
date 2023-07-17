@@ -20,6 +20,7 @@ using ACE.Server.EscapeFromDereth.Hellgates;
 using ACE.Server.EscapeFromDereth.Towns;
 using ACE.Server.EscapeFromDereth.Hideouts;
 using static Google.Protobuf.Reflection.SourceCodeInfo.Types;
+using ACE.Server.EscapeFromDereth;
 
 namespace ACE.Server.Factories
 {
@@ -304,8 +305,8 @@ namespace ACE.Server.Factories
                 if (biota == null)
                 {
                     worldObject = CreateWorldObject(weenie, guid);
-
                     worldObject.Location = new Position(instance.ObjCellId, instance.OriginX, instance.OriginY, instance.OriginZ, instance.AnglesX, instance.AnglesY, instance.AnglesZ, instance.AnglesW, iid);
+                    worldObject = WorldObjectProcessor.ProcessWorldObject(worldObject, ruleset);
                 }
                 else
                 {
