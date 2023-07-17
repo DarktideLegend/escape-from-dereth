@@ -94,8 +94,8 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
 
                 var hellgateGroup = new HellgateGroup(landblock, timespan, maxHellgates, GuidManager.NewDynamicGuid());
 
-                if (ThreadSafeRandom.Next(1, 100) <= 25)
-                    hellgateGroup.IsOpen = true;
+                //if (ThreadSafeRandom.Next(1, 100) <= 25)
+                hellgateGroup.IsOpen = true;
 
                 CurrentHellgateGroup = hellgateGroup;
                 HellgateGroups.Enqueue(hellgateGroup);
