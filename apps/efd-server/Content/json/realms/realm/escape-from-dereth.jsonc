@@ -7,7 +7,7 @@
     "CreatureMobAwarenessMultiplier": 10000,
     "TownDistanceMultiplier": 0.25,
     "ExperienceMultiplierAll": 0.25,
-    "CreatureSpawnRateMultiplier": 3,
+    "CreatureSpawnRateMultiplier": 2,
     "HasRecalls": true,
     "HasRebuffs": false,
     "HasHousing": false,
