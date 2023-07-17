@@ -1,3 +1,17 @@
+## [1.1.0-alpha.39](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.38...efd-server-v1.1.0-alpha.39) (2023-07-17)
+
+
+### Features
+
+* **efd-server:** ✨ add CreatureSpawnRateMultiplier realm ruleset ([fc7da29](https://github.com/DarktideLegend/escape-from-dereth/commit/fc7da29ffe34f4316135c8ab8f98bbf0f537280c))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ add custom itemMax and mundaneMax for hellgate bosses ([9e47675](https://github.com/DarktideLegend/escape-from-dereth/commit/9e47675304b86a5ce4c93f5863b2cc82bf161626))
+* **efd-server:** ♻️ forgotten monsters have a 10% chance to spawn a gatekeeper ([9c9ba9c](https://github.com/DarktideLegend/escape-from-dereth/commit/9c9ba9ca732f4d3ccdae71f0dea5805960a77626))
+* **efd-server:** ♻️ home realm has 2x spawn multiplier ([fa2662d](https://github.com/DarktideLegend/escape-from-dereth/commit/fa2662d91d85dc031f09ff031e32bd98e95f8786))
+
 ## [1.1.0-alpha.38](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.37...efd-server-v1.1.0-alpha.38) (2023-07-17)
 
 
