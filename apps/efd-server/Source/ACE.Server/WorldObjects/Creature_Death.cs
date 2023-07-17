@@ -760,9 +760,7 @@ namespace ACE.Server.WorldObjects
         {
             var isHellgateBoss = WeenieClassId == 4000226;
             var tier = profile.Tier;
-            var itemMax = isHellgateBoss ? 50 : profile.ItemMaxAmount;
-            var magicMax = isHellgateBoss ? 50: profile.MagicItemMaxAmount;
-            var mundaneMax = isHellgateBoss ? 50 : profile.MundaneItemMaxAmount;
+            var magicMax = isHellgateBoss ? 250: profile.MagicItemMaxAmount;
             var hasCustomContent = Weenie?.GetProperty(PropertyBool.IsCustomContent) ?? false;
 
             if (!IsInHellgate && ThreadSafeRandom.Next(0, 100) > 10)
