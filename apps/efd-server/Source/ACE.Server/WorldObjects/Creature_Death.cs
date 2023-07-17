@@ -773,7 +773,7 @@ namespace ACE.Server.WorldObjects
             {
                 Tier = tier,
                 UnknownChances = profile.UnknownChances,
-                ItemMaxAmount = itemMax,
+                ItemMaxAmount = profile.ItemMaxAmount,
                 TreasureType = profile.TreasureType,
                 ItemMinAmount = profile.ItemMinAmount,
                 ItemChance = profile.ItemChance,
@@ -782,7 +782,7 @@ namespace ACE.Server.WorldObjects
                 MagicItemMinAmount = profile.MagicItemMinAmount,
                 MagicItemChance = profile.MagicItemChance,
                 MagicItemTreasureTypeSelectionChances = profile.MagicItemTreasureTypeSelectionChances,
-                MundaneItemMaxAmount = mundaneMax,
+                MundaneItemMaxAmount = profile.MundaneItemMaxAmount,
                 MundaneItemMinAmount = profile.MundaneItemMinAmount,
                 MundaneItemChance = profile.MundaneItemChance,
                 MundaneItemTypeSelectionChances = profile.MundaneItemTypeSelectionChances,
