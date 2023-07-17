@@ -233,7 +233,7 @@ namespace ACE.Server.EscapeFromDereth
                     forgottenCreature.Generator = creature.Generator;
                     forgottenCreature.GeneratorId = creature.GeneratorId;
 
-                    if (ThreadSafeRandom.Next(0, 100) < 50) // 50% chance of mutating a forgotten monster to a Gatekeeper
+                    if (ThreadSafeRandom.Next(0, 100) < 10) // 10% chance of mutating a forgotten monster to a Gatekeeper
                         MutateGatekeeper(forgottenCreature);
 
                     creature.Destroy(); // destroy original creature since we are replacing with a custom monster
