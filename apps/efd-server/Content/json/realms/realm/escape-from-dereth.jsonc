@@ -8,7 +8,7 @@
     "TownDistanceMultiplier": 0.25,
     "ExperienceMultiplierAll": 0.1,
     "CreatureSpawnRateMultiplier": 2,
-    "HasRecalls": true,
+    "HasRecalls": false,
     "HasRebuffs": false,
     "HasHousing": false,
     "HasPvpSummoners": true,
