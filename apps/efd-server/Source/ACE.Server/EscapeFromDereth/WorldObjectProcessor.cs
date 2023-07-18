@@ -227,6 +227,8 @@ namespace ACE.Server.EscapeFromDereth
             if (!(creature is Player) && creature.IsMonster)
             {
                 if (ThreadSafeRandom.Next(0, 100) < 25) // 25% chance of forgotten mob
+
+                if (creature.Level < 80 || ThreadSafeRandom.Next(0, 100) < 25) // 25% chance of forgotten mob
                 {
                     var tier = TownManager.GetMonsterTierByDistance(creature.Location);
                     var forgottenCreature = CreateForgottenMonster(tier);
