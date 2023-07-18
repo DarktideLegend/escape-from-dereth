@@ -226,7 +226,8 @@ namespace ACE.Server.EscapeFromDereth
         {
             if (!(creature is Player) && creature.IsMonster)
             {
-                if (ThreadSafeRandom.Next(0, 100) < 25) // 25% chance of forgotten mob
+                if (creature.Location.Indoors)
+                    return creature;
 
                 if (creature.Level < 80 || ThreadSafeRandom.Next(0, 100) < 25) // 25% chance of forgotten mob
                 {
