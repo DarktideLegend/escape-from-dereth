@@ -64,7 +64,8 @@ namespace ACE.Server.EscapeFromDereth
 
         private static WorldObject ProcessHomeRealmPortal(Portal portal, AppliedRuleset ruleset)
         {
-            if (portal.Name.Contains("Town Network")) // blacklist town network
+            // blacklist town network that isn't in a whitelisted town
+            if (portal.Name.Contains("Town Network") && TownManager.GetMonsterTierByDistance(portal.Location) != 1) 
             {
                 return null;
             }
