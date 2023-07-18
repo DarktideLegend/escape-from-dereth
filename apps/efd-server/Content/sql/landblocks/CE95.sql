@@ -340,10 +340,6 @@ VALUES (0x7CE953EF, 41227, 0xCE95013A, 149.74, 65.725, 23.005, 0.767778, 0, 0, -
 /* @teleloc 0xCE95013A [149.740005 65.724998 23.004999] 0.767778 0.000000 0.000000 -0.640716 */
 
 INSERT INTO `landblock_instance` (`guid`, `weenie_Class_Id`, `obj_Cell_Id`, `origin_X`, `origin_Y`, `origin_Z`, `angles_W`, `angles_X`, `angles_Y`, `angles_Z`, `is_Link_Child`, `last_Modified`)
-VALUES (0x7CE953F0, 600001, 0xCE95002D, 123.561, 114.59, 20.198, -0.999006, 0, 0, 0.044573, False, '2023-06-04 15:16:07'); /* Hideout Portal */
-/* @teleloc 0xCE95002D [123.560997 114.589996 20.198000] -0.999006 0.000000 0.000000 0.044573 */
-
-INSERT INTO `landblock_instance` (`guid`, `weenie_Class_Id`, `obj_Cell_Id`, `origin_X`, `origin_Y`, `origin_Z`, `angles_W`, `angles_X`, `angles_Y`, `angles_Z`, `is_Link_Child`, `last_Modified`)
 VALUES (0x7CE953F1, 3000311, 0xCE95002D, 121.482, 110.121, 20.005, -0.619517, 0, 0, 0.784983, False, '2023-06-13 00:16:38'); /* Quality of Life Vendor */
 /* @teleloc 0xCE95002D [121.482002 110.121002 20.004999] -0.619517 0.000000 0.000000 0.784983 */
 
@@ -352,5 +348,9 @@ VALUES (0x7CE953F2, 72331, 0xCE95002D, 124.441, 108.137, 20.005, -0.996757, 0, 0
 /* @teleloc 0xCE95002D [124.441002 108.137001 20.004999] -0.996757 0.000000 0.000000 -0.080467 */
 
 INSERT INTO `landblock_instance` (`guid`, `weenie_Class_Id`, `obj_Cell_Id`, `origin_X`, `origin_Y`, `origin_Z`, `angles_W`, `angles_X`, `angles_Y`, `angles_Z`, `is_Link_Child`, `last_Modified`)
-VALUES (0x7CE953F3, 3000304, 0xCE95002D, 126.3302, 109.0351, 20.005, -0.970967, 0, 0, -0.239214, False, '2023-06-23 11:53:04'); /* Fitness Instructor Anthony */
-/* @teleloc 0xCE95002D [126.330200 109.035103 20.004999] -0.970967 0.000000 0.000000 -0.239214 */
+VALUES (0x7CE953F3, 3000304, 0xCE95002D, 126.33, 109.035, 20.005, -0.970967, 0, 0, -0.239214, False, '2023-06-23 11:53:04'); /* Fitness Instructor Anthony */
+/* @teleloc 0xCE95002D [126.330002 109.035004 20.004999] -0.970967 0.000000 0.000000 -0.239214 */
+
+INSERT INTO `landblock_instance` (`guid`, `weenie_Class_Id`, `obj_Cell_Id`, `origin_X`, `origin_Y`, `origin_Z`, `angles_W`, `angles_X`, `angles_Y`, `angles_Z`, `is_Link_Child`, `last_Modified`)
+VALUES (0x7CE953F5, 600001, 0xCE95002E, 131.672, 120.049, 19.937, 0.957203, 0, 0, -0.289418, False, '2023-07-18 12:15:50'); /* Hideout Portal */
+/* @teleloc 0xCE95002E [131.671997 120.049004 19.937000] 0.957203 0.000000 0.000000 -0.289418 */
