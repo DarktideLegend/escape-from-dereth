@@ -94,13 +94,13 @@ namespace ACE.Server.EscapeFromDereth.Towns
         {
             var distance = GetTownDistance(location);
 
-            if (distance <= 400)
+            if (distance <= 3750)
                 return 1;
-            if (distance <= 800)
+            if (distance <= 7500)
                 return 2;
-            if (distance <= 1200)
+            if (distance <= 15000)
                 return 3;
-            if (distance <= 1600)
+            if (distance <= 30000)
                 return 4;
 
             return 5;
