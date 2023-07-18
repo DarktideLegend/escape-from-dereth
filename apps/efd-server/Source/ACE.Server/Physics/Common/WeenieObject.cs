@@ -54,15 +54,55 @@ namespace ACE.Server.Physics.Common
             PlayerKillerStatus = creature.PlayerKillerStatus;
         }
 
-        public bool IsPetOwner(WorldObject pet)
+        public bool IsPetAlly(WorldObject pet)
         {
-            if (!(WorldObject is Player player))
-                return false;
-
             if (!(pet is CombatPet combatPet))
                 return false;
 
-            if (combatPet.P_PetOwner == player)
+            if (WorldObject is CombatPet)
+                return IsAllyCombatPet(WorldObject as CombatPet, combatPet);
+
+            if (WorldObject is Player player)
+                return IsPetOwner(player, combatPet) || IsPetAllegianceMember(player, combatPet) || IsPetFellowshipMember(player, combatPet);
+
+            return false;
+        }
+
+        private bool IsAllyCombatPet(CombatPet petA, CombatPet petB)
+        {
+
+            if (IsPetAllegianceMember(petA.P_PetOwner, petB))
+                return true;
+
+            if (IsPetFellowshipMember(petA.P_PetOwner, petB))
+                return true;
+
+            return false;
+
+        }
+
+        private static bool IsPetFellowshipMember(Player player, CombatPet combatPet)
+        {
+            if (combatPet.P_PetOwner.GetFellowshipTargets().Contains(player))
+                return true;
+
+            return false;
+        }
+
+        private static bool IsPetAllegianceMember(Player player, CombatPet combatPet)
+        {
+            if (player.Allegiance == null)
+                return false;
+
+            if (combatPet.P_PetOwner.MonarchId == player.MonarchId)
+                return true;
+
+            return false;
+        }
+
+        private static bool IsPetOwner(Player player, CombatPet pet)
+        {
+            if (pet.P_PetOwner == player)
                 return true;
 
             return false;
