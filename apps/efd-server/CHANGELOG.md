@@ -1,3 +1,23 @@
+## [1.1.0-alpha.40](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.39...efd-server-v1.1.0-alpha.40) (2023-07-18)
+
+
+### Features
+
+* **efd-server:** ✨ monsters below level 80 turn into forgotten monsters ([ee7d40a](https://github.com/DarktideLegend/escape-from-dereth/commit/ee7d40a49e7e519ce69503491d2f7898cfef0d60))
+* **efd-server:** ✨ Town Network portals only exist in whitelisted towns ([86f276c](https://github.com/DarktideLegend/escape-from-dereth/commit/86f276cf5ddf239bee609e01d78b0b05ae5ef03c))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ decrease home realm global xp modifier from 0.25 to 0.1 ([3e52fd0](https://github.com/DarktideLegend/escape-from-dereth/commit/3e52fd0ef45c910de65971221365efe52a3fecd6))
+* **efd-server:** ♻️ disable recalls in home realm ([d9aca76](https://github.com/DarktideLegend/escape-from-dereth/commit/d9aca7627498c35a8463b4d595351fde111da900))
+* **efd-server:** ♻️ enable portal access with HasRecalls disabled ([0ce67e3](https://github.com/DarktideLegend/escape-from-dereth/commit/0ce67e3ca48716ca44e8c6f7618088c3a0a6ac01))
+* **efd-server:** ♻️ forgotten monsters never spawn indoors of home realm ([e6eb99c](https://github.com/DarktideLegend/escape-from-dereth/commit/e6eb99c7e13469d784c61f10eacb4b4279adeff1))
+* **efd-server:** ♻️ increase gatekeeper spawn rate to 25% ([c8ecd43](https://github.com/DarktideLegend/escape-from-dereth/commit/c8ecd43b5ff8a6e1106ddd96e38736657a9af4e2))
+* **efd-server:** ♻️ increased town distance range between tiers ([ea7b836](https://github.com/DarktideLegend/escape-from-dereth/commit/ea7b836dfbbe6b917fedc5a4621652bbf51d859d))
+* **efd-server:** ♻️ pvp summoners no longer target allegiance/fellowship members of owner ([e6c83d7](https://github.com/DarktideLegend/escape-from-dereth/commit/e6c83d79e0aa7e57f527b1662080d776423d3cdd))
+* **efd-server:** ♻️ update handling hellgate tiered loot ([62b68ce](https://github.com/DarktideLegend/escape-from-dereth/commit/62b68ce0f2c901d7ebc7ddfb3594ce05f2fd3aab))
+
 ## [1.1.0-alpha.39](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.38...efd-server-v1.1.0-alpha.39) (2023-07-17)
 
 
