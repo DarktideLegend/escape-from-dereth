@@ -759,12 +759,33 @@ namespace ACE.Server.WorldObjects
         private TreasureDeath CreateDeathTreasureProfile(TreasureDeath profile)
         {
             var isHellgateBoss = WeenieClassId == 4000226;
-            var tier = profile.Tier;
             var magicMax = isHellgateBoss ? 250: profile.MagicItemMaxAmount;
             var itemMax = isHellgateBoss ? 250: profile.ItemMaxAmount;
             var mundaneMax = isHellgateBoss ? 250: profile.MundaneItemMaxAmount;
 
-            var hasCustomContent = Weenie?.GetProperty(PropertyBool.IsCustomContent) ?? false;
+            var tier = profile.Tier;
+
+            if (IsInHellgate)
+            {
+                var hellgate = HellgateManager.GetHellgate(Location.Instance);
+
+                if (hellgate != null)
+                {
+                    switch (hellgate.Tier)
+                    {
+                        case 4:
+                        case 5:
+                            tier = 7;
+                            break;
+                        default:
+                            tier = 5;
+                            break;
+                    }
+                }
+            }
+
+            var weenie = DatabaseManager.World.GetCachedWeenie(WeenieClassId);
+            var hasCustomContent = weenie?.GetProperty(PropertyBool.IsCustomContent) ?? true;
 
             if (!IsInHellgate && ThreadSafeRandom.Next(0, 100) > 10)
                 tier = 4;
