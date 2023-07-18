@@ -294,10 +294,6 @@ namespace ACE.Server.WorldObjects
                 return ProcessHellgate(player, rules);
             }
 
-            var recallsDisabled = !RealmRuleset.GetProperty(RealmPropertyBool.HasRecalls);
-            if (recallsDisabled && !Location.IsEphemeralRealm)
-                return new ActivationResult(false);
-
             if (QuestRestriction != null && !player.IgnorePortalRestrictions)
             {
                 var hasQuest = player.QuestManager.HasQuest(QuestRestriction);
