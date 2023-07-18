@@ -936,10 +936,8 @@ namespace ACE.Server.Physics.Common
                         return false;
                     }
 
-                    if (obj.WeenieObj.IsPetOwner(PhysicsObj.WeenieObj.WorldObject))
-                    {
+                    if (obj.WeenieObj.IsPetAlly(PhysicsObj.WeenieObj.WorldObject))
                         return false;
-                    }
                 }
                 else
                 {
