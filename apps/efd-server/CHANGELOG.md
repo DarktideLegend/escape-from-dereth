@@ -1,3 +1,17 @@
+## [1.1.0-alpha.41](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.40...efd-server-v1.1.0-alpha.41) (2023-07-19)
+
+
+### Features
+
+* **efd-server:** ✨ add configurable tax rate for town ownership ([9330791](https://github.com/DarktideLegend/escape-from-dereth/commit/9330791c5cca16851e716556dee6ec95b6232f28))
+* **efd-server:** ✨ add town control ([abb96bb](https://github.com/DarktideLegend/escape-from-dereth/commit/abb96bb0326803b84c632cf366a86647aac44ace))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ only check Town Network portals based on town distance ([0fcf2fc](https://github.com/DarktideLegend/escape-from-dereth/commit/0fcf2fc26b0b9f7022de27a6e2f1b4aaf440ffe9))
+* **efd-server:** ♻️ reduce gatekeeper spawn rate to 8% ([eae31a5](https://github.com/DarktideLegend/escape-from-dereth/commit/eae31a5fe272fb4a60769e6b1e015424d5a7f156))
+
 ## [1.1.0-alpha.40](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.39...efd-server-v1.1.0-alpha.40) (2023-07-18)
 
 
