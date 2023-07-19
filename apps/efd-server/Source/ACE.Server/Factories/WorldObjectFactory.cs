@@ -20,7 +20,7 @@ using ACE.Server.EscapeFromDereth.Hellgates;
 using ACE.Server.EscapeFromDereth.Towns;
 using ACE.Server.EscapeFromDereth.Hideouts;
 using static Google.Protobuf.Reflection.SourceCodeInfo.Types;
-using ACE.Server.EscapeFromDereth;
+using ACE.Server.EscapeFromDereth.Common;
 
 namespace ACE.Server.Factories
 {

@@ -10,7 +10,7 @@ using ACE.Server.Factories;
 using ACE.Server.Realms;
 using ACE.Server.WorldObjects;
 
-namespace ACE.Server.EscapeFromDereth
+namespace ACE.Server.EscapeFromDereth.Common
 {
     public class WorldObjectProcessor
     {
@@ -47,7 +47,7 @@ namespace ACE.Server.EscapeFromDereth
 
         private static WorldObject ProcessHomeRealm(WorldObject wo, AppliedRuleset ruleset)
         {
-            switch(wo.WeenieType)
+            switch (wo.WeenieType)
             {
                 case WeenieType.Creature:
                     return ProcessHomeRealmCreature(wo as Creature, ruleset);
@@ -65,7 +65,7 @@ namespace ACE.Server.EscapeFromDereth
         private static WorldObject ProcessHomeRealmPortal(Portal portal, AppliedRuleset ruleset)
         {
             // town network portals only exist in whitelisted towns
-            if (portal.Name.Contains("Town Network") && TownManager.GetTownDistance(portal.Location) > 500) 
+            if (portal.Name.Contains("Town Network") && TownManager.GetTownDistance(portal.Location) > 500)
             {
                 return null;
             }
@@ -83,7 +83,7 @@ namespace ACE.Server.EscapeFromDereth
 
         private static WorldObject ProcessHellgateObject(WorldObject wo, AppliedRuleset ruleset)
         {
-            switch(wo.WeenieType)
+            switch (wo.WeenieType)
             {
                 case WeenieType.Door:
                     return null;
@@ -131,7 +131,7 @@ namespace ACE.Server.EscapeFromDereth
                 if (creature.Biota?.PropertiesAttribute2nd?.ContainsKey(PropertyAttribute2nd.MaxHealth) == true)
                 {
                     creature.Biota.PropertiesAttribute2nd[PropertyAttribute2nd.MaxHealth].InitLevel =
-                        (uint)((double)creature.Biota.PropertiesAttribute2nd[PropertyAttribute2nd.MaxHealth].InitLevel *
+                        (uint)(creature.Biota.PropertiesAttribute2nd[PropertyAttribute2nd.MaxHealth].InitLevel *
                         ruleset.GetProperty(RealmPropertyFloat.CreatureSpawnHPMultiplier));
                 }
 
@@ -142,7 +142,7 @@ namespace ACE.Server.EscapeFromDereth
                             (int)creature.Biota.PropertiesAttribute[PropertyAttribute.Strength].InitLevel,
                             ruleset.GetProperty(RealmPropertyInt.CreatureStrengthAdded),
                             ruleset.GetProperty(RealmPropertyFloat.CreatureStrengthMultiplier)
-                        ); 
+                        );
                 }
 
                 if (creature.Biota?.PropertiesAttribute?.ContainsKey(PropertyAttribute.Endurance) == true)
@@ -202,7 +202,7 @@ namespace ACE.Server.EscapeFromDereth
             if (value < 1) value = 1;
             if (value > maxValue)
                 value = maxValue;
-            return  (uint)value;
+            return (uint)value;
         }
 
         private static Creature CreateForgottenMonster(int tier)
@@ -252,7 +252,7 @@ namespace ACE.Server.EscapeFromDereth
 
         private static void MutateDeathTreasureTypeByTier(Creature creature, int tier)
         {
-            creature.DeathTreasureType = 464;
+            creature.DeathTreasureType = 454;
 
             if (tier == 4)
                 creature.DeathTreasureType = 1000;
