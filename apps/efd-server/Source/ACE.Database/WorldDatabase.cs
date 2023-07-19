@@ -705,6 +705,7 @@ namespace ACE.Database
             {
                 Name = name,
                 AllegianceId = 0,
+                TaxRate = 0.0f
             };
 
             using (var context = new WorldDbContext())

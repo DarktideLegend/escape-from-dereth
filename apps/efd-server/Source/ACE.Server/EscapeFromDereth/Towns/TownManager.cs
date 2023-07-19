@@ -82,7 +82,22 @@ namespace ACE.Server.EscapeFromDereth.Towns
                 }
             }
         }
-  
+
+        public static void UpdateTownTaxRate(string name, float rate)
+        {
+            lock (Towns)
+            {
+                var town = DatabaseManager.World.GetTownByName(name);
+
+                if (town != null)
+                {
+                    town.TaxRate = rate;
+                    DatabaseManager.World.UpdateTown(town);
+                    GetTownByName(name).SetTaxRate(rate);
+                }
+            }
+        }
+
         public static bool closeTown(Town town)
         {
             if (ClosedTowns.Contains(town))
@@ -152,6 +167,10 @@ namespace ACE.Server.EscapeFromDereth.Towns
             var town = GetClosestTownFromPosition(location);
             var distance = town.Location.DistanceTo(location);
             return distance;
+        }
+
+        public static void Tick(double currentUnixTime)
+        {
         }
     }
 }
