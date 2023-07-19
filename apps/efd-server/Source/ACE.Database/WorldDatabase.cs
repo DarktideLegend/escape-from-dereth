@@ -682,11 +682,60 @@ namespace ACE.Database
                     context.RealmPropertiesInt64.AddRange(propsint64);
                     context.RealmPropertiesFloat.AddRange(propsfloat);
                     context.RealmPropertiesString.AddRange(propsstring);
-                    
+
                     context.SaveChanges();
                     transaction.Commit();
                 }
             }
+        }
+
+
+        // Towns
+        public List<Town> GetAllTowns()
+        {
+            using (var context = new WorldDbContext())
+            {
+                return context.Town.ToList();
+            };
+        }
+
+        public Town CreateTown(string name)
+        {
+            var town = new Town
+            {
+                Name = name,
+                AllegianceId = 0,
+            };
+
+            using (var context = new WorldDbContext())
+            {
+                context.Town.Add(town);
+                context.SaveChanges();
+            }
+
+            return town;
+        }
+
+        public void UpdateTown(Town town)
+        {
+            using (var context = new WorldDbContext())
+            {
+                context.Entry(town).State = EntityState.Modified;
+                context.SaveChanges();
+            }
+        }
+
+        public Town GetTownByName(string name)
+        {
+            using (var context = new WorldDbContext())
+            {
+                var result = context.Town
+                 .AsNoTracking()
+                 .FirstOrDefault(r => r.Name == name);
+
+                return result;
+            }
+
         }
     }
 }

@@ -15,6 +15,7 @@ using ACE.Server.Entity;
 using ACE.Server.WorldObjects;
 using ACE.Server.Realms;
 using ACE.Server.EscapeFromDereth.Hellgates;
+using ACE.Server.EscapeFromDereth.Towns;
 
 namespace ACE.Server.Managers
 {
@@ -348,6 +349,9 @@ namespace ACE.Server.Managers
 
             // Tick for hellgates
             HellgateManager.Tick(Time.GetUnixTime());
+
+            // Tick for towns
+            TownManager.Tick(Time.GetUnixTime());
         }
 
         private static void TickSingleThreadedWork()
