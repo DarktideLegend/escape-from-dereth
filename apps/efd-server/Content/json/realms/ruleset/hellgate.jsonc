@@ -5,7 +5,8 @@
         "Description": ".",
         "RulesetStampVendorCategory": 1,
         "IsFullLootOnDeath": true,
-        "ExperienceMultiplierAll": 0.75,
+        "ExperienceMultiplierAll": 2,
+        "CreatureSpawnRateMultiplier": 2,
         "IsNeutralZone": true,
         "HasRecalls": false
     }
