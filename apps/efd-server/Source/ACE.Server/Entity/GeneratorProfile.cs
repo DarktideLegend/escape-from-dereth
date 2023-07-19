@@ -13,7 +13,7 @@ using ACE.Server.Factories;
 using ACE.Server.Managers;
 using ACE.Server.Physics.Common;
 using ACE.Server.WorldObjects;
-using ACE.Server.EscapeFromDereth;
+using ACE.Server.EscapeFromDereth.Common;
 
 namespace ACE.Server.Entity
 {
