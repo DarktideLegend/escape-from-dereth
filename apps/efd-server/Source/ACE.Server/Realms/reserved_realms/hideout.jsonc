@@ -4,6 +4,7 @@
     "properties": {
         "Description": "Realm for player hideouts (new housing)",
         "IsOverridable": true,
-        "IsCustomContentOnly": true
+        "IsCustomContentOnly": true,
+        "HasRecalls":  false
     }
 }
