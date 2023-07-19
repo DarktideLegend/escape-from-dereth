@@ -65,7 +65,7 @@ namespace ACE.Server.EscapeFromDereth
         private static WorldObject ProcessHomeRealmPortal(Portal portal, AppliedRuleset ruleset)
         {
             // town network portals only exist in whitelisted towns
-            if (portal.Name.Contains("Town Network") && TownManager.GetTownDistance(portal.Location) > 200) 
+            if (portal.Name.Contains("Town Network") && TownManager.GetTownDistance(portal.Location) > 500) 
             {
                 return null;
             }
