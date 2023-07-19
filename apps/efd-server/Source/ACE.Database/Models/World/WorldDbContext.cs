@@ -2626,6 +2626,10 @@ namespace ACE.Database.Models.World
                     .HasColumnName("allegiance_id")
                     .HasDefaultValueSql("'0'");
 
+                entity.Property(e => e.TaxRate)
+                    .HasColumnName("tax_rate")
+                    .HasDefaultValueSql("'0'");
+
                 entity.Property(e => e.Expiration)
                     .HasColumnName("expiration")
                     .HasDefaultValueSql("'-1'");

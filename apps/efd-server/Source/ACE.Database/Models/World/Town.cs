@@ -11,6 +11,7 @@ namespace ACE.Database.Models.World
         public uint Id { get; set; }
         public string Name { get; set; }
         public uint AllegianceId { get; set; }
+        public float TaxRate { get; set; }
         public int Expiration { get; set; }
         public DateTime LastModified { get; set; }
     }
