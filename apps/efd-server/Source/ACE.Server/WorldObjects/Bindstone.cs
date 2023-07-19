@@ -6,6 +6,7 @@ using ACE.Entity.Enum.Properties;
 using ACE.Entity.Models;
 using ACE.Server.Entity;
 using ACE.Server.Entity.Actions;
+using ACE.Server.Managers;
 using ACE.Server.Network.GameEvent.Events;
 using ACE.Server.Network.GameMessages.Messages;
 
@@ -47,6 +48,11 @@ namespace ACE.Server.WorldObjects
         {
             if (!(worldObject is Player player))
                 return;
+
+            // Bindstones are used to travel back to ur LS
+            player.HandleActionTeleToLifestone(true);
+            return;
+
 
             // check if player is in an allegiance
             if (player.Allegiance == null)

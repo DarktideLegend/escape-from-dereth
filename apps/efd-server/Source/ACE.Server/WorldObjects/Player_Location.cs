@@ -215,7 +215,7 @@ namespace ACE.Server.WorldObjects
         /// <summary>
         /// Handles teleporting a player to the lifestone (/ls or /lifestone command)
         /// </summary>
-        public void HandleActionTeleToLifestone()
+        public void HandleActionTeleToLifestone(bool fromBindstone = false)
         {
             if (PKTimerActive)
             {
@@ -223,7 +223,7 @@ namespace ACE.Server.WorldObjects
                 return;
             }
 
-            if (RecallsDisabled)
+            if (RecallsDisabled && !fromBindstone)
             {
                 Session.Network.EnqueueSend(new GameEventWeenieError(Session, WeenieError.RecallsAreDisabled));
                 return;
