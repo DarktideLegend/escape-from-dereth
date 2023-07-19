@@ -1,4 +1,5 @@
 using ACE.Common;
+using ACE.Database;
 using ACE.Entity;
 using ACE.Entity.Enum.Properties;
 using ACE.Server.Entity;
@@ -12,6 +13,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,7 +25,7 @@ namespace ACE.Server.EscapeFromDereth.Towns
     {
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public readonly static ImmutableDictionary<ushort, Town> Towns = new Dictionary<ushort, Town>()
+        public readonly static Dictionary<ushort, Town> Towns = new Dictionary<ushort, Town>()
         {
             { 0xC6A9, new Town("Arwic",
                 EFDHelpers.slocToPosition("0xC6A90013 [51.633736 68.552765 42.005001] -0.080479 0.000000 0.000000 0.996756 0"),
@@ -34,15 +36,54 @@ namespace ACE.Server.EscapeFromDereth.Towns
             { 0xCE95, new Town("Eastham",
                 EFDHelpers.slocToPosition("0xCE950023 [115.072716 68.856300 20.004999] 0.860280 0.000000 0.000000 -0.509823 0"),
                 EFDHelpers.slocToPosition("0xCE960004 [3.525760 93.337540 19.711185] -0.259322 0.000000 0.000000 0.965791 393216")) }
-        }.ToImmutableDictionary();
+        };
 
-        private readonly static ImmutableList<Town> TownsList = Towns.ToList().Select((kvp) => kvp.Value).ToImmutableList();
+        private readonly static List<Town> TownsList = Towns.Select((kvp) => kvp.Value).ToList();
 
         private static HashSet<Town> ClosedTowns = new HashSet<Town>();
 
-        // This should probably be moved to ACE.Entity
+        public static void Initialize()
+        {
+            foreach(var town in Towns)
+            {
+                var result = DatabaseManager.World.GetTownByName(town.Value.Name);
 
-        public bool closeTown(Town town)
+                if (result == null)
+                {
+                    DatabaseManager.World.CreateTown(town.Value.Name);
+                    continue;
+                }
+
+                var townEntity = town.Value;
+                if (townEntity != null)
+                {
+                    townEntity.SetOwnership(result.AllegianceId);
+
+                }
+            }
+        }
+
+        private static Town GetTownByName(string name)
+        {
+            return Towns.Values.Where(town => town.Name == name).FirstOrDefault();
+        }
+
+        public static void UpdateTownOwnership(string name, uint monarchId)
+        {
+            lock (Towns)
+            {
+                var town = DatabaseManager.World.GetTownByName(name);
+
+                if (town != null)
+                {
+                    town.AllegianceId = monarchId;
+                    DatabaseManager.World.UpdateTown(town);
+                    GetTownByName(name).SetOwnership(monarchId);
+                }
+            }
+        }
+  
+        public static bool closeTown(Town town)
         {
             if (ClosedTowns.Contains(town))
                 return false;
@@ -53,7 +94,7 @@ namespace ACE.Server.EscapeFromDereth.Towns
         }
 
 
-        public bool openTown(Town town)
+        public static bool openTown(Town town)
         {
             if (ClosedTowns.TryGetValue(town, out var closedTown))
             {

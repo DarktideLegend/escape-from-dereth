@@ -16,6 +16,7 @@ using ACE.Server.Managers;
 using ACE.Server.Network.Managers;
 using ACE.Server.EscapeFromDereth.Hellgates;
 using ACE.Server.Mods;
+using ACE.Server.EscapeFromDereth.Towns;
 
 namespace ACE.Server
 {
@@ -297,6 +298,9 @@ namespace ACE.Server
 
             log.Info("Initializing RealmManager...");
             RealmManager.Initialize();
+
+            log.Info("Initializing TownManager...");
+            TownManager.Initialize();
 
             log.Info("Initializing HellgateManager...");
             HellgateManager.Initialize();

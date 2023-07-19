@@ -23,6 +23,7 @@ namespace ACE.Database.Models.World
         public virtual DbSet<Encounter> Encounter { get; set; }
         public virtual DbSet<Event> Event { get; set; }
         public virtual DbSet<HousePortal> HousePortal { get; set; }
+        public virtual DbSet<Town> Town { get; set; }
         public virtual DbSet<LandblockInstance> LandblockInstance { get; set; }
         public virtual DbSet<LandblockInstanceLink> LandblockInstanceLink { get; set; }
         public virtual DbSet<PointsOfInterest> PointsOfInterest { get; set; }
@@ -2605,6 +2606,37 @@ namespace ACE.Database.Models.World
                     .HasForeignKey(d => d.ObjectId)
                     .HasConstraintName("wcid_texturemap");
             });
+
+            // EFD Content
+            modelBuilder.Entity<Town>(entity =>
+            {
+                entity.ToTable("town");
+
+                entity.HasComment("Town control");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasComment("Unique Id of this Town");
+
+                entity.HasIndex(e => e.Name, "name_UNIQUE")
+                    .IsUnique()
+                    .HasAnnotation("MySql:IndexPrefixLength", new[] { 100 });
+
+                entity.Property(e => e.AllegianceId)
+                    .HasColumnName("allegiance_id")
+                    .HasDefaultValueSql("'0'");
+
+                entity.Property(e => e.Expiration)
+                    .HasColumnName("expiration")
+                    .HasDefaultValueSql("'-1'");
+
+                entity.Property(e => e.LastModified)
+                    .HasColumnType("datetime")
+                    .ValueGeneratedOnAddOrUpdate()
+                    .HasColumnName("last_Modified")
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+            });
+
 
             OnModelCreatingPartial(modelBuilder);
         }
