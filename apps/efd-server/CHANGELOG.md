@@ -1,3 +1,21 @@
+## [1.1.0-alpha.43](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.42...efd-server-v1.1.0-alpha.43) (2023-07-20)
+
+
+### Features
+
+* **efd-server:** ✨ add realm rulesets for creature spawn rate, spawn amount, and generator delay ([1abac21](https://github.com/DarktideLegend/escape-from-dereth/commit/1abac21c39ef074eb1c82acfd007e190e5563e9e))
+
+
+### Performance Improvements
+
+* **efd-server:** ⚡️ purge forgotten monster biotas when the server starts ([f554bf6](https://github.com/DarktideLegend/escape-from-dereth/commit/f554bf6c44ee96f28c88d3b2cd6f9756707960ef))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ hellgate realm property CreatureSpawnGeneratorDelay is set to 30 seconds ([fc2d7df](https://github.com/DarktideLegend/escape-from-dereth/commit/fc2d7df78f6a393ca3c1aabb70be73542b2333cb))
+* **efd-server:** ♻️ set creature respawn to 5 seconds ([83d7a52](https://github.com/DarktideLegend/escape-from-dereth/commit/83d7a52384c706878f082b30cbbee6dd5a0b78f5))
+
 ## [1.1.0-alpha.42](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.41...efd-server-v1.1.0-alpha.42) (2023-07-20)
 
 
