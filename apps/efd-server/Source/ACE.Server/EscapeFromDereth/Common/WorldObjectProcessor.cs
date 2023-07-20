@@ -54,8 +54,10 @@ namespace ACE.Server.EscapeFromDereth.Common
                 case WeenieType.Portal:
                     return ProcessHomeRealmPortal(wo as Portal, ruleset);
                 case WeenieType.Door:
+                    wo.Destroy();
                     return null;
                 case WeenieType.SlumLord: // disable housing in home realm
+                    wo.Destroy();
                     return null;
             }
 
@@ -67,6 +69,7 @@ namespace ACE.Server.EscapeFromDereth.Common
             // town network portals only exist in whitelisted towns
             if (portal.Name.Contains("Town Network") && TownManager.GetTownDistance(portal.Location) > 500)
             {
+                portal.Destroy();
                 return null;
             }
 
@@ -86,8 +89,10 @@ namespace ACE.Server.EscapeFromDereth.Common
             switch (wo.WeenieType)
             {
                 case WeenieType.Door:
+                    wo.Destroy();
                     return null;
                 case WeenieType.Portal:
+                    wo.Destroy();
                     return null;
                 case WeenieType.Creature:
                     return ProcessHellgateCreature(wo as Creature, ruleset);
@@ -238,7 +243,7 @@ namespace ACE.Server.EscapeFromDereth.Common
                     forgottenCreature.Generator = creature.Generator;
                     forgottenCreature.GeneratorId = creature.GeneratorId;
 
-                    if (ThreadSafeRandom.Next(0, 100) < 8) // 25% chance of mutating a forgotten monster to a Gatekeeper
+                    if (ThreadSafeRandom.Next(0, 100) < 8) // 8% chance of mutating a forgotten monster to a Gatekeeper
                         MutateGatekeeper(forgottenCreature);
 
                     creature.Destroy(); // destroy original creature since we are replacing with a custom monster
