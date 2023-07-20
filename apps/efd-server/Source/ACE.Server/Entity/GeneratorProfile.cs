@@ -111,7 +111,18 @@ namespace ACE.Server.Entity
                 if (Generator is Chest)
                     return 0;
 
+                var weenie = DatabaseManager.World.GetCachedWeenie(WeenieClassId);
+                if (weenie != null && weenie.WeenieType == WeenieType.Creature)
+                {
+                    var creatureSpawnRateMultiplier = Generator.RealmRuleset.GetProperty(RealmPropertyFloat.CreatureSpawnRateMultiplier);
+                    var creatureSpawnGeneratorDelay = Generator.RealmRuleset.GetProperty(RealmPropertyInt.CreatureSpawnGeneratorDelay);
+                    var isMonster = weenie.GetProperty(PropertyBool.Attackable) ?? false || (TargetingTactic)(weenie.GetProperty(PropertyInt.TargetingTactic) ?? 0) != TargetingTactic.None; 
+                    if (creatureSpawnGeneratorDelay > 0 && isMonster)
+                        return (float)(creatureSpawnGeneratorDelay * creatureSpawnRateMultiplier);
+                }
+
                 return Biota.Delay ?? Generator.GeneratorProfiles[0].Biota.Delay ?? 0.0f;
+
             }
         }
 
@@ -250,9 +261,9 @@ namespace ACE.Server.Entity
             }
             else
             {
-                var creatureSpawnMultiplier = Generator.RealmRuleset.GetProperty(RealmPropertyFloat.CreatureSpawnRateMultiplier);
+                var creatureSpawnMultiplier = Generator.RealmRuleset.GetProperty(RealmPropertyFloat.CreatureSpawnMultiplier);
                 var wo = AddWorldObject();
-                if (wo is Creature && !(wo as Creature).IsMonster)
+                if (wo is Creature creature && creature.IsNPC)
                     objects.Add(wo);
                 else
                     for (var i = 0; i < creatureSpawnMultiplier; i++)

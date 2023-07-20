@@ -96,9 +96,24 @@ namespace ACE.Server.EscapeFromDereth.Common
                     return null;
                 case WeenieType.Creature:
                     return ProcessHellgateCreature(wo as Creature, ruleset);
+                case WeenieType.Generic:
+                    return ProcessHellgateGenerator(wo as GenericObject, ruleset);
             }
 
             return wo;
+        }
+
+        private static WorldObject ProcessHellgateGenerator(GenericObject genericObject, AppliedRuleset ruleset)
+        {
+            var creatureSpawnGeneratorDelay = ruleset.GetProperty(RealmPropertyInt.CreatureSpawnGeneratorDelay);
+            var creatureSpawnRateMultiplier = ruleset.GetProperty(RealmPropertyFloat.CreatureSpawnRateMultiplier);
+
+            if (creatureSpawnGeneratorDelay > 0)
+                genericObject.RegenerationInterval = (int)((float)creatureSpawnGeneratorDelay * creatureSpawnRateMultiplier);
+
+            genericObject.ReinitializeHeartbeats();
+
+            return genericObject;
         }
 
         private static WorldObject ProcessHellgateCreature(Creature creature, AppliedRuleset ruleset)
