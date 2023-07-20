@@ -1,4 +1,5 @@
 using ACE.Common;
+using ACE.Database;
 using ACE.Entity;
 using ACE.Entity.Models;
 using ACE.Server.Entity;
@@ -71,8 +72,19 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
 
         public static void Initialize()
         {
+            PurgeForbiddenMonsterBiotas();
             InitializeHeartbeat();
             CreateHellgateGroup();
+        }
+
+        private static void PurgeForbiddenMonsterBiotas()
+        {
+            // destroy all forbidden monster mobs when server starts
+            foreach (var wcid  in Enumerable.Range(601001, 5))
+            {
+                var forgottenMobs = DatabaseManager.Shard.BaseDatabase.GetBiotasByWcid((uint)wcid).Select(biota => biota.Id);
+                DatabaseManager.Shard.BaseDatabase.RemoveBiotasInParallel(forgottenMobs);
+            }
         }
 
         private static void InitializeHeartbeat()
