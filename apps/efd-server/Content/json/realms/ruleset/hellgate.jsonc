@@ -7,7 +7,7 @@
         "IsFullLootOnDeath": true,
         "ExperienceMultiplierAll": 2,
         "CreatureSpawnMultiplier": 2,
-        "CreatureSpawnGeneratorDelay": 30,
+        "CreatureSpawnGeneratorDelay": 5,
         "IsNeutralZone": true,
         "HasRecalls": false
     }
