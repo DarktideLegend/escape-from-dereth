@@ -1,3 +1,19 @@
+## [1.1.0-alpha.42](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.41...efd-server-v1.1.0-alpha.42) (2023-07-20)
+
+
+### Features
+
+* **efd-server:** ✨ using allegiance bindstone teleports players to their lifestone ([36d5fbd](https://github.com/DarktideLegend/escape-from-dereth/commit/36d5fbd8788cce3efc5157fcd5e40d5c9b31adab))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ disable recalls in hideouts ([5237408](https://github.com/DarktideLegend/escape-from-dereth/commit/5237408d7c58d485503dedf2de1aafb21916b74e))
+* **efd-server:** ♻️ loot quality in home realm has been reduced ([9e323ac](https://github.com/DarktideLegend/escape-from-dereth/commit/9e323acaa66a42e4a7680eccce7ffe0187b27860))
+* **efd-server:** ♻️ process world object links ([610ad73](https://github.com/DarktideLegend/escape-from-dereth/commit/610ad73d805cc42475cf714729956b8ff3360392))
+* **efd-server:** ♻️ update whitelisted town network portal range ([4d4de60](https://github.com/DarktideLegend/escape-from-dereth/commit/4d4de60e4bcc9600e9bd25f771c428d460221567))
+* **efd-server:** ♻️ xp inside hellgates is 2x ([8651374](https://github.com/DarktideLegend/escape-from-dereth/commit/8651374b1645381866fd89ce65db425ad12f4f7e))
+
 ## [1.1.0-alpha.41](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.40...efd-server-v1.1.0-alpha.41) (2023-07-19)
 
 
