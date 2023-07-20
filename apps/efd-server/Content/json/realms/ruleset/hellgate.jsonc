@@ -6,7 +6,8 @@
         "RulesetStampVendorCategory": 1,
         "IsFullLootOnDeath": true,
         "ExperienceMultiplierAll": 2,
-        "CreatureSpawnRateMultiplier": 2,
+        "CreatureSpawnMultiplier": 2,
+        "CreatureSpawnGeneratorDelay": 30,
         "IsNeutralZone": true,
         "HasRecalls": false
     }
