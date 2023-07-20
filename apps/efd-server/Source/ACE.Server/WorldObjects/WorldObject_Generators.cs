@@ -4,6 +4,7 @@ using System.Linq;
 
 using ACE.Common;
 using ACE.Entity.Enum;
+using ACE.Entity.Enum.Properties;
 using ACE.Entity.Models;
 using ACE.Server.Entity;
 using ACE.Server.Managers;
@@ -618,8 +619,9 @@ namespace ACE.Server.WorldObjects
                 GeneratorProfiles.Add(new GeneratorProfile(this, profile, link.Guid));
                 if (profile.Probability == -1)
                 {
+                    var creatureSpawnMultiplier = RealmRuleset.GetProperty(RealmPropertyFloat.CreatureSpawnMultiplier);
                     InitCreate += profile.InitCreate;
-                    MaxCreate += profile.MaxCreate;
+                    MaxCreate += profile.MaxCreate * (int)(creatureSpawnMultiplier);
                 }
             }
         }
