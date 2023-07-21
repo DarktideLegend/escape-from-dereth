@@ -17,6 +17,7 @@ using ACE.Server.Network.GameEvent.Events;
 using ACE.Server.Managers;
 using ACE.Server.Realms;
 using System.Drawing;
+using ACE.Server.EscapeFromDereth.Towns;
 
 namespace ACE.Server.WorldObjects
 {
@@ -283,6 +284,10 @@ namespace ACE.Server.WorldObjects
         {
             var player = wo as Player;
             if (player == null) return;
+
+            // vendors should only be accessible in whitelisted Towns unless you are and admin
+            if (TownManager.GetTownDistance(Location) > 400 && player is not Admin)
+                return;
 
             if (player.IsBusy)
             {
