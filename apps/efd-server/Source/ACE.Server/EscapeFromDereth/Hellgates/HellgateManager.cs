@@ -80,7 +80,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
         private static void PurgeForbiddenMonsterBiotas()
         {
             // destroy all forbidden monster mobs when server starts
-            foreach (var wcid  in Enumerable.Range(601001, 5))
+            foreach (var wcid in Enumerable.Range(601001, 5))
             {
                 var forgottenMobs = DatabaseManager.Shard.BaseDatabase.GetBiotasByWcid((uint)wcid).Select(biota => biota.Id);
                 DatabaseManager.Shard.BaseDatabase.RemoveBiotasInParallel(forgottenMobs);
@@ -184,9 +184,9 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             var boss = WorldObjectFactory.CreateNewWorldObject(4000226); // Darkbeat temporarily 
             if (boss != null)
             {
-               boss.Location = hellgate.BossPosition;
-               boss.Lifespan = lifespan;
-               boss?.EnterWorld();
+                boss.Location = hellgate.BossPosition;
+                boss.Lifespan = lifespan;
+                boss?.EnterWorld();
             }
 
             var exitPortal = WorldObjectFactory.CreateNewWorldObject(600004);
@@ -195,7 +195,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
                 exitPortal.Location = hellgate.ExitPosition;
                 exitPortal.Lifespan = lifespan;
                 exitPortal?.EnterWorld();
-            } 
+            }
         }
 
         public static void AddPlayerToHellgate(Player player, uint instance)
@@ -253,7 +253,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
 
             hellgateGroup.Destroy();
             GuidManager.RecycleDynamicGuid(hellgateGroup.Guid);
-            IsCleaningupHellgateGroup= false;
+            IsCleaningupHellgateGroup = false;
         }
 
 
@@ -307,7 +307,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
                 groupGuid,
                 isOpen,
                 tier,
-                instance); 
+                instance);
 
             hellgateGroup.AddHellgate(hellgate);
 
@@ -319,6 +319,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
 
         private static bool CreateHellgateValidator(Player leader)
         {
+
             var fellowship = leader.Fellowship;
 
             if (fellowship == null)
@@ -337,6 +338,12 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
 
             if (!FellowshipValidator(fellowship, leader))
                 return false;
+
+            if (ServerManager.ShutdownInitiated)
+            {
+                leader.SendMessage($"The server is currently shutting down, players may not enter hellgates at this time.");
+                return false;
+            }
 
             return true;
         }
@@ -368,6 +375,14 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             }
 
             return true;
+        }
+
+        public static void RemoveAllPlayersFromHellgates()
+        {
+            // remove all player from hellgate instances
+            foreach (var player in PlayerManager.GetAllOnline())
+                if (player.IsInHellgate)
+                    player.ExitInstance();
         }
 
         public static void HellgateExitTransition(Player player, Hellgate hellgate)
