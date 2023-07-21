@@ -128,6 +128,9 @@ namespace ACE.Server.WorldObjects
 
         private bool IsSummonerDeath(DamageHistoryInfo topDamager)
         {
+            if (topDamager == null)
+                return false;
+
             var ruleset = RealmRuleset;
             var hasPvpSummoners = ruleset != null && ruleset.GetProperty(ACE.Entity.Enum.Properties.RealmPropertyBool.HasPvpSummoners);
             var petOwner = topDamager.PetOwner;

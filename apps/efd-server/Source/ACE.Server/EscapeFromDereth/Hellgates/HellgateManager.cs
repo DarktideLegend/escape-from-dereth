@@ -204,7 +204,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             {
                 hellgate.AddPlayer(player);
 
-                log.Info($"Added {player.Name} from hellgate - {hellgate.Instance} ");
+                log.Info($"Added {player.Name} to hellgate - {hellgate.Instance} ");
                 return;
             }
         }

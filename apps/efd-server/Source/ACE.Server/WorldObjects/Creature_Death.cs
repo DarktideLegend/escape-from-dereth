@@ -10,6 +10,7 @@ using ACE.Entity.Enum.Properties;
 using ACE.Entity.Models;
 using ACE.Server.Entity;
 using ACE.Server.Entity.Actions;
+using ACE.Server.EscapeFromDereth.Common;
 using ACE.Server.EscapeFromDereth.Hellgates;
 using ACE.Server.Factories;
 using ACE.Server.Managers;
@@ -785,13 +786,9 @@ namespace ACE.Server.WorldObjects
             }
 
             var weenie = DatabaseManager.World.GetCachedWeenie(WeenieClassId);
-            var hasCustomContent = weenie?.GetProperty(PropertyBool.IsCustomContent) ?? true;
 
             if (!IsInHellgate && ThreadSafeRandom.Next(0, 100) > 10)
-                tier = 4;
-
-            if (!IsInHellgate && hasCustomContent)
-                tier = 4;
+                tier = 1;
 
             var deathTreasureProfile = new TreasureDeath()
             {
