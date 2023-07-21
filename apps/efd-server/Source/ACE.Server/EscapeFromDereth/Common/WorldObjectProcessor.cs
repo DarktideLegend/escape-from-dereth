@@ -253,6 +253,7 @@ namespace ACE.Server.EscapeFromDereth.Common
                 {
                     var tier = TownManager.GetMonsterTierByDistance(creature.Location);
                     var forgottenCreature = CreateForgottenMonster(tier);
+                    MutateDeathTreasureTypeByTier(forgottenCreature, 1);
                     forgottenCreature.Location = new Position(creature.Location);
                     forgottenCreature.ScatterPos = creature.ScatterPos;
                     forgottenCreature.Generator = creature.Generator;
@@ -270,9 +271,12 @@ namespace ACE.Server.EscapeFromDereth.Common
             return creature;
         }
 
-        private static void MutateDeathTreasureTypeByTier(Creature creature, int tier)
+        public static void MutateDeathTreasureTypeByTier(Creature creature, int tier)
         {
-            creature.DeathTreasureType = 454;
+            creature.DeathTreasureType = 453;
+
+            if (tier == 3)
+                creature.DeathTreasureType = 464;
 
             if (tier == 4)
                 creature.DeathTreasureType = 1000;

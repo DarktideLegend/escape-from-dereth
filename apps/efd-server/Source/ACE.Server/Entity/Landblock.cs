@@ -893,9 +893,6 @@ namespace ACE.Server.Entity
                 }
             }
 
-            wo.CurrentLandblock = this;
-
-
             if (wo.PhysicsObj == null)
                 wo.InitPhysicsObj();
             else

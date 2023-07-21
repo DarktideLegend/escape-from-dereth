@@ -396,6 +396,8 @@ namespace ACE.Server.Managers
             if (oldBlock != null)
                 oldBlock.RemoveWorldObjectForPhysics(worldObject.Guid, adjacencyMove);
             // Add to the new landblock
+            worldObject.CurrentLandblock = newBlock;
+
             newBlock.AddWorldObjectForPhysics(worldObject);
         }
 
