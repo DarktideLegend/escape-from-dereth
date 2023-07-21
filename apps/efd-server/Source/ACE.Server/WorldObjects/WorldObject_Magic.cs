@@ -956,7 +956,7 @@ namespace ACE.Server.WorldObjects
                 return;
             }
 
-            var recallsDisabled = !RealmRuleset.GetProperty(RealmPropertyBool.HasRecalls);
+            var recallsDisabled = !target.RealmRuleset.GetProperty(RealmPropertyBool.HasRecalls);
             if (recallsDisabled)
                 return;
 
@@ -1049,9 +1049,12 @@ namespace ACE.Server.WorldObjects
                 return;
             }
 
-            var recallsDisabled = !RealmRuleset.GetProperty(RealmPropertyBool.HasRecalls);
-            if (recallsDisabled)
-                return;
+            if (targetCreature is Player)
+            {
+                var recallsDisabled = !targetCreature.RealmRuleset.GetProperty(RealmPropertyBool.HasRecalls);
+                if (recallsDisabled)
+                    return;
+            }
 
             var creature = this as Creature;
 
@@ -1192,9 +1195,12 @@ namespace ACE.Server.WorldObjects
                 return;
             }
 
-            var recallsDisabled = !RealmRuleset.GetProperty(RealmPropertyBool.HasRecalls);
-            if (recallsDisabled)
-                return;
+            if (targetCreature is Player)
+            {
+                var recallsDisabled = !targetCreature.RealmRuleset.GetProperty(RealmPropertyBool.HasRecalls);
+                if (recallsDisabled)
+                    return;
+            }
 
             if (player != null && player.PKTimerActive)
             {
@@ -1364,11 +1370,15 @@ namespace ACE.Server.WorldObjects
         /// </summary>
         private void HandleCastSpell_PortalSending(Spell spell, Creature targetCreature, WorldObject itemCaster)
         {
+
             if (targetCreature is Player targetPlayer)
             {
-                var recallsDisabled = !RealmRuleset.GetProperty(RealmPropertyBool.HasRecalls);
-                if (recallsDisabled)
-                    return;
+                if (itemCaster == null)
+                {
+                    var recallsDisabled = !targetCreature.RealmRuleset.GetProperty(RealmPropertyBool.HasRecalls);
+                    if (recallsDisabled)
+                        return;
+                }
 
                 if (targetPlayer.PKTimerActive)
                 {
@@ -1413,9 +1423,12 @@ namespace ACE.Server.WorldObjects
             if (targetPlayer == null || targetPlayer.Fellowship == null)
                 return false;
 
-            var recallsDisabled = !RealmRuleset.GetProperty(RealmPropertyBool.HasRecalls);
-            if (recallsDisabled)
-                return false;
+            if (itemCaster == null)
+            {
+                var recallsDisabled = !targetCreature.RealmRuleset.GetProperty(RealmPropertyBool.HasRecalls);
+                if (recallsDisabled)
+                    return false;
+            }
 
             if (targetPlayer.PKTimerActive)
             {
