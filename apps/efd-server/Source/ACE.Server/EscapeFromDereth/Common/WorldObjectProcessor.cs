@@ -9,6 +9,7 @@ using ACE.Server.EscapeFromDereth.Towns;
 using ACE.Server.Factories;
 using ACE.Server.Realms;
 using ACE.Server.WorldObjects;
+using System.Collections.Generic;
 
 namespace ACE.Server.EscapeFromDereth.Common
 {
@@ -109,9 +110,26 @@ namespace ACE.Server.EscapeFromDereth.Common
             var creatureSpawnRateMultiplier = ruleset.GetProperty(RealmPropertyFloat.CreatureSpawnRateMultiplier);
 
             if (creatureSpawnGeneratorDelay > 0)
+            {
                 genericObject.RegenerationInterval = (int)((float)creatureSpawnGeneratorDelay * creatureSpawnRateMultiplier);
 
-            genericObject.ReinitializeHeartbeats();
+                genericObject.ReinitializeHeartbeats();
+
+                if (genericObject.Biota.PropertiesGenerator != null)
+                {
+                    // While this may be ugly, it's done for performance reasons.
+                    // Common weenie properties are not cloned into the bota on creation. Instead, the biota references simply point to the weenie collections.
+                    // The problem here is that we want to update one of those common collection properties. If the biota is referencing the weenie collection,
+                    // then we'll end up updating the global weenie (from the cache), instead of just this specific biota.
+                    if (genericObject.Biota.PropertiesGenerator == genericObject.Weenie.PropertiesGenerator)
+                    {
+                        genericObject.Biota.PropertiesGenerator = new List<ACE.Entity.Models.PropertiesGenerator>(genericObject.Weenie.PropertiesGenerator.Count);
+
+                        foreach (var record in genericObject.Weenie.PropertiesGenerator)
+                            genericObject.Biota.PropertiesGenerator.Add(record.Clone());
+                    }
+                }
+            }
 
             return genericObject;
         }
@@ -124,9 +142,6 @@ namespace ACE.Server.EscapeFromDereth.Common
             {
                 var forgottenCreature = CreateForgottenMonster(hellgate.Tier);
                 forgottenCreature.Location = new Position(creature.Location);
-                forgottenCreature.ScatterPos = creature.ScatterPos;
-                forgottenCreature.Generator = creature.Generator;
-                forgottenCreature.GeneratorId = creature.GeneratorId;
                 CreatureRealmMutate(forgottenCreature, ruleset);
                 MutateDeathTreasureTypeByTier(forgottenCreature, hellgate.Tier);
                 creature.Destroy();
@@ -255,9 +270,6 @@ namespace ACE.Server.EscapeFromDereth.Common
                     var forgottenCreature = CreateForgottenMonster(tier);
                     MutateDeathTreasureTypeByTier(forgottenCreature, 1);
                     forgottenCreature.Location = new Position(creature.Location);
-                    forgottenCreature.ScatterPos = creature.ScatterPos;
-                    forgottenCreature.Generator = creature.Generator;
-                    forgottenCreature.GeneratorId = creature.GeneratorId;
 
                     if (ThreadSafeRandom.Next(0, 100) < 8) // 8% chance of mutating a forgotten monster to a Gatekeeper
                         MutateGatekeeper(forgottenCreature);
