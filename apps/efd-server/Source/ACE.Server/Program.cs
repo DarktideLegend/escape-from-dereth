@@ -371,6 +371,7 @@ namespace ACE.Server
             }
             else
             {
+                HellgateManager.RemoveAllPlayersFromHellgates();
                 ServerManager.DoShutdownNow();
                 DatabaseManager.Stop();
             }

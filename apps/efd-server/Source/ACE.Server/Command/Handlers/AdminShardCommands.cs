@@ -6,6 +6,7 @@ using ACE.Entity.Enum;
 using ACE.Server.Managers;
 using ACE.Server.Network;
 using ACE.Server.Network.GameMessages.Messages;
+using ACE.Server.EscapeFromDereth.Hellgates;
 
 namespace ACE.Server.Command.Handlers
 {
@@ -136,6 +137,8 @@ namespace ACE.Server.Command.Handlers
             else
                 PlayerManager.BroadcastToAll(new GameMessageSystemChat(genericMsgToPlayers, ChatMessageType.WorldBroadcast));
 
+
+            HellgateManager.RemoveAllPlayersFromHellgates();
             ServerManager.BeginShutdown();
         }
 
