@@ -1,3 +1,22 @@
+## [1.1.0-alpha.44](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.43...efd-server-v1.1.0-alpha.44) (2023-07-22)
+
+
+### Features
+
+* **efd-server:** ✨ add /spawn-hellgate-boss admin command ([a7e02ff](https://github.com/DarktideLegend/escape-from-dereth/commit/a7e02ffaab26f72137912325c885253bcad25aa3))
+* **efd-server:** ✨ hellgate boss spawns an exit portal on death ([833064e](https://github.com/DarktideLegend/escape-from-dereth/commit/833064e50a50b3b48dd44c30cf9d6f5ff6647929))
+* **efd-server:** ✨ vendors can only be accessed in whitelisted towns ([72942fe](https://github.com/DarktideLegend/escape-from-dereth/commit/72942fe52c109d35d9ee2a3068d25ec532c8eacb))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ handle removing players from hellgates on server shutdown ([2c43e4a](https://github.com/DarktideLegend/escape-from-dereth/commit/2c43e4ab570a0e7dfcfdaad3847ead5dc642a2ae))
+* **efd-server:** ♻️ portal sending only works when mobs invoke it on players ([179a859](https://github.com/DarktideLegend/escape-from-dereth/commit/179a859843d7f80e5b434c7d6c71aca88c9e087d))
+* **efd-server:** ♻️ re-calcuate the global server level average on player level up ([21bd136](https://github.com/DarktideLegend/escape-from-dereth/commit/21bd136720be1afed11366b666ffdd73d437499f))
+* **efd-server:** ♻️ remove SetToDefaultRealmInstance call in /telepoi command ([068ebbc](https://github.com/DarktideLegend/escape-from-dereth/commit/068ebbc8c4e97729c30cfa100cb82634fe14ce75))
+* **efd-server:** ♻️ update creature death loot logic ([cc72db3](https://github.com/DarktideLegend/escape-from-dereth/commit/cc72db38419f4553a4d24eefc71e5dee28cc1442))
+* **efd-server:** ♻️ update ProcessHellgateGenerator logic ([477cd8d](https://github.com/DarktideLegend/escape-from-dereth/commit/477cd8d12a55e3fe62c55f0cbba5fe94d1360bff))
+
 ## [1.1.0-alpha.43](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.42...efd-server-v1.1.0-alpha.43) (2023-07-20)
 
 
