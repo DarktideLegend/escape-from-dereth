@@ -97,7 +97,6 @@ namespace ACE.Server.Managers
             if (lastDatabaseSave + databaseSaveInterval <= DateTime.UtcNow)
             {
                 SaveOfflinePlayersWithChanges();
-                GetPlayerLevelAverage();
             }
 
             var currentUnixTime = Time.GetUnixTime();

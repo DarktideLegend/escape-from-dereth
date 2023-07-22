@@ -351,6 +351,8 @@ namespace ACE.Server.WorldObjects
                 // play level up effect
                 PlayParticleEffect(PlayScript.LevelUp, Guid);
 
+                PlayerManager.GetPlayerLevelAverage();
+
                 Session.Network.EnqueueSend(new GameMessageSystemChat(message, ChatMessageType.Advancement), currentCredits);
             }
         }
