@@ -11,6 +11,14 @@ namespace ACE.Server.WorldObjects
     partial class WorldObject
     {
         
+        public bool IsHellgateBoss
+        {
+            get
+            {
+                return WeenieClassId == 4000226;
+
+            }
+        }
         public bool SpawnHellgateOnDeath
         {
             get => GetProperty(PropertyBool.SpawnHellgateOnDeath) ?? false;

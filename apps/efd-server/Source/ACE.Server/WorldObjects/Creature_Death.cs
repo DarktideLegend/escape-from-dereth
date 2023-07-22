@@ -114,6 +114,19 @@ namespace ACE.Server.WorldObjects
 
             dieEntered = true;
 
+            if (IsHellgateBoss)
+            {
+                var exitPortal = WorldObjectFactory.CreateNewWorldObject(600004);
+                var hellgate = HellgateManager.GetHellgate(Location.Instance);
+
+                if (exitPortal != null && hellgate != null)
+                {
+                    exitPortal.Location = new Position(Location);
+                    exitPortal.Lifespan = (int?)hellgate.TimeRemaining;
+                    exitPortal?.EnterWorld();
+                }
+            }
+
             UpdateVital(Health, 0);
 
             if (topDamager != null)
