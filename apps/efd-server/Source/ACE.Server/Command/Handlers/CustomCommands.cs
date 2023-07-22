@@ -3,6 +3,7 @@ using ACE.Entity;
 using ACE.Entity.Enum;
 using ACE.Entity.Enum.Properties;
 using ACE.Server.Entity.Actions;
+using ACE.Server.EscapeFromDereth.Hellgates;
 using ACE.Server.Managers;
 using ACE.Server.Network;
 using ACE.Server.Network.GameEvent.Events;
@@ -89,6 +90,21 @@ namespace ACE.Server.Command.Handlers
             }
             
             session.Player.HandleActionTeleToHideout();
+        }
+
+        [CommandHandler("spawn-hellgate-boss", AccessLevel.Admin, CommandHandlerFlag.RequiresWorld, "Triggers hellgate boss spawn.")]
+        public static void HandleSpawnHellgateBoss(Session session, params string[] parameters)
+        {
+            var instance = session?.Player?.Location?.Instance;
+            var hellgate = HellgateManager.GetHellgate((uint)instance);
+
+            if (hellgate != null)
+            {
+                hellgate.ReduceBossExpiration(Time.GetUnixTime());
+
+                session.Network.EnqueueSend(new GameMessageSystemChat($"The boss has spawned in your hellgate.", ChatMessageType.Broadcast));
+            } else 
+                session.Network.EnqueueSend(new GameMessageSystemChat($"You are not in a hellgate.", ChatMessageType.Broadcast));
         }
 
         [CommandHandler("rebuff", AccessLevel.Player, CommandHandlerFlag.RequiresWorld,
