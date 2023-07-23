@@ -35,7 +35,7 @@ namespace ACE.Server.EscapeFromDereth.Towns
 
         private static List<Town> TownsList = new List<Town>();
 
-        private static TimeSpan TownTimer = TimeSpan.FromMinutes(60 * 3);
+        private static TimeSpan TownTimer = TimeSpan.FromMinutes(15);
 
         private static TownRepository TownRepo = new TownRepository();
 
@@ -183,7 +183,7 @@ namespace ACE.Server.EscapeFromDereth.Towns
                 if (meetingHall != null)
                 {
                     meetingHall.RemovePlayer(player);
-                    player.MeetingHallExpiration = Time.GetUnixTime() + TimeSpan.FromMinutes(30).TotalSeconds; // 30 minute waiting period
+                    player.MeetingHallExpiration = Time.GetUnixTime() + TimeSpan.FromMinutes(15).TotalSeconds; // 15 minute waiting period
                     return true;
                 }
             }
