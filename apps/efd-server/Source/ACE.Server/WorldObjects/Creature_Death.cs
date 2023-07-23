@@ -12,6 +12,7 @@ using ACE.Server.Entity;
 using ACE.Server.Entity.Actions;
 using ACE.Server.EscapeFromDereth.Common;
 using ACE.Server.EscapeFromDereth.Hellgates;
+using ACE.Server.EscapeFromDereth.Towns;
 using ACE.Server.Factories;
 using ACE.Server.Managers;
 using ACE.Server.Network.GameEvent.Events;
@@ -116,16 +117,30 @@ namespace ACE.Server.WorldObjects
 
             if (IsHellgateBoss)
             {
-                var exitPortal = WorldObjectFactory.CreateNewWorldObject(600004);
-                var hellgate = HellgateManager.GetHellgate(Location.Instance);
-
-                if (exitPortal != null && hellgate != null)
+                if (IsInHellgate)
                 {
-                    exitPortal.Location = new Position(Location);
-                    exitPortal.Lifespan = (int?)hellgate.TimeRemaining;
-                    exitPortal?.EnterWorld();
+                    var exitPortal = WorldObjectFactory.CreateNewWorldObject(600004);
+                    var hellgate = HellgateManager.GetHellgate(Location.Instance);
+
+                    if (exitPortal != null && hellgate != null)
+                    {
+                        exitPortal.Location = new Position(Location);
+                        exitPortal.Lifespan = (int?)hellgate.TimeRemaining;
+                        exitPortal?.EnterWorld();
+                    }
+                } else
+                {
+                    var town = TownManager.GetClosestTownFromPosition(Location);
+                    var killer = lastDamager.TryGetPetOwnerOrAttacker();
+                    if (killer != null)
+                    {
+                        var player = PlayerManager.FindByGuid(killer.Guid.Full);
+                        TownManager.CleanupMeetingHall(town.MeetingHallInstance);
+                        TownManager.UpdateTownOwnership(town.Name, AllegianceManager.GetMonarch(player).Guid.Full);
+                    }
+
                 }
-            }
+            } 
 
             UpdateVital(Health, 0);
 
@@ -772,10 +787,9 @@ namespace ACE.Server.WorldObjects
 
         private TreasureDeath CreateDeathTreasureProfile(TreasureDeath profile)
         {
-            var isHellgateBoss = WeenieClassId == 4000226;
-            var magicMax = isHellgateBoss ? 250: profile.MagicItemMaxAmount;
-            var itemMax = isHellgateBoss ? 250: profile.ItemMaxAmount;
-            var mundaneMax = isHellgateBoss ? 250: profile.MundaneItemMaxAmount;
+            var magicMax = IsHellgateBoss ? 250: profile.MagicItemMaxAmount;
+            var itemMax = IsHellgateBoss ? 250: profile.ItemMaxAmount;
+            var mundaneMax = IsHellgateBoss ? 250: profile.MundaneItemMaxAmount;
 
             var tier = profile.Tier;
 

@@ -9,6 +9,7 @@ using ACE.Server.EscapeFromDereth.Towns;
 using ACE.Server.Factories;
 using ACE.Server.Realms;
 using ACE.Server.WorldObjects;
+using System;
 using System.Collections.Generic;
 
 namespace ACE.Server.EscapeFromDereth.Common
@@ -25,11 +26,28 @@ namespace ACE.Server.EscapeFromDereth.Common
             switch (ruleset.Realm.Id)
             {
                 case 6:
-                    return ProcessHomeRealm(wo, ruleset);
+                    return ProcessHomeRealmObject(wo, ruleset);
                 case 1016:
                     return ProcessHellgateObject(wo, ruleset);
+                case 1017:
+                    return ProcessTownMeetingHallObject(wo, ruleset);
                 case 0x7FFF:
                     return ProcessHideoutObject(wo, ruleset);
+            }
+
+            return wo;
+        }
+
+        private static WorldObject ProcessTownMeetingHallObject(WorldObject wo, AppliedRuleset ruleset)
+        {
+            switch (wo.WeenieType)
+            {
+                case WeenieType.Portal:
+                    wo.Destroy();
+                    return null;
+                case WeenieType.Door:
+                    wo.Destroy();
+                    return null;
             }
 
             return wo;
@@ -46,7 +64,7 @@ namespace ACE.Server.EscapeFromDereth.Common
             return null;
         }
 
-        private static WorldObject ProcessHomeRealm(WorldObject wo, AppliedRuleset ruleset)
+        private static WorldObject ProcessHomeRealmObject(WorldObject wo, AppliedRuleset ruleset)
         {
             switch (wo.WeenieType)
             {
@@ -67,12 +85,20 @@ namespace ACE.Server.EscapeFromDereth.Common
 
         private static WorldObject ProcessHomeRealmPortal(Portal portal, AppliedRuleset ruleset)
         {
+            var location = TownManager.GetTownDistance(portal.Location);
             // town network portals only exist in whitelisted towns
-            if (portal.Name.Contains("Town Network") && TownManager.GetTownDistance(portal.Location) > 500)
+            if (portal.Name.Contains("Town Network") && location > 600)
             {
                 portal.Destroy();
                 return null;
             }
+
+            if (portal.Name.Contains("Meeting Hall") && location > 600)
+            {
+                portal.Destroy();
+                return null;
+            }
+
 
             return portal;
         }

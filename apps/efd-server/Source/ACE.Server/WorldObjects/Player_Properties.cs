@@ -1378,5 +1378,11 @@ namespace ACE.Server.WorldObjects
 
             set { if (value == 0) RemoveProperty(PropertyDataId.HideoutInstance); else SetProperty(PropertyDataId.HideoutInstance, value); }
         }
+
+        public double MeetingHallExpiration
+        {
+            get => GetProperty(PropertyFloat.MeetingHallExpiration) ?? 0;
+            set { if (value == 0) RemoveProperty(PropertyFloat.MeetingHallExpiration); else SetProperty(PropertyFloat.MeetingHallExpiration, value); }
+        }
     }
 }

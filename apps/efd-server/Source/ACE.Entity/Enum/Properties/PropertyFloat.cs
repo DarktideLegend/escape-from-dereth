@@ -216,7 +216,12 @@ namespace ACE.Entity.Enum.Properties
         [ServerOnly]
         PCAPRecordeOmegaY              = 8017,
         [ServerOnly]
-        PCAPRecordeOmegaZ              = 8018
+        PCAPRecordeOmegaZ              = 8018,
+
+        // EFD
+        [ServerOnly]
+        MeetingHallExpiration          = 9000
+
     }
 
     public static class PropertyFloatExtensions

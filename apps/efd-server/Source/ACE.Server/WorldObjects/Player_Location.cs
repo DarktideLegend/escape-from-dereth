@@ -837,6 +837,12 @@ namespace ACE.Server.WorldObjects
             if (newRealmId == 0x7FFF)
                 SetPosition(PositionType.HomeRealmExitTo, new Position(Location.InFrontOf(-5f, true)));
 
+            if (prevrealm.Realm.Id == 1017) // if leaving town meeting hall
+                TownManager.RemovePlayerToMeetingHall(this, Location.Instance);
+
+            if (newRealm.Realm.Id == 1017) // if entering town meeting hall
+                TownManager.AddPlayerToMeetingHall(this, newLocation.Instance);
+
             if (prevrealm.Realm.Id == 1016) // if leaving hellgate
                 HellgateManager.RemovePlayerFromHellgate(this, Location.Instance);
 
@@ -1092,10 +1098,10 @@ namespace ACE.Server.WorldObjects
             {
                 CurrentLandblock?.SetActive();
 
-                if (!CurrentLandblock.IsDungeon && TownManager.Towns.TryGetValue(CurrentLandblock.Id.Landblock, out var town) && town.IsClosed) 
+                /*if (!CurrentLandblock.IsDungeon && TownManager.Towns.TryGetValue(CurrentLandblock.Id.Landblock, out var town) && town.IsClosed) 
                 {
                     WorldManager.ThreadSafeTeleport(this, town.BootLocation, false);
-                }
+                }*/
             }
 
         }

@@ -1,14 +1,11 @@
 {
-  "name": "Hellgate",
+  "name": "Town Meeting Hall",
   "type": "Ruleset",
     "properties": {
         "Description": ".",
         "RulesetStampVendorCategory": 1,
         "IsFullLootOnDeath": true,
-        "ExperienceMultiplierAll": 2,
-        "CreatureSpawnMultiplier": 2,
-        "CreatureSpawnGeneratorDelay": 5,
-        "IsNeutralZone": true,
+        "IsNeutralZone": false,
         "HasRecalls": false
     }
 }

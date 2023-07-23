@@ -349,9 +349,6 @@ namespace ACE.Server.Managers
 
             // Tick for hellgates
             HellgateManager.Tick(Time.GetUnixTime());
-
-            // Tick for towns
-            TownManager.Tick(Time.GetUnixTime());
         }
 
         private static void TickSingleThreadedWork()

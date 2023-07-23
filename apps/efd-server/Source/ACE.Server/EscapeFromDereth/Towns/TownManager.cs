@@ -2,9 +2,15 @@ using ACE.Common;
 using ACE.Database;
 using ACE.Entity;
 using ACE.Entity.Enum.Properties;
+using ACE.Entity.Models;
 using ACE.Server.Entity;
+using ACE.Server.Entity.Actions;
 using ACE.Server.EscapeFromDereth.Common;
+using ACE.Server.EscapeFromDereth.Hellgates.Entity;
+using ACE.Server.EscapeFromDereth.Towns.Data;
 using ACE.Server.EscapeFromDereth.Towns.Entity;
+using ACE.Server.Factories;
+using ACE.Server.Managers;
 using ACE.Server.Network.GameMessages.Messages;
 using ACE.Server.Realms;
 using ACE.Server.WorldObjects;
@@ -25,41 +31,27 @@ namespace ACE.Server.EscapeFromDereth.Towns
     {
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public readonly static Dictionary<ushort, Town> Towns = new Dictionary<ushort, Town>()
-        {
-            { 0xC6A9, new Town("Arwic",
-                EFDHelpers.slocToPosition("0xC6A90013 [51.633736 68.552765 42.005001] -0.080479 0.000000 0.000000 0.996756 0"),
-                EFDHelpers.slocToPosition("0xC5A80004 [22.075813 93.041489 56.005001] 0.464588 0.000000 0.000000 0.885527 393216")) },
-            { 0xC98C, new Town("Rithwic",
-                EFDHelpers.slocToPosition("0xC98C0028 [113.666000 190.259003 22.009998] -0.707107 0.000000 0.000000 -0.707107 393216"),
-                EFDHelpers.slocToPosition("0xCA8C002D [132.680344 106.881424 12.004999] 0.884355 0.000000 0.000000 0.466815 393216")) },
-            { 0xCE95, new Town("Eastham",
-                EFDHelpers.slocToPosition("0xCE950023 [115.072716 68.856300 20.004999] 0.860280 0.000000 0.000000 -0.509823 0"),
-                EFDHelpers.slocToPosition("0xCE960004 [3.525760 93.337540 19.711185] -0.259322 0.000000 0.000000 0.965791 393216")) }
-        };
+        public readonly static Dictionary<string, Town> Towns = new Dictionary<string, Town>();
 
-        private readonly static List<Town> TownsList = Towns.Select((kvp) => kvp.Value).ToList();
+        private static List<Town> TownsList = new List<Town>();
 
-        private static HashSet<Town> ClosedTowns = new HashSet<Town>();
+        private static TimeSpan TownTimer = TimeSpan.FromMinutes(60 * 3);
+
+        private static TownRepository TownRepo = new TownRepository();
+
+        public static readonly Position TownMeetingHallLocation = EFDHelpers.slocToPosition("0x011F0126 [30.000000 -60.000000 6.000000] 1.000000 0.000000 0.000000 0.000000 0");
+        public static readonly Position TownMeetingHallBossLocation = EFDHelpers.slocToPosition("0x011F010D [28.415749 -24.232437 0.005000] -0.943849 0.000000 0.000000 -0.330377 0");
+
+        private static readonly Dictionary<uint, MeetingHall> MeetingHalls = new Dictionary<uint, MeetingHall>();
 
         public static void Initialize()
         {
-            foreach(var town in Towns)
+            var towns = TownRepo.GetAllTowns();
+
+            foreach (var town in towns)
             {
-                var result = DatabaseManager.World.GetTownByName(town.Value.Name);
-
-                if (result == null)
-                {
-                    DatabaseManager.World.CreateTown(town.Value.Name);
-                    continue;
-                }
-
-                var townEntity = town.Value;
-                if (townEntity != null)
-                {
-                    townEntity.SetOwnership(result.AllegianceId);
-
-                }
+                Towns.Add(town.Name, town);
+                TownsList.Add(town);
             }
         }
 
@@ -68,71 +60,24 @@ namespace ACE.Server.EscapeFromDereth.Towns
             return Towns.Values.Where(town => town.Name == name).FirstOrDefault();
         }
 
-        public static void UpdateTownOwnership(string name, uint monarchId)
+        public static void UpdateTownOwnership(string name, uint allegianceId)
         {
-            lock (Towns)
-            {
-                var town = DatabaseManager.World.GetTownByName(name);
-
-                if (town != null)
-                {
-                    town.AllegianceId = monarchId;
-                    DatabaseManager.World.UpdateTown(town);
-                    GetTownByName(name).SetOwnership(monarchId);
-                }
-            }
+            var town = GetTownByName(name);
+            town.SetOwnership(allegianceId, Time.GetUnixTime() + TownTimer.TotalSeconds);
+            TownRepo.UpdateTown(town);
         }
 
-        public static void UpdateTownTaxRate(string name, float rate)
+        public static void UpdateTownTaxRate(string name, float taxRate)
         {
-            lock (Towns)
-            {
-                var town = DatabaseManager.World.GetTownByName(name);
-
-                if (town != null)
-                {
-                    town.TaxRate = rate;
-                    DatabaseManager.World.UpdateTown(town);
-                    GetTownByName(name).SetTaxRate(rate);
-                }
-            }
+            var town = GetTownByName(name);
+            town.SetTaxRate(taxRate);
+            TownRepo.UpdateTown(town);
         }
-
-        public static bool closeTown(Town town)
-        {
-            if (ClosedTowns.Contains(town))
-                return false;
-
-            ClosedTowns.Add(town);
-            town.Close();
-            return true;
-        }
-
-
-        public static bool openTown(Town town)
-        {
-            if (ClosedTowns.TryGetValue(town, out var closedTown))
-            {
-                closedTown.Open();
-                return ClosedTowns.Remove(town);
-            }
-
-            return false;
-        }
-
 
         public static Town GetRandomTown()
         {
-            int random;
-            Town town;
-
-            do
-            {
-                random = ThreadSafeRandom.Next(0, TownsList.Count - 1);
-                town = TownsList[random];
-            } while (town.IsClosed);
-
-            return town;
+            var random = ThreadSafeRandom.Next(0, TownsList.Count - 1);
+            return TownsList[random];
         }
 
         public static Town GetClosestTownFromPosition(Position position)
@@ -169,8 +114,83 @@ namespace ACE.Server.EscapeFromDereth.Towns
             return distance;
         }
 
-        public static void Tick(double currentUnixTime)
+        internal static uint CreateMeetingHall(Town town, Player player, List<Realm> rules)
         {
+            var realm = RealmManager.GetNewEphemeralLandblock(TownMeetingHallLocation.LandblockId, player, rules, null, true);
+            town.MeetingHallInstance = realm.Instance;
+
+            var meetingHall = new MeetingHall(realm.Instance, town);
+            MeetingHalls.TryAdd(realm.Instance, meetingHall);
+
+            var boss = WorldObjectFactory.CreateNewWorldObject(4000226); // Darkbeat temporarily 
+            if (boss != null)
+            {
+                boss.Location = new Position(TownMeetingHallBossLocation);
+                boss.Location.Instance = realm.Instance;
+                boss.Lifespan = int.MaxValue;
+                boss.EnterWorld();
+            }
+
+            return realm.Instance;
         }
+
+        public static void CleanupMeetingHall(uint instance)
+        {
+            if (MeetingHalls.TryGetValue(instance, out var meetingHall))
+            {
+                if (meetingHall != null)
+                {
+                    foreach (var player in meetingHall.Players)
+                    {
+                        player.ExitInstance();
+                    }
+
+                    MeetingHalls.Remove(instance);
+
+                    var actionChain = new ActionChain();
+                    actionChain.AddDelaySeconds(60); // give enough time for meeting hall to be destroyed
+                    actionChain.AddAction(WorldManager.ActionQueue, () =>
+                    {
+                        var lb = LandblockManager.GetLandblockUnsafe(TownMeetingHallLocation.LandblockId, meetingHall.Instance);
+                        if (lb != null)
+                            LandblockManager.AddToDestructionQueue(lb);
+                        meetingHall.Destroy();
+                    });
+                    actionChain.EnqueueChain();
+
+                }
+
+            }
+        }
+
+        internal static bool AddPlayerToMeetingHall(Player player, uint instance)
+        {
+            if (MeetingHalls.TryGetValue(instance, out var meetingHall))
+            {
+                if (meetingHall != null)
+                {
+                    meetingHall.AddPlayer(player);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        internal static bool RemovePlayerToMeetingHall(Player player, uint instance)
+        {
+            if (MeetingHalls.TryGetValue(instance, out var meetingHall))
+            {
+                if (meetingHall != null)
+                {
+                    meetingHall.RemovePlayer(player);
+                    player.MeetingHallExpiration = Time.GetUnixTime() + TimeSpan.FromMinutes(30).TotalSeconds; // 30 minute waiting period
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+
     }
 }
