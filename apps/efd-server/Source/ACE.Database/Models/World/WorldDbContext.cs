@@ -2632,7 +2632,7 @@ namespace ACE.Database.Models.World
 
                 entity.Property(e => e.Expiration)
                     .HasColumnName("expiration")
-                    .HasDefaultValueSql("'-1'");
+                    .HasDefaultValueSql("'0'");
 
                 entity.Property(e => e.LastModified)
                     .HasColumnType("datetime")

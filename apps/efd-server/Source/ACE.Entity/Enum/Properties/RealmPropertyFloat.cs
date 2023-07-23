@@ -46,7 +46,6 @@ namespace ACE.Entity.Enum.Properties
         [RealmPropertyFloat(1f, 0.01f, 100f)]
         CreatureSelfMultiplier,
 
-
         [RealmPropertyFloat(1f, 0.01f, 1f)]
         TownDistanceMultiplier,
 

@@ -16,6 +16,7 @@ using ACE.Server.EscapeFromDereth.Hellgates;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using ACE.Server.EscapeFromDereth.Towns;
 
 namespace ACE.Server.WorldObjects
 {
@@ -96,7 +97,7 @@ namespace ACE.Server.WorldObjects
 
         public bool IsGateway { get => WeenieClassId == 1955; }
 
-        public bool IsProcessingHellgate = false;
+        public bool IsProcessing = false;
 
         //public override void OnActivate(WorldObject activator)
         //{
@@ -263,10 +264,10 @@ namespace ACE.Server.WorldObjects
 
             if (WeenieClassId == 600004) // to hellgate exit 
             {
-                if (IsProcessingHellgate)
+                if (IsProcessing)
                     return new ActivationResult(false);
 
-                IsProcessingHellgate = true;
+                IsProcessing = true;
 
                 var hellgate = HellgateManager.GetHellgate(Location.Instance);
                 if (hellgate != null)
@@ -274,9 +275,24 @@ namespace ACE.Server.WorldObjects
                     HellgateManager.HellgateExitTransition(player, hellgate);
                 }
 
-                IsProcessingHellgate = false;
+                IsProcessing = false;
                 return new ActivationResult(false);
 
+            }
+
+            // to TownMeetingHall
+            if (Name.Contains("Meeting Hall"))
+            {
+                var rules = new List<Realm>()
+                {
+                    RealmManager.GetRealm(player.HomeRealm).Realm,
+                    RealmManager.GetRealm(1017).Realm // meeting hall ruleset
+                };
+
+                if (IsProcessing)
+                    return new ActivationResult(false);
+
+                return ProcessMeetingHall(player, rules);
             }
 
             if (WeenieClassId == 600003) // to hellgate (ephemeral realm)
@@ -288,7 +304,7 @@ namespace ACE.Server.WorldObjects
                     RealmManager.GetRealm(1016).Realm // hellgate ruleset
                 };
 
-                if (IsProcessingHellgate)
+                if (IsProcessing)
                     return new ActivationResult(false);
 
                 return ProcessHellgate(player, rules);
@@ -317,15 +333,48 @@ namespace ACE.Server.WorldObjects
             return new ActivationResult(true);
         }
 
+        private ActivationResult ProcessMeetingHall(Player player, List<Realm> rules)
+        {
+            IsProcessing = true;
+
+            var town = TownManager.GetClosestTownFromPosition(Location);
+
+            if (town.ShouldCreateMeetingHall)
+                TownManager.CreateMeetingHall(town, player, rules);
+
+
+            if (town.MeetingHallInstance != 0 && player.CanEnterMeetingHall)
+            {
+                var location = new Position(TownManager.TownMeetingHallLocation);
+                location.Instance = town.MeetingHallInstance;
+                WorldManager.ThreadSafeTeleport(player, location, false, new ActionEventDelegate(() =>
+                {
+                    var message = $"Player {player.Name} has entered Town Meeting Hall in {town.Name}";
+                    log.Info(message);
+                    PlayerManager.BroadcastToAll(new GameMessageSystemChat(message, ChatMessageType.WorldBroadcast));
+                }));
+
+
+            } else
+            {
+                var message = $"You may not enter the Town Meeting Hall at this time";
+                player.EnqueueBroadcast(new GameMessageSystemChat(message, ChatMessageType.System));
+            }
+
+            IsProcessing = false;
+            return new ActivationResult(false);
+
+        }
+
         private ActivationResult ProcessHellgate(Player player, List<Realm> rules)
         {
-            IsProcessingHellgate = true;
+            IsProcessing = true;
 
             var hellgate = HellgateManager.CreateHellgate(player, rules);
 
             if (hellgate == null)
             {
-                IsProcessingHellgate = false;
+                IsProcessing = false;
                 return new ActivationResult(false);
             }
 
@@ -341,7 +390,7 @@ namespace ACE.Server.WorldObjects
                 }));
             }
 
-            IsProcessingHellgate = false;
+            IsProcessing = false;
             return new ActivationResult(false);
         }
 

@@ -472,17 +472,13 @@ VALUES (0x7C6A96A6, 39788, 0xC6A90008, 23.5546, 168.419, 22, -0.363977, 0, 0, 0.
 /* @teleloc 0xC6A90008 [23.554600 168.419006 22.000000] -0.363977 0.000000 0.000000 0.931408 */
 
 INSERT INTO `landblock_instance` (`guid`, `weenie_Class_Id`, `obj_Cell_Id`, `origin_X`, `origin_Y`, `origin_Z`, `angles_W`, `angles_X`, `angles_Y`, `angles_Z`, `is_Link_Child`, `last_Modified`)
-VALUES (0x7C6A96A8, 3000311, 0xC6A9001B, 81.627, 63.6958, 42.005, 0.520284, 0, 0, 0.853993, False, '2023-06-13 00:17:19'); /* Quality of Life Vendor */
-/* @teleloc 0xC6A9001B [81.626999 63.695801 42.005001] 0.520284 0.000000 0.000000 0.853993 */
+VALUES (0x7C6A96AB, 72331, 0xC6A901A2, 106.267, 66.1768, 42.005, 0.382684, 0, 0, 0.92388, False, '2023-07-22 17:52:13'); /* Arqubal the Archmage */
+/* @teleloc 0xC6A901A2 [106.266998 66.176804 42.005001] 0.382684 0.000000 0.000000 0.923880 */
 
 INSERT INTO `landblock_instance` (`guid`, `weenie_Class_Id`, `obj_Cell_Id`, `origin_X`, `origin_Y`, `origin_Z`, `angles_W`, `angles_X`, `angles_Y`, `angles_Z`, `is_Link_Child`, `last_Modified`)
-VALUES (0x7C6A96A9, 72331, 0xC6A9001B, 84.6837, 62.8252, 42.005, -0.371615, 0, 0, -0.928387, False, '2023-06-23 00:09:42'); /* Arqubal the Archmage */
-/* @teleloc 0xC6A9001B [84.683701 62.825199 42.005001] -0.371615 0.000000 0.000000 -0.928387 */
+VALUES (0x7C6A96AC, 3000304, 0xC6A901A2, 106.199, 59.0826, 42.005, 0.891567, 0, 0, 0.45289, False, '2023-07-22 17:53:19'); /* Fitness Instructor Anthony */
+/* @teleloc 0xC6A901A2 [106.198997 59.082600 42.005001] 0.891567 0.000000 0.000000 0.452890 */
 
 INSERT INTO `landblock_instance` (`guid`, `weenie_Class_Id`, `obj_Cell_Id`, `origin_X`, `origin_Y`, `origin_Z`, `angles_W`, `angles_X`, `angles_Y`, `angles_Z`, `is_Link_Child`, `last_Modified`)
-VALUES (0x7C6A96AA, 3000304, 0xC6A9001B, 86.6262, 60.5624, 42.005, 0.677556, 0, 0, 0.735472, False, '2023-06-23 01:36:17'); /* Fitness Instructor Anthony */
-/* @teleloc 0xC6A9001B [86.626198 60.562401 42.005001] 0.677556 0.000000 0.000000 0.735472 */
-
-INSERT INTO `landblock_instance` (`guid`, `weenie_Class_Id`, `obj_Cell_Id`, `origin_X`, `origin_Y`, `origin_Z`, `angles_W`, `angles_X`, `angles_Y`, `angles_Z`, `is_Link_Child`, `last_Modified`)
-VALUES (0x7C6A96AB, 600001, 0xC6A9001A, 82.07027, 42.22499, 41.937, 0.010235, 0, 0, -0.999948, False, '2023-07-18 12:17:03'); /* Hideout Portal */
-/* @teleloc 0xC6A9001A [82.070267 42.224991 41.937000] 0.010235 0.000000 0.000000 -0.999948 */
+VALUES (0x7C6A96AD, 3000311, 0xC6A901A2, 102.877, 67.1901, 42.005, 0, 0, 0, -1, False, '2023-07-22 18:09:39'); /* Quality of Life Vendor */
+/* @teleloc 0xC6A901A2 [102.876999 67.190102 42.005001] 0.000000 0.000000 0.000000 -1.000000 */

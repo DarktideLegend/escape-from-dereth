@@ -12,9 +12,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
     {
         public readonly HashSet<Player> Players;
         public readonly HellgateLandblock Landblock;
-
         public AppliedRuleset Ruleset { get; }
-
         public readonly uint Instance;
         public uint HellgateGroup;
         public double Expiration { get; private set; }

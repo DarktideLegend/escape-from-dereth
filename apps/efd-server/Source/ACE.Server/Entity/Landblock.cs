@@ -568,7 +568,7 @@ namespace ACE.Server.Entity
                     }
                 }
 
-                if (!Permaload && HasNoKeepAliveObjects)
+                if (HasNoKeepAliveObjects)
                 {
                     if (lastActiveTime + dormantInterval < thisHeartBeat)
                     {
@@ -584,7 +584,7 @@ namespace ACE.Server.Entity
 
                         IsDormant = true;
                     }
-                    if (lastActiveTime + UnloadInterval < thisHeartBeat)
+                    if (!Permaload && lastActiveTime + UnloadInterval < thisHeartBeat)
                         LandblockManager.AddToDestructionQueue(this);
                 }
 
