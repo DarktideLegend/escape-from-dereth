@@ -32,7 +32,6 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
 
         public Hellgate(
             HellgateLandblock landblock,
-            List<Player> players,
             AppliedRuleset ruleset,
             Position bossPosition,
             Position exitPosition,
@@ -42,7 +41,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
             uint hellgateGroup,
             bool isOpen,
             int tier,
-            uint instance) : base(instance, players)
+            uint instance) : base(instance)
         {
             Landblock = landblock;
             Ruleset = ruleset;

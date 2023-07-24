@@ -10,7 +10,7 @@ namespace ACE.Server.EscapeFromDereth.Towns.Entity
     {
         public readonly Town Town;
 
-        public MeetingHall(uint instance, List<Player> players, Town town) : base(instance, players)
+        public MeetingHall(uint instance, Town town) : base(instance)
         {
             Town = town;
         }

@@ -124,9 +124,16 @@ namespace ACE.Server.WorldObjects
 
                     if (exitPortal != null && hellgate != null)
                     {
-                        exitPortal.Location = new Position(Location);
-                        exitPortal.Lifespan = (int?)hellgate.TimeRemaining;
-                        exitPortal?.EnterWorld();
+                        var actionChain = new ActionChain();
+                        actionChain.AddDelaySeconds(5); 
+                        actionChain.AddAction(exitPortal, new Action(() =>
+                        {
+                            exitPortal.Location = new Position(Location);
+                            exitPortal.Lifespan = (int?)hellgate.TimeRemaining;
+                            exitPortal?.EnterWorld();
+                        }));
+                        actionChain.EnqueueChain();
+
                     }
                 } else
                 {

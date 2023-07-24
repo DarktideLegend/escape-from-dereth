@@ -362,6 +362,14 @@ namespace ACE.Server.WorldObjects
         private ActivationResult ProcessHellgate(Player player, List<Realm> rules)
         {
             IsProcessing = true;
+            var fellowship = player.Fellowship?.GetFellowshipMembers()?.Values?.ToList();
+            if (
+                !HellgateManager.CreateHellgatePlayerValidator(player) ||
+                !HellgateManager.CreateHellgateFellowshipValidator(player, fellowship))
+            {
+                IsProcessing = false;
+                return new ActivationResult(false);
+            }
 
             var hellgate = HellgateManager.CreateHellgate(player, rules);
 
@@ -374,13 +382,10 @@ namespace ACE.Server.WorldObjects
             var hellgateLocation = hellgate.DropPosition;
 
             Destroy();
-            foreach (var member in hellgate.Players)
+            foreach (var member in fellowship)
             {
 
-                WorldManager.ThreadSafeTeleport(member, hellgateLocation, false, new ActionEventDelegate(() =>
-                {
-                    log.Info($"Player {member.Name} has entered hellgate {hellgateLocation.Instance}");
-                }));
+                WorldManager.ThreadSafeTeleport(member, hellgateLocation, false);
             }
 
             IsProcessing = false;

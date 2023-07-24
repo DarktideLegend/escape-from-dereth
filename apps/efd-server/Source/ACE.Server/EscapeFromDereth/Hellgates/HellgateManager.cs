@@ -63,7 +63,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
 
         private static readonly ImmutableList<ushort> HellgateLandblockKeys = HellgateLandblocks.Keys.ToImmutableList();
 
-        private static readonly ConcurrentDictionary<uint, Hellgate> ActiveHellgates = new ConcurrentDictionary<uint, Hellgate>();
+        private static readonly Dictionary<uint, Hellgate> ActiveHellgates = new Dictionary<uint, Hellgate>();
 
         private static readonly Queue<HellgateGroup> HellgateGroups = new Queue<HellgateGroup>();
 
@@ -182,6 +182,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             hellgate.BossSpawned = true;
             var lifespan = (int)hellgate.TimeRemaining;
             var boss = WorldObjectFactory.CreateNewWorldObject(4000226); // Darkbeat temporarily 
+            WorldObjectProcessor.MutateDeathTreasureTypeByTier(boss as Creature, hellgate.Tier);
             if (boss != null)
             {
                 boss.Location = hellgate.BossPosition;
@@ -260,24 +261,19 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
 
         public static Hellgate CreateHellgate(Player leader, List<Realm> appliedRulesets)
         {
-            if (!CreateHellgateValidator(leader))
-                return null;
-
             lock (hellgateLock)
             {
-
                 if (CurrentHellgateGroup.HasReachedCapacity || CurrentHellgateGroup.IsClosed)
                     CreateHellgateGroup();
 
-                var allowedPlayers = leader.Fellowship.GetFellowshipMembers().Values.ToList();
-                var hellgate = CreateHellgate(leader, allowedPlayers, appliedRulesets, CurrentHellgateGroup);
+                var hellgate = CreateHellgate(leader, appliedRulesets, CurrentHellgateGroup);
                 return hellgate;
             }
         }
 
-        private static Hellgate CreateHellgate(Player leader, List<Player> allowedPlayers, List<Realm> appliedRulesets, HellgateGroup hellgateGroup)
+        private static Hellgate CreateHellgate(Player leader, List<Realm> appliedRulesets, HellgateGroup hellgateGroup)
         {
-            var ephemeralRealm = RealmManager.GetNewEphemeralLandblock(hellgateGroup.HellgateLandblock.DropLocation.LandblockId, leader, appliedRulesets, allowedPlayers);
+            var ephemeralRealm = RealmManager.GetNewEphemeralLandblock(hellgateGroup.HellgateLandblock.DropLocation.LandblockId, leader, appliedRulesets, true);
             var instance = ephemeralRealm.Instance;
             var expiration = hellgateGroup.HellgateGroupExpiration;
             var bossExpiration = hellgateGroup.HellgateBossSpawnExpiration;
@@ -297,7 +293,6 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
 
             var hellgate = new Hellgate(
                 hellgateGroup.HellgateLandblock,
-                allowedPlayers,
                 ephemeralRealm.RealmRuleset,
                 bossPosition,
                 exitPosition,
@@ -317,7 +312,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             return hellgate;
         }
 
-        private static bool CreateHellgateValidator(Player leader)
+        public static bool CreateHellgatePlayerValidator(Player leader)
         {
 
             var fellowship = leader.Fellowship;
@@ -336,9 +331,6 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
                 return false;
             }
 
-            if (!FellowshipValidator(fellowship, leader))
-                return false;
-
             if (ServerManager.ShutdownInitiated)
             {
                 leader.SendMessage($"The server is currently shutting down, players may not enter hellgates at this time.");
@@ -348,19 +340,18 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             return true;
         }
 
-        private static bool FellowshipValidator(Fellowship fellowship, Player leader)
+        public static bool CreateHellgateFellowshipValidator(Player leader, List<Player> fellowship)
         {
-            var memberCount = fellowship.FellowshipMembers.Count;
-            if (memberCount == 1)
+            if (fellowship.Count == 1)
                 return true;
 
-            if (memberCount > 3)
+            if (fellowship.Count > 3)
             {
                 leader.SendMessage($"Fellowships can have no more than 3 players to enter a hellgate.");
                 return false;
             }
 
-            foreach (var member in fellowship.GetFellowshipMembers().Values.ToList())
+            foreach (var member in fellowship)
             {
                 if (member == leader)
                     continue;
