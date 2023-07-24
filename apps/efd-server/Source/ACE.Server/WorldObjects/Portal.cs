@@ -347,14 +347,7 @@ namespace ACE.Server.WorldObjects
             {
                 var location = new Position(TownManager.TownMeetingHallLocation);
                 location.Instance = town.MeetingHallInstance;
-                WorldManager.ThreadSafeTeleport(player, location, false, new ActionEventDelegate(() =>
-                {
-                    var message = $"Player {player.Name} has entered Town Meeting Hall in {town.Name}";
-                    log.Info(message);
-                    PlayerManager.BroadcastToAll(new GameMessageSystemChat(message, ChatMessageType.WorldBroadcast));
-                }));
-
-
+                WorldManager.ThreadSafeTeleport(player, location, false);
             } else
             {
                 var message = $"You may not enter the Town Meeting Hall at this time";
