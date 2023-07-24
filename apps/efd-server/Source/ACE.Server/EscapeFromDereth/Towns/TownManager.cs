@@ -16,6 +16,7 @@ using ACE.Server.Network.GameMessages.Messages;
 using ACE.Server.Realms;
 using ACE.Server.WorldObjects;
 using log4net;
+using log4net.Util;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -117,11 +118,10 @@ namespace ACE.Server.EscapeFromDereth.Towns
 
         internal static uint CreateMeetingHall(Town town, Player player, List<Realm> rules)
         {
-            var players = new List<Player>() { player };
-            var realm = RealmManager.GetNewEphemeralLandblock(TownMeetingHallLocation.LandblockId, player, rules, players, true);
+            var realm = RealmManager.GetNewEphemeralLandblock(TownMeetingHallLocation.LandblockId, player, rules, true);
             town.MeetingHallInstance = realm.Instance;
 
-            var meetingHall = new MeetingHall(realm.Instance, players, town);
+            var meetingHall = new MeetingHall(realm.Instance, town);
             MeetingHalls.TryAdd(realm.Instance, meetingHall);
 
             var boss = WorldObjectFactory.CreateNewWorldObject(4000226); // Darkbeat temporarily 
@@ -147,7 +147,6 @@ namespace ACE.Server.EscapeFromDereth.Towns
                         player.ExitInstance();
                     }
 
-                    MeetingHalls.Remove(instance);
 
                     var actionChain = new ActionChain();
                     actionChain.AddDelaySeconds(60); // give enough time for meeting hall to be destroyed
@@ -156,6 +155,7 @@ namespace ACE.Server.EscapeFromDereth.Towns
                         var lb = LandblockManager.GetLandblockUnsafe(TownMeetingHallLocation.LandblockId, meetingHall.Instance);
                         if (lb != null)
                             LandblockManager.AddToDestructionQueue(lb);
+                        MeetingHalls.Remove(instance);
                         meetingHall.Destroy();
                     });
                     actionChain.EnqueueChain();

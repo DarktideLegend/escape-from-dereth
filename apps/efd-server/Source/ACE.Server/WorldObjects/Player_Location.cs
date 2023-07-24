@@ -837,6 +837,7 @@ namespace ACE.Server.WorldObjects
             if (newRealmId == 0x7FFF)
                 SetPosition(PositionType.HomeRealmExitTo, new Position(Location.InFrontOf(-5f, true)));
 
+
             if (prevrealm.Realm.Id == 1017) // if leaving town meeting hall
                 TownManager.RemovePlayerFromMeetingHall(this, Location.Instance);
 

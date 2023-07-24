@@ -12,10 +12,9 @@ namespace ACE.Server.EscapeFromDereth.Common
         public readonly List<Player> Players = new List<Player>();
         public readonly uint Instance;
 
-        public Arena(uint instance, List<Player> players)
+        public Arena(uint instance)
         {
             Instance = instance;
-            Players = players;
         }
 
         public void Destroy()

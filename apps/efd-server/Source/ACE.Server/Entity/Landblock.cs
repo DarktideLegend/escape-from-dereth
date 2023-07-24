@@ -1159,12 +1159,6 @@ namespace ACE.Server.Entity
         {
             var landblockID = Id.Raw | 0xFFFF;
 
-            // If ephemeral realm, cleanup and destroy
-            if (InnerRealmInfo != null)
-            {
-                InnerRealmInfo.Destroy();
-            }
-
             //log.Debug($"Landblock.Unload({landblockID:X8})");
 
             ProcessPendingWorldObjectAdditionsAndRemovals();

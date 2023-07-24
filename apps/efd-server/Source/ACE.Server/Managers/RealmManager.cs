@@ -149,11 +149,11 @@ namespace ACE.Server.Managers
             return GetRealm(player.GetPosition(PositionType.EphemeralRealmExitTo)?.RealmID ?? player.HomeRealm);
         }
 
-        internal static Landblock GetNewEphemeralLandblock(ACE.Entity.LandblockId landblockId, Player owner, List<ACE.Entity.Models.Realm> realmTemplates, List<Player> allowedPlayers, bool permaload = false)
+        internal static Landblock GetNewEphemeralLandblock(ACE.Entity.LandblockId landblockId, Player owner, List<ACE.Entity.Models.Realm> realmTemplates, bool permaload = false)
         {
             EphemeralRealm ephemeralRealm;
             lock (realmsLock)
-                ephemeralRealm = EphemeralRealm.Initialize(owner, realmTemplates, allowedPlayers);
+                ephemeralRealm = EphemeralRealm.Initialize(owner, realmTemplates);
             var iid = LandblockManager.RequestNewInstanceID(true, ephemeralRealm.RulesetTemplate.Realm.Id, landblockId);
             var landblock = LandblockManager.GetLandblock(landblockId, iid, ephemeralRealm, false, permaload);
 

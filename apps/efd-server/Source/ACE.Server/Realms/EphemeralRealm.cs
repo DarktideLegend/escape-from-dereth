@@ -14,28 +14,23 @@ namespace ACE.Server.Realms
     public class EphemeralRealm
     {
         public Player Owner { get; set; }
-        public List<Player> AllowedPlayers { get; private set; }
-        public bool OpenToFellowship { get; set; } = true;
-        public DateTime ExpiresAt = DateTime.UtcNow.AddDays(1);
-
         public RulesetTemplate RulesetTemplate { get; set; }
         //public bool IsDuelInstance => RulesetTemplate.
 
         private EphemeralRealm() { }
-        private EphemeralRealm(Player owner, RulesetTemplate template, List<Player> allowedPlayers)
+        private EphemeralRealm(Player owner, RulesetTemplate template)
         {
             this.Owner = owner;
             this.RulesetTemplate = template;
-            this.AllowedPlayers = allowedPlayers;
         }
 
-        public static EphemeralRealm Initialize(Player owner, List<Realm> realms, List<Player> allowedPlayers)
+        public static EphemeralRealm Initialize(Player owner, List<Realm> realms)
         {
             var baseRealm = RealmManager.GetBaseRealm(owner);
-            return Initialize(owner, baseRealm, realms, allowedPlayers);
+            return Initialize(owner, baseRealm, realms);
         }
 
-        private static EphemeralRealm Initialize(Player owner, WorldRealm baseRealm, List<Realm> appliedRealms, List<Player> allowedPlayers)
+        private static EphemeralRealm Initialize(Player owner, WorldRealm baseRealm, List<Realm> appliedRealms)
         {
             string key = baseRealm.Realm.Id.ToString();
             RulesetTemplate template = null;
@@ -57,12 +52,7 @@ namespace ACE.Server.Realms
                 template = prevTemplate;
             
 
-            return new EphemeralRealm(owner, template, allowedPlayers);
-        }
-
-        internal void Destroy()
-        {
-            AllowedPlayers.Clear();
+            return new EphemeralRealm(owner, template);
         }
     }
 }
