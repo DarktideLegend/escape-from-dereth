@@ -14,7 +14,7 @@ namespace ACE.Server.Realms
     public class EphemeralRealm
     {
         public Player Owner { get; set; }
-        public HashSet<Player> AllowedPlayers { get; private set; } = new HashSet<Player>();
+        public HashSet<Player> AllowedPlayers { get; private set; }
         public bool OpenToFellowship { get; set; } = true;
         public DateTime ExpiresAt = DateTime.UtcNow.AddDays(1);
 

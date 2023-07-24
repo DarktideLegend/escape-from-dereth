@@ -1,37 +1,19 @@
+using ACE.Server.EscapeFromDereth.Common;
 using ACE.Server.WorldObjects;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace ACE.Server.EscapeFromDereth.Towns.Entity
 {
-    internal class MeetingHall
+    internal class MeetingHall : Arena
     {
-        public readonly List<Player> Players = new List<Player>();
-        public readonly Town Home;
-        public readonly uint Instance;
+        public readonly Town Town;
 
-        public MeetingHall(uint instance, Town home)
+        public MeetingHall(uint instance, List<Player> players, Town town) : base(instance, players)
         {
-            Instance = instance;
-            Home = home;
+            Town = town;
         }
 
-        public void Destroy()
-        {
-            Players.Clear();
-        }
-
-        public void AddPlayer(Player player)
-        {
-            Players.Add(player);
-        }
-
-        public bool RemovePlayer(Player player)
-        {
-            return Players.Remove(player);
-        }
     }
 }

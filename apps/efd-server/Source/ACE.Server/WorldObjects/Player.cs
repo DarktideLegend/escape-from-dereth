@@ -47,7 +47,9 @@ namespace ACE.Server.WorldObjects
 
         public bool LastContact = true;
 
-        public bool CanEnterMeetingHall => MeetingHallExpiration <= 0;
+        public double MeetingHallTimeRemaining => MeetingHallExpiration - Time.GetUnixTime();
+
+        public bool CanEnterMeetingHall => MeetingHallTimeRemaining <= 0;
 
         public bool IsJumping
         {

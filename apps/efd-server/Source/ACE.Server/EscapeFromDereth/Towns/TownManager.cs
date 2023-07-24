@@ -1,6 +1,7 @@
 using ACE.Common;
 using ACE.Database;
 using ACE.Entity;
+using ACE.Entity.Enum;
 using ACE.Entity.Enum.Properties;
 using ACE.Entity.Models;
 using ACE.Server.Entity;
@@ -116,10 +117,11 @@ namespace ACE.Server.EscapeFromDereth.Towns
 
         internal static uint CreateMeetingHall(Town town, Player player, List<Realm> rules)
         {
-            var realm = RealmManager.GetNewEphemeralLandblock(TownMeetingHallLocation.LandblockId, player, rules, null, true);
+            var players = new HashSet<Player>() { player };
+            var realm = RealmManager.GetNewEphemeralLandblock(TownMeetingHallLocation.LandblockId, player, rules, players, true);
             town.MeetingHallInstance = realm.Instance;
 
-            var meetingHall = new MeetingHall(realm.Instance, town);
+            var meetingHall = new MeetingHall(realm.Instance, players.ToList(), town);
             MeetingHalls.TryAdd(realm.Instance, meetingHall);
 
             var boss = WorldObjectFactory.CreateNewWorldObject(4000226); // Darkbeat temporarily 
@@ -170,13 +172,16 @@ namespace ACE.Server.EscapeFromDereth.Towns
                 if (meetingHall != null)
                 {
                     meetingHall.AddPlayer(player);
+                    var message = $"Player {player.Name} has entered the {meetingHall.Town.Name} Town Meeting Hall";
+                    log.Info(message);
+                    PlayerManager.BroadcastToAll(new GameMessageSystemChat(message, ChatMessageType.WorldBroadcast));
                     return true;
                 }
             }
 
             return false;
         }
-        internal static bool RemovePlayerToMeetingHall(Player player, uint instance)
+        internal static bool RemovePlayerFromMeetingHall(Player player, uint instance)
         {
             if (MeetingHalls.TryGetValue(instance, out var meetingHall))
             {
@@ -184,6 +189,8 @@ namespace ACE.Server.EscapeFromDereth.Towns
                 {
                     meetingHall.RemovePlayer(player);
                     player.MeetingHallExpiration = Time.GetUnixTime() + TimeSpan.FromMinutes(15).TotalSeconds; // 15 minute waiting period
+                    var message = $"Player {player.Name} has left the {meetingHall.Town.Name} Town Meeting Hall";
+                    log.Info(message);
                     return true;
                 }
             }
