@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ACE.Server.EscapeFromDereth.Common
 {
-    internal class Arena
+    public class Arena
     {
         public readonly List<Player> Players = new List<Player>();
         public readonly uint Instance;
