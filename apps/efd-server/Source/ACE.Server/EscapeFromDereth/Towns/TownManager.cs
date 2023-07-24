@@ -117,11 +117,11 @@ namespace ACE.Server.EscapeFromDereth.Towns
 
         internal static uint CreateMeetingHall(Town town, Player player, List<Realm> rules)
         {
-            var players = new HashSet<Player>() { player };
+            var players = new List<Player>() { player };
             var realm = RealmManager.GetNewEphemeralLandblock(TownMeetingHallLocation.LandblockId, player, rules, players, true);
             town.MeetingHallInstance = realm.Instance;
 
-            var meetingHall = new MeetingHall(realm.Instance, players.ToList(), town);
+            var meetingHall = new MeetingHall(realm.Instance, players, town);
             MeetingHalls.TryAdd(realm.Instance, meetingHall);
 
             var boss = WorldObjectFactory.CreateNewWorldObject(4000226); // Darkbeat temporarily 

@@ -269,13 +269,13 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
                 if (CurrentHellgateGroup.HasReachedCapacity || CurrentHellgateGroup.IsClosed)
                     CreateHellgateGroup();
 
-                var allowedPlayers = leader.Fellowship.GetFellowshipMembers().Values.ToHashSet();
+                var allowedPlayers = leader.Fellowship.GetFellowshipMembers().Values.ToList();
                 var hellgate = CreateHellgate(leader, allowedPlayers, appliedRulesets, CurrentHellgateGroup);
                 return hellgate;
             }
         }
 
-        private static Hellgate CreateHellgate(Player leader, HashSet<Player> allowedPlayers, List<Realm> appliedRulesets, HellgateGroup hellgateGroup)
+        private static Hellgate CreateHellgate(Player leader, List<Player> allowedPlayers, List<Realm> appliedRulesets, HellgateGroup hellgateGroup)
         {
             var ephemeralRealm = RealmManager.GetNewEphemeralLandblock(hellgateGroup.HellgateLandblock.DropLocation.LandblockId, leader, appliedRulesets, allowedPlayers);
             var instance = ephemeralRealm.Instance;
