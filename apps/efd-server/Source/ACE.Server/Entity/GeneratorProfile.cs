@@ -14,6 +14,7 @@ using ACE.Server.Managers;
 using ACE.Server.Physics.Common;
 using ACE.Server.WorldObjects;
 using ACE.Server.EscapeFromDereth.Common;
+using ACE.Server.EscapeFromDereth.Mutations;
 
 namespace ACE.Server.Entity
 {
@@ -318,7 +319,7 @@ namespace ACE.Server.Entity
         {
             var wo = WorldObjectFactory.CreateNewWorldObject(Biota.WeenieClassId);
             wo.Location = new ACE.Entity.Position(Generator.Location);
-            wo = WorldObjectProcessor.ProcessWorldObject(wo, Generator.RealmRuleset);
+            wo = MutationsManager.ProcessWorldObject(wo, Generator.RealmRuleset);
             if (wo == null)
             {
                 log.Warn($"[GENERATOR] 0x{Generator.Guid}:{Generator.WeenieClassId} {Generator.Name}.Spawn(): failed to create wcid {Biota.WeenieClassId}");

@@ -533,7 +533,7 @@ namespace ACE.Database
             return dynamics;
         }
 
-        public Biota GetHideoutStorage(Position position)
+        public Biota GetPersistentStorage(Position position)
         {
             using (var context = new ShardDbContext())
             {
@@ -547,7 +547,8 @@ namespace ACE.Database
                 {
                     var biota = GetBiota(result.ObjectId);
 
-                    if (biota.WeenieClassId == 600000)
+                    // hideout storage and town storage
+                    if (biota.WeenieClassId == 600000 || biota.WeenieClassId == 600005)
                         return biota;
                 }
 

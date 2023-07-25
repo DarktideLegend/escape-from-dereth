@@ -8,6 +8,7 @@ using ACE.Database.Models.Shard;
 using ACE.Entity;
 using ACE.Server.Factories;
 using ACE.Server.EscapeFromDereth.Common;
+using ACE.Server.EscapeFromDereth.Mutations;
 
 namespace ACE.Server.WorldObjects
 {
@@ -39,7 +40,7 @@ namespace ACE.Server.WorldObjects
                 {
                     wo = WorldObjectFactory.CreateWorldObject(DatabaseManager.World.GetCachedWeenie(link.WeenieClassId), new ObjectGuid(link.Guid));
                     wo.Location = new Position(parent.Location);
-                    wo = WorldObjectProcessor.ProcessWorldObject(wo, parent.RealmRuleset);
+                    wo = MutationsManager.ProcessWorldObject(wo, parent.RealmRuleset);
 
                 }
                 else

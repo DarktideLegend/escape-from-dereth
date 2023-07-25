@@ -1,10 +1,5 @@
 using ACE.Entity;
 using System;
-using log4net;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ACE.Server.EscapeFromDereth.Common
 {

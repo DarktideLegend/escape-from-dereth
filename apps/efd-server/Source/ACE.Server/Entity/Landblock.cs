@@ -32,7 +32,6 @@ using ACE.Server.EscapeFromDereth.Hellgates;
 using ACE.Server.EscapeFromDereth.Towns;
 using ACE.Common;
 using Microsoft.EntityFrameworkCore.Update;
-using ACE.Server.EscapeFromDereth.Hideouts;
 using ACE.Server.EscapeFromDereth;
 
 namespace ACE.Server.Entity

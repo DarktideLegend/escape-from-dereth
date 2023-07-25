@@ -347,8 +347,9 @@ namespace ACE.Server.Managers
                 }
             }
 
-            // Tick for hellgates
+            // TODO: find better place to Tick hellgates and Towns more efficiently
             HellgateManager.Tick(Time.GetUnixTime());
+            TownManager.Tick(Time.GetUnixTime());
         }
 
         private static void TickSingleThreadedWork()
