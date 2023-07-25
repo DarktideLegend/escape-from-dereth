@@ -55,6 +55,19 @@ namespace ACE.Server.EscapeFromDereth.Towns
                 Towns.Add(town.Name, town);
                 TownsList.Add(town);
             }
+
+            InitializeHeartbeat();
+        }
+        private static void InitializeHeartbeat()
+        {
+            var currentUnixTime = Time.GetUnixTime();
+            NextHeartbeatTime = currentUnixTime + HeartbeatInterval;
+        }
+
+
+        public static void AddTaxToTownStorage()
+        {
+
         }
 
         private static Town GetTownByName(string name)
@@ -196,6 +209,22 @@ namespace ACE.Server.EscapeFromDereth.Towns
             }
 
             return false;
+        }
+
+        public static void Tick(double currentUnixTime)
+        {
+            if (NextHeartbeatTime > currentUnixTime)
+                return;
+
+            foreach(var town in TownsList)
+            {
+                if (town.IsExpired && town.AnnouncementState == Town.TownAccouncementState.Pending)
+                {
+                    town.SetAnnouncementStateToIdle();
+                    var message = $"[{town.Name}] Town Meeting Hall is now open and may be claimed!";
+                    PlayerManager.BroadcastToAll(new GameMessageSystemChat(message, ChatMessageType.WorldBroadcast));
+                }
+            }
         }
 
 
