@@ -5,6 +5,7 @@ using ACE.Entity.Enum.Properties;
 using ACE.Server.Entity;
 using ACE.Server.Entity.Actions;
 using ACE.Server.EscapeFromDereth.Hellgates;
+using ACE.Server.EscapeFromDereth.Hellgates.Entity;
 using ACE.Server.EscapeFromDereth.Towns;
 using ACE.Server.Managers;
 using ACE.Server.Network;
@@ -109,6 +110,18 @@ namespace ACE.Server.Command.Handlers
                 session.Network.EnqueueSend(new GameMessageSystemChat($"You are not in a hellgate.", ChatMessageType.Broadcast));
         }
 
+        [CommandHandler("open-meeting-hall", AccessLevel.Admin, CommandHandlerFlag.RequiresWorld, "Triggers the opening of a closed meeting hall.")]
+        public static void OpenMeetingHall(Session session, params string[] parameters)
+        {
+            var player = session?.Player;
+            var town = TownManager.GetClosestTownFromPosition(player.Location);
+
+            if (town != null && !town.IsExpired)
+            {
+                town.OpenTownMeetingHall();
+            }
+        }
+
         [CommandHandler("update-town-tax", AccessLevel.Player, CommandHandlerFlag.RequiresWorld, "Change the tax rate of the closest town.")]
         public static void HandleUpdateTownTax(Session session, params string[] parameters)
         {
@@ -120,6 +133,13 @@ namespace ACE.Server.Command.Handlers
             float taxRate = 0.0f;
 
             float.TryParse(parameters[0], out taxRate);
+
+            if (taxRate < 0 || taxRate > 1f)
+            {
+                session.Network.EnqueueSend(new GameMessageSystemChat($"Tax rate must be between 0 and 1", ChatMessageType.Broadcast));
+                return;
+            }
+
 
             var player = session.Player;
             var town = TownManager.GetClosestTownFromPosition(player.Location);
@@ -140,15 +160,25 @@ namespace ACE.Server.Command.Handlers
 
             var town = TownManager.GetClosestTownFromPosition(player.Location);
 
-            session.Network.EnqueueSend(new GameMessageSystemChat($"{town.Name} is your closest town.", ChatMessageType.Broadcast));
+            session.Network.EnqueueSend(new GameMessageSystemChat($"[{town.Name}] is your closest town.", ChatMessageType.System));
 
             var townOwner = PlayerManager.FindByGuid(town.AllegianceId);
             if (townOwner == null)
-                session.Network.EnqueueSend(new GameMessageSystemChat($"{town.Name} is currently unowned.", ChatMessageType.Broadcast));
+                session.Network.EnqueueSend(new GameMessageSystemChat($"[{town.Name}] is currently unowned.", ChatMessageType.System));
             else
-                session.Network.EnqueueSend(new GameMessageSystemChat($"{town.Name} is owned by {townOwner.Name}.", ChatMessageType.Broadcast));
+                session.Network.EnqueueSend(new GameMessageSystemChat($"[{town.Name}] is owned by {townOwner.Name}.", ChatMessageType.System));
 
-            session.Network.EnqueueSend(new GameMessageSystemChat($"{town.Name} has a tax rate of {town.TaxRate}.", ChatMessageType.Broadcast));
+            session.Network.EnqueueSend(new GameMessageSystemChat($"[{town.Name}] has a tax rate of {town.TaxRate}.", ChatMessageType.System));
+
+            var meetingHallTimeRemaining = TimeSpan.FromSeconds(town.TimeRemaining);
+            var meetingHallCountown = meetingHallTimeRemaining.ToString(@"hh\:mm\:ss");
+
+            if (town.TimeRemaining > 0)
+                session.Network.EnqueueSend(new GameMessageSystemChat($"[{town.Name}] The meeting hall is currently not open, come back in {meetingHallCountown}", ChatMessageType.System));
+            else
+                session.Network.EnqueueSend(new GameMessageSystemChat($"[{town.Name}] The meeting hall is currently open!", ChatMessageType.System));
+
+
         }
 
         [CommandHandler("rebuff", AccessLevel.Player, CommandHandlerFlag.RequiresWorld,
