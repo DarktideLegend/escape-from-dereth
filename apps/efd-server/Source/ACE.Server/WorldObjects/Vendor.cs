@@ -499,6 +499,9 @@ namespace ACE.Server.WorldObjects
             var defaultItemProfiles = new List<ItemProfile>();
             var uniqueItems = new List<WorldObject>();
 
+            var town = TownManager.GetClosestTownFromPosition(player.Location);
+            var taxRate = town.TaxRate;
+
             // find item profiles in default and unique items
             foreach (var itemProfile in itemProfiles)
             {
@@ -607,9 +610,17 @@ namespace ACE.Server.WorldObjects
                 totalPrice += cost;
             }
 
+
             // verify player has enough currency
             if (AlternateCurrency == null)
             {
+                // town tax man
+                if (town.AllegianceId != (player?.Allegiance?.MonarchId ?? 0))
+                { 
+                    var taxAmount = (uint)(totalPrice * taxRate);
+                    totalPrice += taxAmount;
+                }
+
                 if (player.CoinValue < totalPrice)
                 {
                     CleanupCreatedItems(defaultItems);
@@ -663,12 +674,22 @@ namespace ACE.Server.WorldObjects
             return cost;
         }
 
-        public int CalculatePayoutCoinAmount(Dictionary<uint, WorldObject> items)
+        public int CalculatePayoutCoinAmount(Dictionary<uint, WorldObject> items, Player player)
         {
             var payout = 0;
 
+            var town = TownManager.GetClosestTownFromPosition(Location);
+
             foreach (WorldObject item in items.Values)
-                payout += GetBuyCost(item);
+            {
+                var cost = GetBuyCost(item);
+                if (town.AllegianceId != (player?.Allegiance?.MonarchId ?? player.Guid.Full))
+                { 
+                    var taxAmount = (int)(cost * town.TaxRate);
+                    cost -= taxAmount;
+                }
+                payout += cost;
+            }
 
             return payout;
         }

@@ -157,7 +157,7 @@ namespace ACE.Server.WorldObjects
             }
 
             // calculate pyreals to receive
-            var payoutCoinAmount = vendor.CalculatePayoutCoinAmount(sellList);
+            var payoutCoinAmount = vendor.CalculatePayoutCoinAmount(sellList, this);
 
             if (payoutCoinAmount < 0)
             {
