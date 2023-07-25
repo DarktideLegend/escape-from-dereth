@@ -1,20 +1,25 @@
 using ACE.Common;
+using ACE.Database;
 using ACE.Entity;
 using ACE.Entity.Enum;
 using ACE.Entity.Enum.Properties;
 using ACE.Entity.Models;
 using ACE.Server.EscapeFromDereth.Hellgates;
-using ACE.Server.EscapeFromDereth.Hideouts;
 using ACE.Server.EscapeFromDereth.Towns;
 using ACE.Server.Factories;
+using ACE.Server.Managers;
 using ACE.Server.Realms;
 using ACE.Server.WorldObjects;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace ACE.Server.EscapeFromDereth.Common
+namespace ACE.Server.EscapeFromDereth.Mutations
 {
-    public class WorldObjectProcessor
+    public class MutationsManager
+
     {
         public static WorldObject ProcessWorldObject(WorldObject wo, AppliedRuleset ruleset)
         {
@@ -72,6 +77,8 @@ namespace ACE.Server.EscapeFromDereth.Common
                     return ProcessHomeRealmCreature(wo as Creature, ruleset);
                 case WeenieType.Portal:
                     return ProcessHomeRealmPortal(wo as Portal, ruleset);
+                case WeenieType.Storage:
+                    return ProcessHomeRealmStorage(wo, ruleset);
                 case WeenieType.Door:
                     wo.Destroy();
                     return null;
@@ -82,6 +89,19 @@ namespace ACE.Server.EscapeFromDereth.Common
 
             return wo;
         }
+
+        private static WorldObject ProcessHomeRealmStorage(WorldObject wo, AppliedRuleset ruleset)
+        {
+            if (TownManager.GetTownDistance(wo.Location) > 300)
+                return wo;
+
+            var storage = WorldObjectFactory.CreateNewWorldObject(600005);
+            storage.Location = new Position(wo.Location);
+            wo.Destroy();
+            return GetPersistentStorage(storage.Weenie, storage.Location);
+        }
+
+
 
         private static WorldObject ProcessHomeRealmPortal(Portal portal, AppliedRuleset ruleset)
         {
@@ -182,7 +202,7 @@ namespace ACE.Server.EscapeFromDereth.Common
             var storage = WorldObjectFactory.CreateNewWorldObject(600000);
             storage.Location = new Position(wo.Location);
             wo.Destroy();
-            return HideoutManager.GetHideoutStorage(storage.Weenie, storage.Location);
+            return GetPersistentStorage(storage.Weenie, storage.Location);
         }
 
         private static void CreatureRealmMutate(Creature creature, AppliedRuleset ruleset)
@@ -338,6 +358,22 @@ namespace ACE.Server.EscapeFromDereth.Common
             wo.SetProperty(PropertyFloat.DefaultScale, 3); // scale the gatekeeper to have 3x size
             wo.Name = $"Forgotten Gatekeeper";
             wo.SaveBiotaToDatabase();
+        }
+
+        private static Storage GetPersistentStorage(Weenie weenie, Position location)
+        {
+            var biota = DatabaseManager.Shard.BaseDatabase.GetPersistentStorage(location);
+
+            if (biota != null)
+                return (Storage)WorldObjectFactory.CreateWorldObject(biota);
+            else
+            {
+                // stupid hack to persist a storage object without recycling, player Guids are not dynamic
+                var storageGuid = GuidManager.NewPlayerGuid();
+                var storage = new Storage(weenie, storageGuid);
+                storage.Location = new Position(location);
+                return storage;
+            }
         }
 
     }
