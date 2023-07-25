@@ -216,10 +216,6 @@ VALUES (0x7C6A903B,   143, 0xC6A90141, 53.0707, 91.0101, 45.005, 0.999933, 0, 0,
 /* @teleloc 0xC6A90141 [53.070702 91.010101 45.005001] 0.999933 0.000000 0.000000 0.011613 */
 
 INSERT INTO `landblock_instance` (`guid`, `weenie_Class_Id`, `obj_Cell_Id`, `origin_X`, `origin_Y`, `origin_Z`, `angles_W`, `angles_X`, `angles_Y`, `angles_Z`, `is_Link_Child`, `last_Modified`)
-VALUES (0x7C6A903C, 22207, 0xC6A901A3, 102.784, 66.8105, 38.2569, 0.918892, 0, 0, 0.39451, False, '2021-11-01 00:00:00'); /* Storage */
-/* @teleloc 0xC6A901A3 [102.783997 66.810501 38.256901] 0.918892 0.000000 0.000000 0.394510 */
-
-INSERT INTO `landblock_instance` (`guid`, `weenie_Class_Id`, `obj_Cell_Id`, `origin_X`, `origin_Y`, `origin_Z`, `angles_W`, `angles_X`, `angles_Y`, `angles_Z`, `is_Link_Child`, `last_Modified`)
 VALUES (0x7C6A903D,   694, 0xC6A90104, 61.9466, 38.2984, 42.005, 0.508262, 0, 0, -0.861202, False, '2021-11-01 00:00:00'); /* Barkeep Lienne */
 /* @teleloc 0xC6A90104 [61.946602 38.298401 42.005001] 0.508262 0.000000 0.000000 -0.861202 */
 
@@ -482,3 +478,7 @@ VALUES (0x7C6A96AC, 3000304, 0xC6A901A2, 106.199, 59.0826, 42.005, 0.891567, 0, 
 INSERT INTO `landblock_instance` (`guid`, `weenie_Class_Id`, `obj_Cell_Id`, `origin_X`, `origin_Y`, `origin_Z`, `angles_W`, `angles_X`, `angles_Y`, `angles_Z`, `is_Link_Child`, `last_Modified`)
 VALUES (0x7C6A96AD, 3000311, 0xC6A901A2, 102.877, 67.1901, 42.005, 0, 0, 0, -1, False, '2023-07-22 18:09:39'); /* Quality of Life Vendor */
 /* @teleloc 0xC6A901A2 [102.876999 67.190102 42.005001] 0.000000 0.000000 0.000000 -1.000000 */
+
+INSERT INTO `landblock_instance` (`guid`, `weenie_Class_Id`, `obj_Cell_Id`, `origin_X`, `origin_Y`, `origin_Z`, `angles_W`, `angles_X`, `angles_Y`, `angles_Z`, `is_Link_Child`, `last_Modified`)
+VALUES (0x7C6A96AE,  9687, 0xC6A901A3, 102.574, 66.9999, 38.026, -0.932393, 0, 0, -0.361446, False, '2023-07-24 20:43:21'); /* Storage */
+/* @teleloc 0xC6A901A3 [102.573997 66.999901 38.026001] -0.932393 0.000000 0.000000 -0.361446 */
