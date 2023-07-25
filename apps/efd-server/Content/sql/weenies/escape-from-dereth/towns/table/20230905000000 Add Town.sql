@@ -1,8 +1,6 @@
 use ace_world;
 
-DROP TABLE IF EXISTS `town`;
-
-CREATE TABLE `town` (
+CREATE TABLE IF NOT EXISTS `town` (
   `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT 'Unique Id of this Town',
   `name` varchar(255) NOT NULL COMMENT 'Unique Name of Town',
   `allegiance_id` int DEFAULT 0 NOT NULL COMMENT 'The allegiance id that this town belongs to',

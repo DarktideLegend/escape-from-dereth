@@ -2,8 +2,10 @@ using ACE.Common;
 using ACE.Entity;
 using ACE.Entity.Enum;
 using ACE.Entity.Enum.Properties;
+using ACE.Server.Entity;
 using ACE.Server.Entity.Actions;
 using ACE.Server.EscapeFromDereth.Hellgates;
+using ACE.Server.EscapeFromDereth.Towns;
 using ACE.Server.Managers;
 using ACE.Server.Network;
 using ACE.Server.Network.GameEvent.Events;
@@ -105,6 +107,48 @@ namespace ACE.Server.Command.Handlers
                 session.Network.EnqueueSend(new GameMessageSystemChat($"The boss has spawned in your hellgate.", ChatMessageType.Broadcast));
             } else 
                 session.Network.EnqueueSend(new GameMessageSystemChat($"You are not in a hellgate.", ChatMessageType.Broadcast));
+        }
+
+        [CommandHandler("update-town-tax", AccessLevel.Player, CommandHandlerFlag.RequiresWorld, "Change the tax rate of the closest town.")]
+        public static void HandleUpdateTownTax(Session session, params string[] parameters)
+        {
+            if (parameters.Length > 1)
+            {
+                session.Network.EnqueueSend(new GameMessageSystemChat($"You must provide a valid tax rate ex: 0.5", ChatMessageType.Broadcast));
+            }
+
+            float taxRate = 0.0f;
+
+            float.TryParse(parameters[0], out taxRate);
+
+            var player = session.Player;
+            var town = TownManager.GetClosestTownFromPosition(player.Location);
+
+            if (town.AllegianceId == player.Guid.Full)
+            {
+                TownManager.UpdateTownTaxRate(town.Name, taxRate);
+                session.Network.EnqueueSend(new GameMessageSystemChat($"You have successfully updated {town.Name}'s tax rate to {taxRate}.", ChatMessageType.Broadcast));
+            }
+            else
+                session.Network.EnqueueSend(new GameMessageSystemChat($"Only the monarch of {town.Name} may update the town tax rate.", ChatMessageType.Broadcast));
+        }
+
+        [CommandHandler("town-info", AccessLevel.Player, CommandHandlerFlag.RequiresWorld, "Get town info closest to your location.")]
+        public static void HandleTownInfo(Session session, params string[] parameters)
+        {
+            var player = session.Player;
+
+            var town = TownManager.GetClosestTownFromPosition(player.Location);
+
+            session.Network.EnqueueSend(new GameMessageSystemChat($"{town.Name} is your closest town.", ChatMessageType.Broadcast));
+
+            var townOwner = PlayerManager.FindByGuid(town.AllegianceId);
+            if (townOwner == null)
+                session.Network.EnqueueSend(new GameMessageSystemChat($"{town.Name} is currently unowned.", ChatMessageType.Broadcast));
+            else
+                session.Network.EnqueueSend(new GameMessageSystemChat($"{town.Name} is owned by {townOwner.Name}.", ChatMessageType.Broadcast));
+
+            session.Network.EnqueueSend(new GameMessageSystemChat($"{town.Name} has a tax rate of {town.TaxRate}.", ChatMessageType.Broadcast));
         }
 
         [CommandHandler("rebuff", AccessLevel.Player, CommandHandlerFlag.RequiresWorld,
