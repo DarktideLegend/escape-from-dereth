@@ -46,6 +46,10 @@ namespace ACE.Server.EscapeFromDereth.Towns
 
         private static readonly Dictionary<uint, MeetingHall> MeetingHalls = new Dictionary<uint, MeetingHall>();
 
+        private static double NextHeartbeatTime;
+
+        private static readonly double HeartbeatInterval = 5.0f;
+
         public static void Initialize()
         {
             var towns = TownRepo.GetAllTowns();

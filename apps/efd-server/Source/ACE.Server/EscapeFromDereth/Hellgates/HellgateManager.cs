@@ -6,6 +6,7 @@ using ACE.Server.Entity;
 using ACE.Server.Entity.Actions;
 using ACE.Server.EscapeFromDereth.Common;
 using ACE.Server.EscapeFromDereth.Hellgates.Entity;
+using ACE.Server.EscapeFromDereth.Mutations;
 using ACE.Server.EscapeFromDereth.Towns;
 using ACE.Server.Factories;
 using ACE.Server.Managers;
@@ -182,7 +183,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             hellgate.BossSpawned = true;
             var lifespan = (int)hellgate.TimeRemaining;
             var boss = WorldObjectFactory.CreateNewWorldObject(4000226); // Darkbeat temporarily 
-            WorldObjectProcessor.MutateDeathTreasureTypeByTier(boss as Creature, hellgate.Tier);
+            MutationsManager.MutateDeathTreasureTypeByTier(boss as Creature, hellgate.Tier);
             if (boss != null)
             {
                 boss.Location = hellgate.BossPosition;
