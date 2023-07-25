@@ -15,9 +15,22 @@ namespace ACE.Server.EscapeFromDereth.Towns.Entity
         public double Expiration { get; private set; } = 0;
         public uint AllegianceId { get; private set; } = 0;
         public float TaxRate { get; private set; } = 0.0f;
+
         public double TimeRemaining => Expiration - Time.GetUnixTime();
         public bool IsExpired => TimeRemaining <= 0;
         public bool ShouldCreateMeetingHall => IsExpired && MeetingHallInstance <= 0;
+
+        public void OpenTownMeetingHall()
+        {
+            Expiration = 0;
+        }
+
+        public enum TownAccouncementState
+        {
+            Idle,
+            Pending
+        }
+        public TownAccouncementState AnnouncementState { get; private set; } = TownAccouncementState.Idle;
 
         public Town(string name, Position location)
         {
@@ -25,16 +38,22 @@ namespace ACE.Server.EscapeFromDereth.Towns.Entity
             Location = location;
         }
 
+        public void SetAnnouncementStateToIdle()
+        {
+            AnnouncementState = TownAccouncementState.Idle;
+        }
+
         public void SetOwnership(uint monarchId, double expiration = 0)
         {
             AllegianceId = monarchId;
             Expiration = expiration;
             MeetingHallInstance = 0;
+            AnnouncementState = TownAccouncementState.Pending;
         }
 
         public void SetTaxRate(float rate)
         {
-            if (rate >= 0 && rate < 1)
+            if (rate >= 0 && rate <= 1)
                 TaxRate = rate;
         }
     }

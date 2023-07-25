@@ -142,8 +142,13 @@ namespace ACE.Server.WorldObjects
                     if (killer != null)
                     {
                         var player = PlayerManager.FindByGuid(killer.Guid.Full);
+                        var monarch = AllegianceManager.GetMonarch(player);
                         TownManager.CleanupMeetingHall(town.MeetingHallInstance);
-                        TownManager.UpdateTownOwnership(town.Name, AllegianceManager.GetMonarch(player).Guid.Full);
+                        TownManager.UpdateTownOwnership(town.Name, monarch.Guid.Full);
+
+                        var msg = $"[{town.Name}] has been claimed by {monarch.Name}!!";
+                        GameMessageSystemChat sysMessage = new GameMessageSystemChat(msg, ChatMessageType.WorldBroadcast);
+                        PlayerManager.BroadcastToAll(sysMessage);
                     }
 
                 }
