@@ -482,3 +482,7 @@ VALUES (0x7C6A96AD, 3000311, 0xC6A901A2, 102.877, 67.1901, 42.005, 0, 0, 0, -1, 
 INSERT INTO `landblock_instance` (`guid`, `weenie_Class_Id`, `obj_Cell_Id`, `origin_X`, `origin_Y`, `origin_Z`, `angles_W`, `angles_X`, `angles_Y`, `angles_Z`, `is_Link_Child`, `last_Modified`)
 VALUES (0x7C6A96AE,  9687, 0xC6A901A3, 102.574, 66.9999, 38.026, -0.932393, 0, 0, -0.361446, False, '2023-07-24 20:43:21'); /* Storage */
 /* @teleloc 0xC6A901A3 [102.573997 66.999901 38.026001] -0.932393 0.000000 0.000000 -0.361446 */
+
+INSERT INTO `landblock_instance` (`guid`, `weenie_Class_Id`, `obj_Cell_Id`, `origin_X`, `origin_Y`, `origin_Z`, `angles_W`, `angles_X`, `angles_Y`, `angles_Z`, `is_Link_Child`, `last_Modified`)
+VALUES (0x7C6A96AF, 600001, 0xC6A9001C, 88.23082, 80.40383, 41.937, -0.713358, 0, 0, 0.7008, False, '2023-07-25 15:41:00'); /* Hideout Portal */
+/* @teleloc 0xC6A9001C [88.230820 80.403831 41.937000] -0.713358 0.000000 0.000000 0.700800 */

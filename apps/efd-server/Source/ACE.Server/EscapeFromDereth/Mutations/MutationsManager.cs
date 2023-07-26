@@ -95,10 +95,13 @@ namespace ACE.Server.EscapeFromDereth.Mutations
             if (TownManager.GetTownDistance(wo.Location) > 300)
                 return wo;
 
+            var town = TownManager.GetClosestTownFromPosition(wo.Location);
             var storage = WorldObjectFactory.CreateNewWorldObject(600005);
             storage.Location = new Position(wo.Location);
             wo.Destroy();
-            return GetPersistentStorage(storage.Weenie, storage.Location);
+            var townStorage = GetPersistentStorage(storage.Weenie, storage.Location);
+            town.SetTownStorage(townStorage);
+            return townStorage;
         }
 
 

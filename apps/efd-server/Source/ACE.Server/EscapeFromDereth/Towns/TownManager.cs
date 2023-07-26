@@ -25,6 +25,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace ACE.Server.EscapeFromDereth.Towns
 {
@@ -69,9 +70,41 @@ namespace ACE.Server.EscapeFromDereth.Towns
         }
 
 
-        public static void AddTaxToTownStorage()
+        public static void AddTaxToTownStorage(Town town, int taxAmount)
         {
+            var storage = town.TownStorage;
 
+            if (storage == null)
+                return;
+
+            var payoutCoinStacks = CreatePayoutCoinStacks(taxAmount);
+
+            // add coins to town storage inventory
+            foreach (var item in payoutCoinStacks)
+            {
+                if (!storage.TryAddToInventory(item))  // this shouldn't happen because of pre-validations in itemsToReceive
+                {
+                    log.WarnFormat("[VENDOR] Payout 0x{0:X8}:{1} for player {2} failed to add to inventory HandleActionSellItem.", item.Guid.Full, item.Name, storage.Name);
+                    item.Destroy();
+                }
+            }
+
+        }
+        private static List<WorldObject> CreatePayoutCoinStacks(int amount)
+        {
+            var coinStacks = new List<WorldObject>();
+
+            while (amount > 0)
+            {
+                var currencyStack = WorldObjectFactory.CreateNewWorldObject("coinstack");
+
+                var currentStackAmount = Math.Min(amount, currencyStack.MaxStackSize.Value);
+
+                currencyStack.SetStackSize(currentStackAmount);
+                coinStacks.Add(currencyStack);
+                amount -= currentStackAmount;
+            }
+            return coinStacks;
         }
 
         private static Town GetTownByName(string name)
