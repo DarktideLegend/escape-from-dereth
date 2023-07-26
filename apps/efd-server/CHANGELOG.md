@@ -1,3 +1,11 @@
+## [1.1.0-alpha.46](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.45...efd-server-v1.1.0-alpha.46) (2023-07-26)
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ add HellgateRepository ([a852be7](https://github.com/DarktideLegend/escape-from-dereth/commit/a852be729c8158f5fe2d63af85df42413de67775))
+* **efd-server:** ♻️ remove Meeting Hall from TownJsonDto ([b237fb4](https://github.com/DarktideLegend/escape-from-dereth/commit/b237fb4136074e8e53c6ce581c6dab6f4f6dd9f7))
+
 ## [1.1.0-alpha.45](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.44...efd-server-v1.1.0-alpha.45) (2023-07-26)
 
 
