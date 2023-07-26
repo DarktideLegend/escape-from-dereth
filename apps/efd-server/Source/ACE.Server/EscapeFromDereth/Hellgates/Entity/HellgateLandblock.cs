@@ -14,7 +14,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
         public Position BossLocation;
         public string Name;
 
-        public HellgateLandblock(Position dropLocation, Position exitLocation, Position bossLocation, string name) 
+        public HellgateLandblock(string name, Position dropLocation, Position exitLocation, Position bossLocation) 
         {
             this.DropLocation = dropLocation;
             this.ExitLocation = exitLocation;

@@ -23,11 +23,8 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
         public double TimeRemaining => Expiration - Time.GetUnixTime();
         public double BossSpawnRemaining => BossExpiration - Time.GetUnixTime();
         public bool ShouldSpawnBoss => BossSpawnRemaining <= 0;
-
         public Position DropPosition;
-
         public Position ExitPosition;
-
         public Position BossPosition;
 
         public Hellgate(

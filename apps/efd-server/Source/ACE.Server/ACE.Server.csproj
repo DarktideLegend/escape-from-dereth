@@ -36,6 +36,7 @@
     <None Remove="Realms\reserved_realms\default.jsonc" />
     <None Remove="Realms\reserved_realms\hideout.jsonc" />
     <None Remove="EscapeFromDereth\Towns\towns.json" />
+    <None Remove="EscapeFromDereth\Hellgates\hellgates.json" />
     <None Remove="Entity\Mutations\ArmorLevel\armor_level_extremity.txt" />
     <None Remove="Entity\Mutations\ArmorLevel\armor_level_non_extremity.txt" />
     <None Remove="Entity\Mutations\ArmorLevel\covenant_armor.txt" />
@@ -142,6 +143,7 @@
     <EmbeddedResource Include="Realms\reserved_realms\hideout.jsonc" />
     <EmbeddedResource Include="Realms\reserved_realms\default.jsonc" />
     <EmbeddedResource Include="EscapeFromDereth\Towns\towns.json" />
+    <EmbeddedResource Include="EscapeFromDereth\Hellgates\hellgates.json" />
     <EmbeddedResource Include="Factories\Entity\Mutations\ArmorLevel\armor_level_extremity.txt" />
     <EmbeddedResource Include="Factories\Entity\Mutations\ArmorLevel\armor_level_non_extremity.txt" />
     <EmbeddedResource Include="Factories\Entity\Mutations\ArmorLevel\covenant_armor.txt" />
