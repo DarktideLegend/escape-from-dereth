@@ -14,6 +14,8 @@ namespace ACE.Server.EscapeFromDereth.Towns.Entity
         public uint MeetingHallInstance { get; set; } = 0;
         public double Expiration { get; private set; } = 0;
         public uint AllegianceId { get; private set; } = 0;
+
+        public Storage TownStorage { get; private set; }
         public float TaxRate { get; private set; } = 0.0f;
 
         public double TimeRemaining => Expiration - Time.GetUnixTime();
@@ -36,6 +38,11 @@ namespace ACE.Server.EscapeFromDereth.Towns.Entity
         {
             Name = name;
             Location = location;
+        }
+
+        public void SetTownStorage(Storage storage)
+        {
+            TownStorage = storage;
         }
 
         public void SetAnnouncementStateToIdle()

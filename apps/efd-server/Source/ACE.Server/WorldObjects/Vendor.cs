@@ -619,6 +619,7 @@ namespace ACE.Server.WorldObjects
                 { 
                     var taxAmount = (uint)(totalPrice * taxRate);
                     totalPrice += taxAmount;
+                    TownManager.AddTaxToTownStorage(town, (int)taxAmount);
                 }
 
                 if (player.CoinValue < totalPrice)
@@ -683,10 +684,11 @@ namespace ACE.Server.WorldObjects
             foreach (WorldObject item in items.Values)
             {
                 var cost = GetBuyCost(item);
-                if (town.AllegianceId != (player?.Allegiance?.MonarchId ?? player.Guid.Full))
+                if (town.AllegianceId != (player?.Allegiance?.MonarchId ?? player.Guid.Full) && item.ItemType != ItemType.PromissoryNote)
                 { 
                     var taxAmount = (int)(cost * town.TaxRate);
                     cost -= taxAmount;
+                    TownManager.AddTaxToTownStorage(town, taxAmount);
                 }
                 payout += cost;
             }

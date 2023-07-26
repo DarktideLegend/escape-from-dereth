@@ -6,6 +6,8 @@ using ACE.Entity.Models;
 using ACE.Server.Entity;
 using ACE.Server.Network.GameEvent.Events;
 using ACE.Server.Network.GameMessages.Messages;
+using ACE.Server.EscapeFromDereth.Towns;
+using ACE.Server.Managers;
 
 namespace ACE.Server.WorldObjects
 {
@@ -58,6 +60,17 @@ namespace ACE.Server.WorldObjects
             if (hideout.RealmID == 0x7FFF && player.Location.Instance == hideout.Instance)
                 return new ActivationResult(true);
 
+            var town = TownManager.GetClosestTownFromPosition(player.Location);
+
+            if (town.TownStorage == this)
+            {
+
+                if (town.AllegianceId == player.Guid.Full)
+                    return new ActivationResult(true);
+                else
+                    return new ActivationResult(false);
+            }
+
             var baseRequirements = base.CheckUseRequirements(activator);
             if (!baseRequirements.Success)
                 return baseRequirements;
@@ -82,6 +95,8 @@ namespace ACE.Server.WorldObjects
             }
             return new ActivationResult(true);
         }
+
+        
 
         /// <summary>
         /// This event is raised when player adds item to storage
