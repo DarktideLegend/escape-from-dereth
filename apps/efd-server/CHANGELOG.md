@@ -1,3 +1,27 @@
+## [1.1.0-alpha.45](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.44...efd-server-v1.1.0-alpha.45) (2023-07-26)
+
+
+### Features
+
+* **efd-server:** ✨ add /town-info and /update-town-tax player commands ([3510f1d](https://github.com/DarktideLegend/escape-from-dereth/commit/3510f1d0885219c1655c3ff0fbead0497d0b35d1))
+* **efd-server:** ✨ add open-meeting-hall command for admin ([4702ae7](https://github.com/DarktideLegend/escape-from-dereth/commit/4702ae75b146a89d331d49643e0bf634ea0b38d8))
+* **efd-server:** ✨ add tax rate implementation to vendor purchases and sales ([ebbc327](https://github.com/DarktideLegend/escape-from-dereth/commit/ebbc327c36b81d079e03788e3b8892e40154918a))
+* **efd-server:** ✨ add Town Control with Town Meeting Hall instancing ([e534b54](https://github.com/DarktideLegend/escape-from-dereth/commit/e534b5493fef7ef3767cfe2eee1b95bffeb8774a))
+* **efd-server:** ✨ all taxed vendor pyreals are added to Town Storage ([50cdb08](https://github.com/DarktideLegend/escape-from-dereth/commit/50cdb089574e1e6a635bd78518d695004815f46e))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ add TownManger tick ([248ba40](https://github.com/DarktideLegend/escape-from-dereth/commit/248ba40d08b1371b43205ef188433af04f9d59fe))
+* **efd-server:** ♻️ Hellgates now extend Arena class ([ae872b4](https://github.com/DarktideLegend/escape-from-dereth/commit/ae872b478535eacfd0062095b6ccae4cee3d22ba))
+* **efd-server:** ♻️ hideout storage is now managed by MutationManager ([459d111](https://github.com/DarktideLegend/escape-from-dereth/commit/459d111442dd8c070486a96ac508256d772568ff))
+* **efd-server:** ♻️ players must wait 15 minutes upon exiting a meeting hall instance ([630497a](https://github.com/DarktideLegend/escape-from-dereth/commit/630497a59ca55b693541c62229413c0dac031d4f))
+* **efd-server:** ♻️ update hellgate/meeting hall transition logic ([0f2c9fc](https://github.com/DarktideLegend/escape-from-dereth/commit/0f2c9fc82d9449eca692ae31263cf06d7db41264))
+* **efd-server:** ♻️ update town meeting hall transitions ([b810337](https://github.com/DarktideLegend/escape-from-dereth/commit/b810337f9ae643284afda355c11a65f16661e37b))
+* **efd-server:** ♻️ update weenie content directory structure ([c310f3b](https://github.com/DarktideLegend/escape-from-dereth/commit/c310f3b5ebddcd110a3634a6ef5764ca2e6b9611))
+* **efd-server:** ♻️ vitae penalty is now set to 5 ([d93b8c3](https://github.com/DarktideLegend/escape-from-dereth/commit/d93b8c3acd27b03e9bf414e32d234837ea438f57))
+* **efd-server:** ♻️ WorldObjectProcessor is now the MutationsManager ([f7279f0](https://github.com/DarktideLegend/escape-from-dereth/commit/f7279f059d9ec22da259e503f34e551ed95363c6))
+
 ## [1.1.0-alpha.44](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.43...efd-server-v1.1.0-alpha.44) (2023-07-22)
 
 
