@@ -1,3 +1,10 @@
+## [1.1.0-alpha.47](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.46...efd-server-v1.1.0-alpha.47) (2023-07-27)
+
+
+### Bug Fixes
+
+* **efd-server:** 🐛 TownManager needs to update next heartbeat on every tick ([0c312ee](https://github.com/DarktideLegend/escape-from-dereth/commit/0c312ee12d368342aab39676dda3c9f783510049))
+
 ## [1.1.0-alpha.46](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.45...efd-server-v1.1.0-alpha.46) (2023-07-26)
 
 
