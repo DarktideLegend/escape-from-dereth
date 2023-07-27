@@ -262,6 +262,8 @@ namespace ACE.Server.EscapeFromDereth.Towns
                     PlayerManager.BroadcastToAll(new GameMessageSystemChat(message, ChatMessageType.WorldBroadcast));
                 }
             }
+
+            NextHeartbeatTime = currentUnixTime + HeartbeatInterval; 
         }
 
 
