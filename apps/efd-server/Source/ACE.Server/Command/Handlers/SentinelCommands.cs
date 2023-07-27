@@ -56,7 +56,7 @@ namespace ACE.Server.Command.Handlers
 
                     session.Player.SetProperty(PropertyInt.CloakStatus, (int)CloakStatus.Off);
 
-                    CommandHandlerHelper.WriteOutputInfo(session, $"You are no longer cloaked, can no longer pass through doors and will appear as an admin.", ChatMessageType.Broadcast);
+                    CommandHandlerHelper.WriteOutputInfo(session, $"You are no longer cloaked, can no longer pass through doors and will appear as a player.", ChatMessageType.Broadcast);
                     break;
                 case "on":
                     if (session.Player.CloakStatus == CloakStatus.On)

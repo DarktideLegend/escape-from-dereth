@@ -257,6 +257,13 @@ namespace ACE.Server.WorldObjects
             set { if (!value.HasValue) RemoveProperty(PropertyFloat.LoginTimestamp); else SetProperty(PropertyFloat.LoginTimestamp, value.Value); }
         }
 
+        public double InvisibilityPotionNextAvailable
+        {
+            get => GetProperty(PropertyFloat.InvisibilityPotionNextAvailable) ?? 0;
+            set { if (value == 0) RemoveProperty(PropertyFloat.InvisibilityPotionNextAvailable); else SetProperty(PropertyFloat.InvisibilityPotionNextAvailable, value); }   
+        }
+
+
         /// <summary>
         /// The timestamp when the player last logged off
         /// </summary>

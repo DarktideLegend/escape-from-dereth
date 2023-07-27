@@ -220,7 +220,8 @@ namespace ACE.Entity.Enum.Properties
 
         // EFD
         [ServerOnly]
-        MeetingHallExpiration          = 9000
+        MeetingHallExpiration          = 9000,
+        InvisibilityPotionNextAvailable= 9001
 
     }
 

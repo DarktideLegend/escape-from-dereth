@@ -1,5 +1,5 @@
 using System;
-
+using ACE.Common;
 using ACE.Entity;
 using ACE.Entity.Enum;
 using ACE.Server.Entity;
@@ -20,7 +20,20 @@ namespace ACE.Server.WorldObjects
         /// This is set by Hook.ActOnUse
         /// </summary>
         public ObjectGuid LasUsedHookId { get; set; }
+        public double InvisibilityPotionExpiration { get; private set; } = 0;
 
+        public double InvisibilityPotionTimeRemaining => InvisibilityPotionExpiration - Time.GetUnixTime();
+
+        public bool IsInvisibilityPotionExpired => InvisibilityPotionTimeRemaining <= 0;
+
+
+        public double InvisibilityPotionNextAvailableTimeRemaining => InvisibilityPotionNextAvailable - Time.GetUnixTime();
+        
+        public bool IsInvisibilityPotionUsable => InvisibilityPotionNextAvailableTimeRemaining <= 0;
+
+        public TimeSpan InvisibilityPotionTimer  = TimeSpan.FromSeconds(30);
+
+      
         /// <summary>
         /// Handles the 'GameAction 0x35 - UseWithTarget' network message
         /// when player double clicks an inventory item resulting in a target indicator
