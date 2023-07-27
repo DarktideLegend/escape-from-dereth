@@ -1,3 +1,15 @@
+## [1.1.0-alpha.48](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.47...efd-server-v1.1.0-alpha.48) (2023-07-27)
+
+
+### Features
+
+* **efd-server:** ✨ add ust to Fitness Instructor Anthony ([461babf](https://github.com/DarktideLegend/escape-from-dereth/commit/461babf072db399ecd9715d0c342fd7aeb48ca67))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ remove ACRealms content from Holtburg ([ebe81ab](https://github.com/DarktideLegend/escape-from-dereth/commit/ebe81abdde5feee2a24f1ee61419d75ce34e0dea))
+
 ## [1.1.0-alpha.47](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.46...efd-server-v1.1.0-alpha.47) (2023-07-27)
 
 
