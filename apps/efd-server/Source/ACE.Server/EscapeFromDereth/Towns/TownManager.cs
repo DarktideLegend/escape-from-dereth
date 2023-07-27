@@ -33,22 +33,14 @@ namespace ACE.Server.EscapeFromDereth.Towns
     public class TownManager
     {
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
         public readonly static Dictionary<string, Town> Towns = new Dictionary<string, Town>();
-
         private static List<Town> TownsList = new List<Town>();
-
         private static TimeSpan TownTimer = TimeSpan.FromMinutes(15);
-
         private static TownRepository TownRepo = new TownRepository();
-
         public static readonly Position TownMeetingHallLocation = EFDHelpers.slocToPosition("0x011F0126 [30.000000 -60.000000 6.000000] 1.000000 0.000000 0.000000 0.000000 0");
         public static readonly Position TownMeetingHallBossLocation = EFDHelpers.slocToPosition("0x011F010D [28.415749 -24.232437 0.005000] -0.943849 0.000000 0.000000 -0.330377 0");
-
         private static readonly Dictionary<uint, MeetingHall> MeetingHalls = new Dictionary<uint, MeetingHall>();
-
         private static double NextHeartbeatTime;
-
         private static readonly double HeartbeatInterval = 5.0f;
 
         public static void Initialize()

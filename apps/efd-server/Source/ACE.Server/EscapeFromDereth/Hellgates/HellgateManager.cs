@@ -25,21 +25,13 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
     internal class HellgateManager
     {
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
         private static readonly ReaderWriterLockSlim hellgateLock = new ReaderWriterLockSlim();
-
         private static readonly Dictionary<string, HellgateLandblock> HellgateLandblocks = new Dictionary<string, HellgateLandblock>();
-
         private static double NextHeartbeatTime;
-
         private static readonly double HeartbeatInterval = 5.0f;
-
         private static readonly List<string> HellgateLandblockKeys =  new List<string>();
-
         private static readonly Dictionary<uint, Hellgate> ActiveHellgates = new Dictionary<uint, Hellgate>();
-
         private static readonly Queue<HellgateGroup> HellgateGroups = new Queue<HellgateGroup>();
-
         private static readonly HellgateRepository HellgateRepo = new HellgateRepository();
         public static HellgateGroup CurrentHellgateGroup { get; private set; }
         public static bool IsCleaningupHellgateGroup { get; private set; }
