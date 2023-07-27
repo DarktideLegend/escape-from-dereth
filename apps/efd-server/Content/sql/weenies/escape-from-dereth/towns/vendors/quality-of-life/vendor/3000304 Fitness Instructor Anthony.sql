@@ -254,7 +254,8 @@ VALUES (3000304, 4,  6597, -1, 0, 0, False) /* Create Greater Koujia Shadow Brea
      , (3000304, 4, 70238, -1, 0, 0, False) /* Create Amateur Explorer Board with Nail (70238) for Shop */
      , (3000304, 4, 70232, -1, 0, 0, False) /* Create Amateur Explorer Trident (70232) for Shop */
      , (3000304, 4, 70234, -1, 0, 0, False) /* Create Amateur Explorer Stick (70234) for Shop */
-     , (3000304, 4, 20646, -1, 0, 0, False) /* Ust (20646) for Shop */;
+     , (3000304, 4, 602001, -1, 0, 0, False) /* Create Invisibility Potion (602001) for Shop */
+     , (3000304, 4, 20646, -1, 0, 0, False) /* Create Ust (20646) for Shop */;
 
 
 /* Lifestoned Changelog:

@@ -14,6 +14,8 @@ using ACE.Server.Managers;
 using ACE.Server.Network.Structure;
 using ACE.Server.Network.GameEvent.Events;
 using ACE.Server.Network.GameMessages.Messages;
+using ACE.Server.Command.Handlers;
+using ACE.Common;
 
 namespace ACE.Server.WorldObjects
 {
@@ -583,6 +585,16 @@ namespace ACE.Server.WorldObjects
                         EnchantmentManager.Dispel(removeSpell);
                     }
                 }
+            }
+        }
+
+        internal void HandleInvisibilityPotion()
+        {
+            if (Session != null)
+            {
+                SentinelCommands.HandleCloak(Session, "on");
+                InvisibilityPotionExpiration = Time.GetUnixTime() + InvisibilityPotionTimer.TotalSeconds;
+                InvisibilityPotionNextAvailable = Time.GetUnixTime() + TimeSpan.FromMinutes(30).TotalSeconds;
             }
         }
     }

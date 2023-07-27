@@ -56,10 +56,32 @@ namespace ACE.Server.WorldObjects
                 return;
             }
 
+            if (WeenieClassId == 602001)
+            {
+                if (!player.IsInvisibilityPotionUsable)
+                {
+                    var invisPotionTimespan = TimeSpan.FromSeconds(player.InvisibilityPotionNextAvailableTimeRemaining);
+                    var invisibilityPotionCountdown = invisPotionTimespan.ToString(@"hh\:mm\:ss");
+                    player.Session.Network.EnqueueSend(new GameMessageSystemChat($"You have used your invisibility potion too recently you must wait {invisibilityPotionCountdown}", ChatMessageType.Broadcast));
+                    return;
+                }
+
+                if (player.PKTimerActive)
+                {
+                    player.SendWeenieError(WeenieError.YouHaveBeenInPKBattleTooRecently);
+                    return;
+                }
+
+                if (player.IsInvisibilityPotionExpired)
+                    player.HandleInvisibilityPotion();
+            }
+
+
             var motionCommand = GetUseSound() == Sound.Eat1 ? MotionCommand.Eat : MotionCommand.Drink;
 
             player.ApplyConsumable(motionCommand, () => ApplyConsumable(player));
         }
+
 
         /// <summary>
         /// Applies the boost from the consumable, broadcasts the sound,
@@ -69,6 +91,7 @@ namespace ACE.Server.WorldObjects
         {
             if (player.IsDead) return;
 
+           
             // verify item is still valid
             if (player.FindObject(Guid.Full, Player.SearchLocations.MyInventory) == null)
             {

@@ -7,6 +7,7 @@ using ACE.Common;
 using ACE.Entity.Enum;
 using ACE.Entity.Enum.Properties;
 using ACE.Entity.Models;
+using ACE.Server.Command.Handlers;
 using ACE.Server.Entity;
 using ACE.Server.Entity.Actions;
 using ACE.Server.EscapeFromDereth.Towns;
@@ -80,6 +81,17 @@ namespace ACE.Server.WorldObjects
 
                 // In retail, this is sent every 7 seconds. If you adjust ageUpdateInterval from 7, you'll need to re-add logic to send this every 7s (if you want to match retail)
                 Session.Network.EnqueueSend(new GameMessagePrivateUpdatePropertyInt(this, PropertyInt.Age, Age ?? 1));
+            }
+
+            var isCloaked = CloakStatus == CloakStatus.On;
+
+            if (isCloaked && IsInvisibilityPotionExpired && (this is not Admin || this is not Sentinel))
+            {
+                if (Session != null)
+                {
+                    SentinelCommands.HandleCloak(Session, "off");
+                }
+
             }
 
             if (FellowVitalUpdate && Fellowship != null)
