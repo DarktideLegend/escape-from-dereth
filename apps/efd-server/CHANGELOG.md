@@ -1,3 +1,10 @@
+## [1.1.0-alpha.49](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.48...efd-server-v1.1.0-alpha.49) (2023-07-28)
+
+
+### Features
+
+* **efd-server:** ✨ add invisibility potions with 30 sec duration, 30 min cooldown ([01af7d7](https://github.com/DarktideLegend/escape-from-dereth/commit/01af7d7a0829d3e69fdecce97be31c61b9d16381))
+
 ## [1.1.0-alpha.48](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.47...efd-server-v1.1.0-alpha.48) (2023-07-27)
 
 
