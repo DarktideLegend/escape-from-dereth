@@ -1,3 +1,10 @@
+## [1.1.0-alpha.50](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.49...efd-server-v1.1.0-alpha.50) (2023-07-28)
+
+
+### Bug Fixes
+
+* **efd-server:** 🐛 vendors now properly handle tax related transactions without freezing ([92fc2bf](https://github.com/DarktideLegend/escape-from-dereth/commit/92fc2bf0c8d633926b770b008902f9bf61fbfaa8))
+
 ## [1.1.0-alpha.49](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.48...efd-server-v1.1.0-alpha.49) (2023-07-28)
 
 
