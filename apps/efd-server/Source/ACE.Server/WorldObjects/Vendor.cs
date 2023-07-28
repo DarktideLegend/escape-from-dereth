@@ -287,7 +287,10 @@ namespace ACE.Server.WorldObjects
 
             // vendors should only be accessible in whitelisted Towns unless you are and admin
             if (TownManager.GetTownDistance(Location) > 400 && player is not Admin)
+            {
+                player.SendTransientError($"You can only use vendors near a whitelisted town, type /town-info to find your nearest town.");
                 return;
+            }
 
             if (player.IsBusy)
             {
@@ -599,34 +602,46 @@ namespace ACE.Server.WorldObjects
                 return false;
             }
 
+            var isOwner = town.AllegianceId == player.Guid.Full;
+            var isOwnerFollower = town.AllegianceId == player?.Allegiance?.MonarchId;
+            var isTaxable = !isOwner && !isOwnerFollower;
+
             // calculate price
             uint totalPrice = 0;
+            uint totalTax = 0;
 
             foreach (var item in purchaseItems)
             {
+                var shouldTax = isTaxable && !item.IsTradeNote;
                 var cost = GetSellCost(item);
+                var taxAmount = (uint)(cost * taxRate);
 
                 // detect rollover?
                 totalPrice += cost;
+
+                if (shouldTax)
+                {
+                    totalTax += taxAmount;
+                    totalPrice += taxAmount;
+                }
             }
 
 
             // verify player has enough currency
             if (AlternateCurrency == null)
             {
-                // town tax man
-                if (town.AllegianceId != (player?.Allegiance?.MonarchId ?? 0))
-                { 
-                    var taxAmount = (uint)(totalPrice * taxRate);
-                    totalPrice += taxAmount;
-                    TownManager.AddTaxToTownStorage(town, (int)taxAmount);
-                }
 
-                if (player.CoinValue < totalPrice)
+                var insufficientFunds = player.CoinValue < totalPrice;
+                if (insufficientFunds)
                 {
                     CleanupCreatedItems(defaultItems);
+                    ApproachVendor(player, VendorType.Buy);
+                    player.SendTransientError($"You currently have insufficient funds.. funds: {player.CoinValue} total: {totalPrice} tax: {totalTax}");
                     return false;
                 }
+
+                if (isTaxable && !insufficientFunds)
+                    TownManager.AddTaxToTownStorage(town, (int)totalTax);
             }
             else
             {
@@ -680,11 +695,14 @@ namespace ACE.Server.WorldObjects
             var payout = 0;
 
             var town = TownManager.GetClosestTownFromPosition(Location);
+            var isOwner = town.AllegianceId == player.Guid.Full;
+            var isOwnerFollower = town.AllegianceId == player?.Allegiance?.MonarchId;
+            var isTaxable = !isOwner && !isOwnerFollower;
 
             foreach (WorldObject item in items.Values)
             {
                 var cost = GetBuyCost(item);
-                if (town.AllegianceId != (player?.Allegiance?.MonarchId ?? player.Guid.Full) && item.ItemType != ItemType.PromissoryNote)
+                if (isTaxable && !item.IsTradeNote)
                 { 
                     var taxAmount = (int)(cost * town.TaxRate);
                     cost -= taxAmount;
