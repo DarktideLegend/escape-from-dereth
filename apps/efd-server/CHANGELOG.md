@@ -1,3 +1,16 @@
+## [1.1.0-alpha.51](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.50...efd-server-v1.1.0-alpha.51) (2023-07-29)
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ /myxp command should exist in CustomCommands ([c9c269d](https://github.com/DarktideLegend/escape-from-dereth/commit/c9c269d46a963ea4927046119dd5d2790e3935ee))
+
+
+### Other changes that don't modify src or test files
+
+* **efd-server:** 🔧 add logging to GetPlayerLevelAverage ([85bfc2d](https://github.com/DarktideLegend/escape-from-dereth/commit/85bfc2dab540d161381be1ab82aea91be1498b59))
+* **efd-server:** 🔧 disable automatically creating admin account on fresh start ([96e747f](https://github.com/DarktideLegend/escape-from-dereth/commit/96e747ffd46d59d7a77419484d8c5fddb47df447))
+
 ## [1.1.0-alpha.50](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.49...efd-server-v1.1.0-alpha.50) (2023-07-28)
 
 
