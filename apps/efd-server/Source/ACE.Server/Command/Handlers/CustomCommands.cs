@@ -134,9 +134,9 @@ namespace ACE.Server.Command.Handlers
 
             float.TryParse(parameters[0], out taxRate);
 
-            if (taxRate < 0 || taxRate > 1f)
+            if (taxRate < 0 || taxRate > 0.5f)
             {
-                session.Network.EnqueueSend(new GameMessageSystemChat($"Tax rate must be between 0 and 1", ChatMessageType.Broadcast));
+                session.Network.EnqueueSend(new GameMessageSystemChat($"Tax rate must be between 0 and 0.5", ChatMessageType.Broadcast));
                 return;
             }
 
