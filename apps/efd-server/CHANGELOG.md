@@ -1,3 +1,10 @@
+## [1.1.0-alpha.52](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.51...efd-server-v1.1.0-alpha.52) (2023-07-29)
+
+
+### Features
+
+* **efd-server:** ✨ town tax rate is capped at 50% ([3424cdb](https://github.com/DarktideLegend/escape-from-dereth/commit/3424cdb945535af96fc474f854c9444ecb4aaafd))
+
 ## [1.1.0-alpha.51](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.50...efd-server-v1.1.0-alpha.51) (2023-07-29)
 
 
