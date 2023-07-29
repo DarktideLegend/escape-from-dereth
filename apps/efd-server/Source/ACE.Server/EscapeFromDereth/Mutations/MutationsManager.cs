@@ -47,9 +47,6 @@ namespace ACE.Server.EscapeFromDereth.Mutations
         {
             switch (wo.WeenieType)
             {
-                case WeenieType.Portal:
-                    wo.Destroy();
-                    return null;
                 case WeenieType.Door:
                     wo.Destroy();
                     return null;
