@@ -181,6 +181,14 @@ namespace ACE.Server.Command.Handlers
 
         }
 
+        [CommandHandler("myxp", AccessLevel.Player, CommandHandlerFlag.RequiresWorld, 0, "Show your xp modifier based on global average", "")]
+        public static void HandleMyXp(Session session, params string[] parameters)
+        {
+            var modifier = session.Player.GetPlayerLevelXpModifier();
+            CommandHandlerHelper.WriteOutputInfo(session, $"The average player level of the server: {PlayerManager.PlayerLevelAverage}", ChatMessageType.Broadcast);
+            CommandHandlerHelper.WriteOutputInfo(session, $"Your current calculated xp modifier based on average is: {(float)modifier}", ChatMessageType.Broadcast);
+        }
+
         [CommandHandler("rebuff", AccessLevel.Player, CommandHandlerFlag.RequiresWorld,
             "Buffs you with all beneficial spells. Only usable in certain realms.")]
         public static void HandleRebuff(Session session, params string[] parameters)
