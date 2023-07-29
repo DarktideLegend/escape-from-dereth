@@ -240,6 +240,7 @@ namespace ACE.Server.Managers
 
         public static void GetPlayerLevelAverage()
         {
+            log.Info("[PlayerManager]: Getting player level average");
             var levels = new List<int>();
             var accountNames = DatabaseManager.Authentication.GetListofAccountsByAccessLevel(AccessLevel.Player);
             var accounts = accountNames.Select(DatabaseManager.Authentication.GetAccountByName);
@@ -252,7 +253,10 @@ namespace ACE.Server.Managers
                 {
                     var highestLevelPlayer = account.Values.MaxBy(player => player.Level);
                     if (highestLevelPlayer != null)
+                    {
+                        log.Info($"[PlayerManager]: Player: {highestLevelPlayer.Name}, Level: {highestLevelPlayer.Level}");
                         levels.Add((int)highestLevelPlayer.Level);
+                    }
                 }
             }
 
