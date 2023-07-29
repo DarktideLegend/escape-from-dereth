@@ -24,13 +24,14 @@ namespace ACE.Database
         {
             Authentication.Exists(true);
 
-            if (Authentication.GetListofAccountsByAccessLevel(ACE.Entity.Enum.AccessLevel.Admin).Count == 0)
+            /*if (Authentication.GetListofAccountsByAccessLevel(ACE.Entity.Enum.AccessLevel.Admin).Count == 0)
             {
                 log.Warn("Authentication Database does not contain any admin accounts. The next account to be created will automatically be promoted to an Admin account.");
                 AutoPromoteNextAccountToAdmin = true;
             }
-            else
-                AutoPromoteNextAccountToAdmin = false;
+            else*/
+
+            AutoPromoteNextAccountToAdmin = false;
 
             World.Exists(true);
 
