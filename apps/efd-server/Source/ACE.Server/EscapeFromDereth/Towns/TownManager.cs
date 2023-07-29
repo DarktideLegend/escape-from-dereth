@@ -35,7 +35,7 @@ namespace ACE.Server.EscapeFromDereth.Towns
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public readonly static Dictionary<string, Town> Towns = new Dictionary<string, Town>();
         private static List<Town> TownsList = new List<Town>();
-        private static TimeSpan TownTimer = TimeSpan.FromMinutes(15);
+        private static TimeSpan TownTimer = TimeSpan.FromHours(2);
         private static TownRepository TownRepo = new TownRepository();
         public static readonly Position TownMeetingHallLocation = EFDHelpers.slocToPosition("0x011F0126 [30.000000 -60.000000 6.000000] 1.000000 0.000000 0.000000 0.000000 0");
         public static readonly Position TownMeetingHallBossLocation = EFDHelpers.slocToPosition("0x011F010D [28.415749 -24.232437 0.005000] -0.943849 0.000000 0.000000 -0.330377 0");
@@ -113,6 +113,8 @@ namespace ACE.Server.EscapeFromDereth.Towns
 
         public static void UpdateTownTaxRate(string name, float taxRate)
         {
+            if (taxRate >= 0.5f)
+                return;
             var town = GetTownByName(name);
             town.SetTaxRate(taxRate);
             TownRepo.UpdateTown(town);

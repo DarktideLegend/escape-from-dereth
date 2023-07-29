@@ -60,7 +60,7 @@ namespace ACE.Server.EscapeFromDereth.Towns.Entity
 
         public void SetTaxRate(float rate)
         {
-            if (rate >= 0 && rate <= 1)
+            if (rate >= 0.0f && rate <= 0.5f)
                 TaxRate = rate;
         }
     }
