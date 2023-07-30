@@ -36,7 +36,7 @@ namespace ACE.Server.Managers
             if (loadDefaultValues)
                 DefaultPropertyManager.LoadDefaultProperties();
 
-            LoadPropertiesFromDB();
+            //LoadPropertiesFromDB();
 
             if (Program.IsRunningInContainer && !GetString("content_folder").Equals("/ace/Content"))
                 ModifyString("content_folder", "/ace/Content");
