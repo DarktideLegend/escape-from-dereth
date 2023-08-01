@@ -134,7 +134,7 @@ namespace ACE.Server.WorldObjects
             if (player.Teleporting)
                 return new ActivationResult(false);
 
-            if (Destination == null)
+            if (Destination == null && (Weenie.GetProperty(PropertyBool.IsCustomContent) ?? false))
             {
                 player.Session.Network.EnqueueSend(new GameMessageSystemChat($"Portal destination for portal ID {WeenieClassId} not yet implemented!", ChatMessageType.System));
                 return new ActivationResult(false);

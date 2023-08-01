@@ -25,12 +25,10 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
         public bool ShouldSpawnBoss => BossSpawnRemaining <= 0;
         public Position DropPosition;
         public Position ExitPosition;
-        public Position BossPosition;
 
         public Hellgate(
             HellgateLandblock landblock,
             AppliedRuleset ruleset,
-            Position bossPosition,
             Position exitPosition,
             Position dropPosition,
             double expiration,
@@ -45,7 +43,6 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
             Expiration = expiration;
             BossExpiration = bossExpiration;
             HellgateGroup = hellgateGroup;
-            BossPosition = bossPosition;
             ExitPosition = exitPosition;
             DropPosition = dropPosition;
             Tier = tier;

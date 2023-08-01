@@ -60,7 +60,41 @@ namespace ACE.Server.WorldObjects
             if (SpawnHellgateOnDeath) // if Gatekeeper
                 OnDeath_SummonHellgate();
 
+            if (SpawnHellgateSurfaceOnDeath) // if hellgate boss
+                OnDeath_SummonHellgateSurfacePortal();
+
+            if (IsMeetingHallBoss)
+                HandleMeetingHallBoss(lastDamager);
+
             return GetDeathMessage(lastDamager, damageType, criticalHit);
+        }
+
+        private void HandleMeetingHallBoss(DamageHistoryInfo lastDamager)
+        {
+            var town = TownManager.GetClosestTownFromPosition(Location);
+            var killer = lastDamager.TryGetPetOwnerOrAttacker();
+            if (killer != null)
+            {
+                var player = PlayerManager.FindByGuid(killer.Guid.Full);
+                var monarch = AllegianceManager.GetMonarch(player);
+                TownManager.CleanupMeetingHall(town.MeetingHallInstance);
+                TownManager.UpdateTownOwnership(town.Name, monarch.Guid.Full);
+
+                var msg = $"[{town.Name}] has been claimed by {monarch.Name}!!";
+                GameMessageSystemChat sysMessage = new GameMessageSystemChat(msg, ChatMessageType.WorldBroadcast);
+                PlayerManager.BroadcastToAll(sysMessage);
+            }
+    }
+
+        private void OnDeath_SummonHellgateSurfacePortal()
+        {
+            var pos = new Position(Location);
+            var wo = WorldObjectFactory.CreateNewWorldObject(600004);
+            wo.Lifespan = int.MaxValue;
+            wo.Location = pos;
+
+            if (wo != null)
+                wo.EnterWorld();
         }
 
         private void OnDeath_SummonHellgate()
@@ -117,42 +151,11 @@ namespace ACE.Server.WorldObjects
 
             if (IsHellgateBoss)
             {
-                if (IsInHellgate)
                 {
-                    var exitPortal = WorldObjectFactory.CreateNewWorldObject(600004);
-                    var hellgate = HellgateManager.GetHellgate(Location.Instance);
 
-                    if (exitPortal != null && hellgate != null)
-                    {
-                        var actionChain = new ActionChain();
-                        actionChain.AddDelaySeconds(5); 
-                        actionChain.AddAction(exitPortal, new Action(() =>
-                        {
-                            exitPortal.Location = new Position(Location);
-                            exitPortal.Lifespan = (int?)hellgate.TimeRemaining;
-                            exitPortal?.EnterWorld();
-                        }));
-                        actionChain.EnqueueChain();
 
                     }
-                } else
-                {
-                    var town = TownManager.GetClosestTownFromPosition(Location);
-                    var killer = lastDamager.TryGetPetOwnerOrAttacker();
-                    if (killer != null)
-                    {
-                        var player = PlayerManager.FindByGuid(killer.Guid.Full);
-                        var monarch = AllegianceManager.GetMonarch(player);
-                        TownManager.CleanupMeetingHall(town.MeetingHallInstance);
-                        TownManager.UpdateTownOwnership(town.Name, monarch.Guid.Full);
-
-                        var msg = $"[{town.Name}] has been claimed by {monarch.Name}!!";
-                        GameMessageSystemChat sysMessage = new GameMessageSystemChat(msg, ChatMessageType.WorldBroadcast);
-                        PlayerManager.BroadcastToAll(sysMessage);
                     }
-
-                }
-            } 
 
             UpdateVital(Health, 0);
 

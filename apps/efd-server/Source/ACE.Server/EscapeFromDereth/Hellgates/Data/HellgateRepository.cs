@@ -23,8 +23,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Data
             return ReadHellgateJson().Select(dto => new HellgateLandblock(
                 dto.Name,
                 EFDHelpers.slocToPosition(dto.DropLocation),
-                EFDHelpers.slocToPosition(dto.ExitLocation),
-                EFDHelpers.slocToPosition(dto.BossLocation)
+                EFDHelpers.slocToPosition(dto.ExitLocation)
                 )).ToList();
         }
 

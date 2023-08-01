@@ -5,6 +5,7 @@ using ACE.Entity.Enum;
 using ACE.Entity.Enum.Properties;
 using ACE.Entity.Models;
 using ACE.Server.EscapeFromDereth.Hellgates;
+using ACE.Server.EscapeFromDereth.Hellgates.Entity;
 using ACE.Server.EscapeFromDereth.Towns;
 using ACE.Server.Factories;
 using ACE.Server.Managers;
@@ -148,6 +149,32 @@ namespace ACE.Server.EscapeFromDereth.Mutations
             }
 
             return wo;
+        }
+        public static WorldObject CreateHellgateBoss(Hellgate hellgate)
+        {
+            var lb = LandblockManager.GetLandblockUnsafe(hellgate.Landblock.DropLocation.LandblockId, hellgate.Instance);
+            var worldObjects = lb.GetAllWorldObjectsForDiagnostics();
+
+            if (worldObjects.Count == 0)
+                return null;
+
+            WorldObject monster = null;
+
+            while(monster == null)
+            {
+                var random = ThreadSafeRandom.Next(0, worldObjects.Count - 1);
+                var wo = worldObjects[random];
+                if (wo != null && wo is Creature && wo is not Player && wo.IsGenerator is false)
+                {
+                    var boss = WorldObjectFactory.CreateNewWorldObject(wo.WeenieClassId);
+                    boss.Location = new Position(wo.Location);
+                    MutateHellgateBoss(boss, hellgate.Tier);
+                    monster = boss;
+                    wo.Destroy();
+                }
+            }
+
+            return monster;
         }
 
         private static WorldObject ProcessHellgateGenerator(GenericObject genericObject, AppliedRuleset ruleset)
@@ -376,5 +403,21 @@ namespace ACE.Server.EscapeFromDereth.Mutations
             }
         }
 
+        internal static void MutateHellgateBoss(WorldObject wo, int tier)
+        {
+            if (wo.Biota?.PropertiesAttribute2nd?.ContainsKey(PropertyAttribute2nd.MaxHealth) == true)
+            {
+                var level = (uint)(5000 * tier);
+                wo.Biota.PropertiesAttribute2nd[PropertyAttribute2nd.MaxHealth].InitLevel = level;
+                wo.Biota.PropertiesAttribute2nd[PropertyAttribute2nd.MaxHealth].CurrentLevel = level;
+            }
+
+            wo.SpawnHellgateSurfaceOnDeath = true;
+            wo.SetProperty(PropertyFloat.DefaultScale, 1.5); // scale the boss to have 1.5x size
+            wo.Name = $"Hellgate Boss";
+
+            MutateDeathTreasureTypeByTier(wo as Creature, tier);
+            wo.SaveBiotaToDatabase();
+        }
     }
 }
