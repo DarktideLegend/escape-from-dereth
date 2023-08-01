@@ -11,7 +11,6 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Data
         public string Name { get; set; }
         public string DropLocation { get; set; }    
         public string ExitLocation { get; set; }    
-        public string BossLocation { get; set; }
     }
 }
 

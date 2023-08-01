@@ -2,9 +2,7 @@ using ACE.Common;
 using ACE.Database;
 using ACE.Entity;
 using ACE.Entity.Models;
-using ACE.Server.Entity;
 using ACE.Server.Entity.Actions;
-using ACE.Server.EscapeFromDereth.Common;
 using ACE.Server.EscapeFromDereth.Hellgates.Data;
 using ACE.Server.EscapeFromDereth.Hellgates.Entity;
 using ACE.Server.EscapeFromDereth.Mutations;
@@ -13,8 +11,6 @@ using ACE.Server.Factories;
 using ACE.Server.Managers;
 using ACE.Server.WorldObjects;
 using log4net;
-using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -31,7 +27,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
         private static readonly double HeartbeatInterval = 5.0f;
         private static readonly List<string> HellgateLandblockKeys =  new List<string>();
         private static readonly Dictionary<uint, Hellgate> ActiveHellgates = new Dictionary<uint, Hellgate>();
-        private static readonly Queue<HellgateGroup> HellgateGroups = new Queue<HellgateGroup>();
+        private static readonly SortedDictionary<double, HellgateGroup> HellgateGroups = new SortedDictionary<double, HellgateGroup>();
         private static readonly HellgateRepository HellgateRepo = new HellgateRepository();
         public static HellgateGroup CurrentHellgateGroup { get; private set; }
         public static bool IsCleaningupHellgateGroup { get; private set; }
@@ -69,7 +65,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             NextHeartbeatTime = currentUnixTime + HeartbeatInterval;
         }
 
-        private static HellgateGroup CreateHellgateGroup(int timespan = 0, int maxHellgates = 3, int openChance = 25)
+        private static HellgateGroup CreateHellgateGroup(int timespan = 0, int maxHellgates = 3, int openChance = 50)
         {
             lock (hellgateLock)
             {
@@ -82,11 +78,11 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
 
                 var hellgateGroup = new HellgateGroup(landblock, timespan, maxHellgates, GuidManager.NewDynamicGuid());
 
-                //if (ThreadSafeRandom.Next(1, 100) <= 25)
-                hellgateGroup.IsOpen = true;
+                if (ThreadSafeRandom.Next(1, 100) <= openChance)
+                    hellgateGroup.IsOpen = true;
 
                 CurrentHellgateGroup = hellgateGroup;
-                HellgateGroups.Enqueue(hellgateGroup);
+                HellgateGroups.Add(hellgateGroup.HellgateGroupExpiration, hellgateGroup);
 
                 log.Info($"Created HellgateGroup - {hellgateGroup.Guid}");
                 return hellgateGroup;
@@ -119,13 +115,14 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             if (HellgateGroups.Count == 0)
                 return;
 
-            var hellgateGroup = HellgateGroups.Peek();
+            var hellgateGroup = HellgateGroups.FirstOrDefault().Value;
 
             while (hellgateGroup != null && hellgateGroup.ShouldDestroy)
             {
-                CleanupHellgateGroup(HellgateGroups.Dequeue());
+                HellgateGroups.Remove(hellgateGroup.HellgateGroupExpiration);
+                CleanupHellgateGroup(hellgateGroup);
 
-                hellgateGroup = HellgateGroups.Count > 0 ? HellgateGroups.Peek() : null;
+                hellgateGroup = HellgateGroups.FirstOrDefault().Value;
             }
 
             TickHellgates();
@@ -149,29 +146,46 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
                     continue;
 
                 SpawnHellgateBoss(hellgate);
+                SpawnHellgateSurfacePortal(hellgate);
 
+            }
+        }
+
+        private static void SpawnHellgateSurfacePortal(Hellgate hellgate)
+        {
+            var surfacePortal = WorldObjectFactory.CreateNewWorldObject(600004);
+
+            if (surfacePortal != null)
+            {
+                surfacePortal.Location = new Position(hellgate.ExitPosition);
+                surfacePortal.Location.Instance = hellgate.Instance;
+                surfacePortal.Lifespan = int.MaxValue;
+                surfacePortal.EnterWorld();
             }
         }
 
         private static void SpawnHellgateBoss(Hellgate hellgate)
         {
             hellgate.BossSpawned = true;
-            var lifespan = (int)hellgate.TimeRemaining;
-            var boss = WorldObjectFactory.CreateNewWorldObject(4000226); // Darkbeat temporarily 
-            MutationsManager.MutateDeathTreasureTypeByTier(boss as Creature, hellgate.Tier);
-            if (boss != null)
-            {
-                boss.Location = hellgate.BossPosition;
-                boss.Lifespan = lifespan;
-                boss?.EnterWorld();
-            }
 
-            var exitPortal = WorldObjectFactory.CreateNewWorldObject(600004);
-            if (exitPortal != null)
+            var spawned = false;
+
+
+            while (!spawned)
             {
-                exitPortal.Location = hellgate.ExitPosition;
-                exitPortal.Lifespan = lifespan;
-                exitPortal?.EnterWorld();
+                var boss = MutationsManager.CreateHellgateBoss(hellgate);
+                if (boss == null)
+                {
+                    var hellgateGroup = HellgateGroups.GetValueOrDefault(hellgate.Expiration);
+                    if (hellgateGroup != null)
+                        CleanupHellgateGroup(hellgateGroup, false);
+                    return;
+                }
+
+                spawned = boss.EnterWorld();
+
+                if (!spawned)
+                    boss.Destroy();
             }
         }
 
@@ -197,7 +211,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             }
         }
 
-        private static void CleanupHellgateGroup(HellgateGroup hellgateGroup)
+        private static void CleanupHellgateGroup(HellgateGroup hellgateGroup, bool killPlayers = true)
         {
             IsCleaningupHellgateGroup = true;
 
@@ -213,7 +227,12 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
                     foreach (var player in hellgate.Players)
                     {
                         if (player != null)
-                            player.HandleActionDie();
+                        {
+                            if (killPlayers)
+                                player.HandleActionDie();
+                            else
+                                player.ExitInstance();
+                        }
                     }
                     var actionChain = new ActionChain();
                     actionChain.AddDelaySeconds(60); // give enough time for hellgate to be destroyed
@@ -256,9 +275,6 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             var isOpen = hellgateGroup.IsOpen;
             var groupGuid = hellgateGroup.Guid.Full;
 
-            var bossPosition = new Position(hellgateGroup.HellgateLandblock.BossLocation);
-            bossPosition.Instance = instance;
-
             var exitPosition = new Position(hellgateGroup.HellgateLandblock.ExitLocation);
             exitPosition.Instance = instance;
 
@@ -270,7 +286,6 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             var hellgate = new Hellgate(
                 hellgateGroup.HellgateLandblock,
                 ephemeralRealm.RealmRuleset,
-                bossPosition,
                 exitPosition,
                 dropPosition,
                 expiration,
