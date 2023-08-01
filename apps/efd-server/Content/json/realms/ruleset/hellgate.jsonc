@@ -7,8 +7,12 @@
         "IsFullLootOnDeath": true,
         "ExperienceMultiplierAll": 2,
         "CreatureSpawnMultiplier": 2,
-        "CreatureSpawnGeneratorDelay": 5,
         "IsNeutralZone": true,
-        "HasRecalls": false
+        "HasRecalls": false,
+        "CreatureSpawnGeneratorDelay": {
+            "low": 30.0,
+            "high": 120.0,
+            "reroll": "landblock"
+        }
     }
 }
