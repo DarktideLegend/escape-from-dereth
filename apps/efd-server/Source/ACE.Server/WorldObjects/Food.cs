@@ -72,6 +72,12 @@ namespace ACE.Server.WorldObjects
                     return;
                 }
 
+                if (player.CombatMode != CombatMode.NonCombat)
+                {
+                    player.Session.Network.EnqueueSend(new GameMessageSystemChat($"You must be out of combat mode to use invisibility potions.", ChatMessageType.System));
+                    return;
+                }
+
                 if (player.IsInvisibilityPotionExpired)
                     player.HandleInvisibilityPotion();
             }
