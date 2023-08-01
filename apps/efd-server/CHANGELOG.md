@@ -1,3 +1,28 @@
+## [1.1.0-alpha.53](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.52...efd-server-v1.1.0-alpha.53) (2023-08-01)
+
+
+### Features
+
+* **efd-server:** ✨ enable portals in meeting hall realm ([b42986c](https://github.com/DarktideLegend/escape-from-dereth/commit/b42986cbcff0c05b41518c90608d5c6da2ed9971))
+* **efd-server:** ✨ hellgate boss is now created and spawned dynamically ([7d6a24b](https://github.com/DarktideLegend/escape-from-dereth/commit/7d6a24b7fddc5b2d218555b643197f863be4d044))
+* **efd-server:** ✨ hellgate creature respawn is between 30 to 120 seconds ([d8b2e59](https://github.com/DarktideLegend/escape-from-dereth/commit/d8b2e592f172dec6db44a5e7391daacabacd2385))
+* **efd-server:** ✨ hellgate surface portals no longer trigger from player collision ([c0144e0](https://github.com/DarktideLegend/escape-from-dereth/commit/c0144e061c918a0ce0832366a3354291bb1b8377))
+* **efd-server:** ✨ invisibility potions can only be used in non-combat mode ([57ebffb](https://github.com/DarktideLegend/escape-from-dereth/commit/57ebffba65c1329689e9d4eceac20626c95b3b84))
+* **efd-server:** ✨ new players are white for 5 minutes to prevent greifing ([7695e80](https://github.com/DarktideLegend/escape-from-dereth/commit/7695e80fa48073a319f62021f2c22bdd862f5464))
+* **efd-server:** ✨ players now spawn in the basement of agent of arcanum ([df82420](https://github.com/DarktideLegend/escape-from-dereth/commit/df824208b65f9722b8f20726cf1ee73f216732e9))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ check if landblock is permaloaded before adding to the destruction queue ([9a42103](https://github.com/DarktideLegend/escape-from-dereth/commit/9a421037a1e0db09cef69b1256bdbda9812de291))
+* **efd-server:** ♻️ PropertyManager only reads default properties into the cache ([131d014](https://github.com/DarktideLegend/escape-from-dereth/commit/131d014f09d65ef318e8987c6a55a7793a8ce11d))
+* **efd-server:** ♻️ update hellgate creature death treasure logic ([4a774b9](https://github.com/DarktideLegend/escape-from-dereth/commit/4a774b9063dfb9b5ab592b1d85b3aa7858379a2f))
+
+
+### Other changes that don't modify src or test files
+
+* **efd-server:** 🔧 change welcome motd ([776170d](https://github.com/DarktideLegend/escape-from-dereth/commit/776170dbf08b6343a0ded407f0a44ec15faba67b))
+
 ## [1.1.0-alpha.52](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.51...efd-server-v1.1.0-alpha.52) (2023-07-29)
 
 
