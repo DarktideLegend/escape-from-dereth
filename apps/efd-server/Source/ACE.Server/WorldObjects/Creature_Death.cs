@@ -152,10 +152,10 @@ namespace ACE.Server.WorldObjects
             if (IsHellgateBoss)
             {
                 {
+                    
 
-
-                    }
-                    }
+                }
+            } 
 
             UpdateVital(Health, 0);
 
@@ -802,9 +802,9 @@ namespace ACE.Server.WorldObjects
 
         private TreasureDeath CreateDeathTreasureProfile(TreasureDeath profile)
         {
-            var magicMax = IsHellgateBoss ? 250: profile.MagicItemMaxAmount;
-            var itemMax = IsHellgateBoss ? 250: profile.ItemMaxAmount;
-            var mundaneMax = IsHellgateBoss ? 250: profile.MundaneItemMaxAmount;
+            var magicMax = IsHellgateBoss ? 100: profile.MagicItemMaxAmount;
+            var itemMax = IsHellgateBoss ? 100: profile.ItemMaxAmount;
+            var mundaneMax = IsHellgateBoss ? 1: profile.MundaneItemMaxAmount;
 
             var tier = profile.Tier;
 
@@ -835,21 +835,21 @@ namespace ACE.Server.WorldObjects
             var deathTreasureProfile = new TreasureDeath()
             {
                 Tier = tier,
-                UnknownChances = profile.UnknownChances,
+                UnknownChances = IsInHellgate ? 19 : profile.UnknownChances,
                 ItemMaxAmount = itemMax,
-                TreasureType = profile.TreasureType,
+                TreasureType = IsInHellgate ? 2222 : profile.TreasureType,
                 ItemMinAmount = profile.ItemMinAmount,
-                ItemChance = profile.ItemChance,
-                ItemTreasureTypeSelectionChances = profile.ItemTreasureTypeSelectionChances,
+                ItemChance = IsInHellgate ? 100 : profile.ItemChance,
+                ItemTreasureTypeSelectionChances = IsInHellgate ? 8 : profile.ItemTreasureTypeSelectionChances,
                 MagicItemMaxAmount = magicMax,
                 MagicItemMinAmount = profile.MagicItemMinAmount,
-                MagicItemChance = profile.MagicItemChance,
-                MagicItemTreasureTypeSelectionChances = profile.MagicItemTreasureTypeSelectionChances,
+                MagicItemChance = IsInHellgate ? 100 : profile.MagicItemChance,
+                MagicItemTreasureTypeSelectionChances = IsInHellgate ? 8 : profile.MagicItemTreasureTypeSelectionChances,
                 MundaneItemMaxAmount = mundaneMax,
                 MundaneItemMinAmount = profile.MundaneItemMinAmount,
                 MundaneItemChance = profile.MundaneItemChance,
                 MundaneItemTypeSelectionChances = profile.MundaneItemTypeSelectionChances,
-                LootQualityMod = profile.LootQualityMod,
+                LootQualityMod = IsInHellgate ? 0 : profile.LootQualityMod,
 
             };
 
