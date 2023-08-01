@@ -1,3 +1,10 @@
+## [1.1.0-alpha.54](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.53...efd-server-v1.1.0-alpha.54) (2023-08-01)
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ change CreatureSpawnGeneratorDelay to CreatureRespawnDuration ([6c7f132](https://github.com/DarktideLegend/escape-from-dereth/commit/6c7f132226ebd682dd3a7859ac6962212771e8f6))
+
 ## [1.1.0-alpha.53](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.52...efd-server-v1.1.0-alpha.53) (2023-08-01)
 
 
