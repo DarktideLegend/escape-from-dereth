@@ -116,7 +116,7 @@ namespace ACE.Server.Entity
                 if (weenie != null && weenie.WeenieType == WeenieType.Creature)
                 {
                     var creatureSpawnRateMultiplier = Generator.RealmRuleset.GetProperty(RealmPropertyFloat.CreatureSpawnRateMultiplier);
-                    var creatureSpawnGeneratorDelay = Generator.RealmRuleset.GetProperty(RealmPropertyInt.CreatureSpawnGeneratorDelay);
+                    var creatureSpawnGeneratorDelay = Generator.RealmRuleset.GetProperty(RealmPropertyFloat.CreatureSpawnGeneratorDelay);
                     var isMonster = weenie.GetProperty(PropertyBool.Attackable) ?? false || (TargetingTactic)(weenie.GetProperty(PropertyInt.TargetingTactic) ?? 0) != TargetingTactic.None; 
                     if (creatureSpawnGeneratorDelay > 0 && isMonster)
                         return (float)(creatureSpawnGeneratorDelay * creatureSpawnRateMultiplier);

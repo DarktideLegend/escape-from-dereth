@@ -48,9 +48,6 @@ namespace ACE.Entity.Enum.Properties
 
         [RealmPropertyInt(0, -100000, 100000)]
         FoodRestoreAmountAdded,
-
-        [RealmPropertyInt(0, 0, 100000)]
-        CreatureSpawnGeneratorDelay,
     }
 
     public static class RealmPropertyIntExtensions

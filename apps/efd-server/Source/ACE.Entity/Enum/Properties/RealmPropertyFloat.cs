@@ -109,6 +109,11 @@ namespace ACE.Entity.Enum.Properties
 
         [RealmPropertyFloat(33f, -10f, 100f)]
         TinkeringBaseImbueChanceCap,
+
+        [RealmPropertyFloat(30f, 0f, 300f)]
+        CreatureSpawnGeneratorDelay
+
+
     }
 
     public static class RealmPropertyFloatExtensions
