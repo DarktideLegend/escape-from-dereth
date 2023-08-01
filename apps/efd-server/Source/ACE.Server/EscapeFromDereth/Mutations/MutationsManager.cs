@@ -179,12 +179,12 @@ namespace ACE.Server.EscapeFromDereth.Mutations
 
         private static WorldObject ProcessHellgateGenerator(GenericObject genericObject, AppliedRuleset ruleset)
         {
-            var creatureSpawnGeneratorDelay = ruleset.GetProperty(RealmPropertyFloat.CreatureSpawnGeneratorDelay);
+            var creatureRespawnDuration = ruleset.GetProperty(RealmPropertyFloat.CreatureRespawnDuration);
             var creatureSpawnRateMultiplier = ruleset.GetProperty(RealmPropertyFloat.CreatureSpawnRateMultiplier);
 
-            if (creatureSpawnGeneratorDelay > 0)
+            if (creatureRespawnDuration > 0)
             {
-                genericObject.RegenerationInterval = (int)((float)creatureSpawnGeneratorDelay * creatureSpawnRateMultiplier);
+                genericObject.RegenerationInterval = (int)((float)creatureRespawnDuration * creatureSpawnRateMultiplier);
 
                 genericObject.ReinitializeHeartbeats();
 
