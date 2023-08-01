@@ -9,7 +9,7 @@
         "CreatureSpawnMultiplier": 2,
         "IsNeutralZone": true,
         "HasRecalls": false,
-        "CreatureSpawnGeneratorDelay": {
+        "CreatureRespawnDuration": {
             "low": 30.0,
             "high": 120.0,
             "reroll": "landblock"
