@@ -33,6 +33,11 @@ namespace ACE.Server.WorldObjects
 
         public TimeSpan InvisibilityPotionTimer  = TimeSpan.FromSeconds(30);
 
+        public void ResetInvisibilityExpiration()
+        {
+            InvisibilityPotionExpiration = 0;
+        }
+
       
         /// <summary>
         /// Handles the 'GameAction 0x35 - UseWithTarget' network message

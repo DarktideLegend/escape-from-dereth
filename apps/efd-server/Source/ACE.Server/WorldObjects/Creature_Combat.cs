@@ -5,6 +5,7 @@ using ACE.Common;
 using ACE.Entity;
 using ACE.Entity.Enum;
 using ACE.Entity.Enum.Properties;
+using ACE.Server.Command.Handlers;
 using ACE.Server.Entity;
 using ACE.Server.Entity.Actions;
 using ACE.Server.Network.GameEvent.Events;
@@ -77,6 +78,9 @@ namespace ACE.Server.WorldObjects
                 CombatMode = combatMode;
 
             var animLength = 0.0f;
+
+            if (this is Player player && !player.IsInvisibilityPotionExpired)
+                player.ResetInvisibilityExpiration();
 
             switch (combatMode)
             {
