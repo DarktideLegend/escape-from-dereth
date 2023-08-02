@@ -395,6 +395,7 @@ namespace ACE.Server.Factories
                 // set home realm for new players to Escape from Dereth
                 var realm = RealmManager.GetRealm((ushort)6);
                 player.SetProperty(PropertyInt.HomeRealm, realm.Realm.Id);
+                player.SetProperty(PropertyInt.AetheriaBitfield, (int)AetheriaBitfield.All);
                 var homeRealmStarterLocation = realm.DefaultStartingLocation(player);
                 player.Location = homeRealmStarterLocation;
                 player.Instantiation = homeRealmStarterLocation;
