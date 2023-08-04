@@ -9,6 +9,15 @@
     owner: 231072
     mode: '0740'
 
+- name: ACE - Set up dumps directory
+  file:
+    state: directory
+    recurse: true
+    path: "{{ ace_config }}/dumps"
+    group: 231072
+    owner: 231072
+    mode: '0740'
+
 - name: ACE - Write pull-from-dockerhub script
   template:
     src: pull-from-dockerhub.j2

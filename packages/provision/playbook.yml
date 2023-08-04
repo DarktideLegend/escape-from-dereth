@@ -7,5 +7,4 @@
     - ufw
     - docker
     - swag
-    - webhook
     - ace

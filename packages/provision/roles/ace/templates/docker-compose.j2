@@ -33,6 +33,16 @@ services:
     restart: on-failure
     networks:
       - {{ ace_network_name }}
+    
+  ace-backup:
+    image: databack/mysql-backup
+    env_file:
+      - docker.env
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - "{{ ace_config }}/dumps:/ace/dumps"
+    networks:
+      - {{ ace_network_name }}
       
 networks:
   {{ ace_network_name }}:
