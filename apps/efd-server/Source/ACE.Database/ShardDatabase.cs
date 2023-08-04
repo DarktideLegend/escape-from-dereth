@@ -542,14 +542,16 @@ namespace ACE.Database
                 var query = from biota in context.Biota
                             join position in context.BiotaPropertiesPosition on biota.Id equals position.ObjectId
                             where biota.WeenieClassId == 600000 || biota.WeenieClassId == 600005
-                            && position.Instance == location.Instance
-                            && position.ObjCellId == location.Cell
-                            && position.OriginX == location.Pos.X
-                            && position.OriginY == location.Pos.Y
-                            && position.OriginZ == location.Pos.Z
+                            where position.Instance == location.Instance
+                            where position.ObjCellId == location.Cell
                             select biota;
 
-                return query.FirstOrDefault();
+                var storageBiota = query.FirstOrDefault();
+
+                if (storageBiota != null)
+                    return GetBiota(storageBiota.Id);
+
+                return storageBiota;
             }
         }
 
