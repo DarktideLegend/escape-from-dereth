@@ -533,27 +533,23 @@ namespace ACE.Database
             return dynamics;
         }
 
-        public Biota GetPersistentStorage(Position position)
+        public Biota GetPersistentStorage(Position location)
         {
             using (var context = new ShardDbContext())
             {
                 context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
-                var results = context.BiotaPropertiesPosition
-                    .Where(p => (p.Instance ?? 0) == position.Instance)
-                    .ToList();
+                var query = from biota in context.Biota
+                            join position in context.BiotaPropertiesPosition on biota.Id equals position.ObjectId
+                            where biota.WeenieClassId == 600000 || biota.WeenieClassId == 600005
+                            && position.Instance == location.Instance
+                            && position.ObjCellId == location.Cell
+                            && position.OriginX == location.Pos.X
+                            && position.OriginY == location.Pos.Y
+                            && position.OriginZ == location.Pos.Z
+                            select biota;
 
-                foreach (var result in results)
-                {
-                    var biota = GetBiota(result.ObjectId);
-
-                    // hideout storage and town storage
-                    if (biota.WeenieClassId == 600000 || biota.WeenieClassId == 600005)
-                        return biota;
-                }
-
-                return null;
-
+                return query.FirstOrDefault();
             }
         }
 
