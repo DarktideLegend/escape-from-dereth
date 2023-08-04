@@ -1,3 +1,15 @@
+## [1.1.0-alpha.55](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.54...efd-server-v1.1.0-alpha.55) (2023-08-04)
+
+
+### Features
+
+* **efd-server:** ✨ new players have aetheria slots unlocked ([f0a2455](https://github.com/DarktideLegend/escape-from-dereth/commit/f0a2455cb469dfff3874cffb82799da2e83b31f5))
+
+
+### Bug Fixes
+
+* **efd-server:** 🐛 update query preventing landblock from loading ([9bd4fb6](https://github.com/DarktideLegend/escape-from-dereth/commit/9bd4fb6d1fa7a7390d38265090867943ff01c1de))
+
 ## [1.1.0-alpha.54](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.53...efd-server-v1.1.0-alpha.54) (2023-08-01)
 
 
