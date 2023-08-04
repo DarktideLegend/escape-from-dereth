@@ -1,3 +1,24 @@
+## [1.1.0-alpha.56](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.55...efd-server-v1.1.0-alpha.56) (2023-08-04)
+
+
+### Features
+
+* **efd-server:** ✨ add hebian-to as a whitelisted town ([c76fc76](https://github.com/DarktideLegend/escape-from-dereth/commit/c76fc762b0c3ae73a6a0b67fd1a28688ea3ac9c7))
+* **efd-server:** ✨ add yaraq as a whitelisted town ([48f32c3](https://github.com/DarktideLegend/escape-from-dereth/commit/48f32c3e45cdd6445e471db1a3fc8a7805ddd5d5))
+* **efd-server:** ✨ tapers are required to cast spells ([cee6f65](https://github.com/DarktideLegend/escape-from-dereth/commit/cee6f650cf2d229975c142c7cd4bbb0a54030100))
+
+
+### Bug Fixes
+
+* **efd-server:** 🐛 update town meeting hall broadcasting to players who cannot enter ([5424690](https://github.com/DarktideLegend/escape-from-dereth/commit/5424690a5f76a1a67396d171b95daba8fdea25c0))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ change name of exit portal in town meeting hall realm ([0bad110](https://github.com/DarktideLegend/escape-from-dereth/commit/0bad110ac65a65f22f0949fba7a081d5269dfdac))
+* **efd-server:** ♻️ persistent storage should be saved to db after creation ([86823e8](https://github.com/DarktideLegend/escape-from-dereth/commit/86823e8320cc33a24c6d2dc0baaf0cc0fd0f6eb0))
+* **efd-server:** ♻️ update persistent storage query ([91718f4](https://github.com/DarktideLegend/escape-from-dereth/commit/91718f4cba1f59e288c64fe88cacf2d8b4c0423a))
+
 ## [1.1.0-alpha.55](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.54...efd-server-v1.1.0-alpha.55) (2023-08-04)
 
 
