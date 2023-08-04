@@ -399,6 +399,7 @@ namespace ACE.Server.EscapeFromDereth.Mutations
                 var storageGuid = GuidManager.NewPlayerGuid();
                 var storage = new Storage(weenie, storageGuid);
                 storage.Location = new Position(location);
+                storage.SaveBiotaToDatabase();
                 return storage;
             }
         }
