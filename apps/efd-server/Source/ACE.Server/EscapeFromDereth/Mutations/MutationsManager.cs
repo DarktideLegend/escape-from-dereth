@@ -51,6 +51,9 @@ namespace ACE.Server.EscapeFromDereth.Mutations
                 case WeenieType.Door:
                     wo.Destroy();
                     return null;
+                case WeenieType.Portal:
+                    wo.Name = "Meeting Hall Exit Portal";
+                    return wo;
             }
 
             return wo;
