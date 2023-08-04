@@ -121,6 +121,11 @@ namespace ACE.Server.EscapeFromDereth.Mutations
             {
                 portal.Destroy();
                 return null;
+            } else
+            {
+                portal.PortalRestrictions |= PortalBitmask.NoNPK; // meeting hall should never have npk
+                portal.PortalRestrictions |= PortalBitmask.NoSummon;
+                portal.PortalRestrictions |= PortalBitmask.NoRecall;
             }
 
 
