@@ -1,3 +1,16 @@
+## [1.1.0-alpha.57](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.56...efd-server-v1.1.0-alpha.57) (2023-08-04)
+
+
+### Features
+
+* **efd-server:** ✨ enable global chat channels ([5d4d553](https://github.com/DarktideLegend/escape-from-dereth/commit/5d4d55381064c1726e9366a64072b32f4da94706))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ update portal restrictions for meeting hall ([7e43dc2](https://github.com/DarktideLegend/escape-from-dereth/commit/7e43dc26abaf1b3d9c642121e128ee993d7dc0f2))
+* **efd-server:** ♻️ update preloaded landblocks ([71b6fb0](https://github.com/DarktideLegend/escape-from-dereth/commit/71b6fb049aa94f415aa2f8ca51c25979f0797c15))
+
 ## [1.1.0-alpha.56](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.55...efd-server-v1.1.0-alpha.56) (2023-08-04)
 
 
