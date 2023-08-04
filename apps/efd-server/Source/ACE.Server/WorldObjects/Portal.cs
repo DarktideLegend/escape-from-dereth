@@ -351,7 +351,7 @@ namespace ACE.Server.WorldObjects
             } else
             {
                 var message = $"You may not enter the Town Meeting Hall at this time";
-                player.EnqueueBroadcast(new GameMessageSystemChat(message, ChatMessageType.System));
+                player.Session.Network.EnqueueSend(new GameMessageSystemChat(message, ChatMessageType.Broadcast));
             }
 
             IsProcessing = false;
