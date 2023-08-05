@@ -61,6 +61,9 @@ namespace ACE.Server.EscapeFromDereth.Mutations
 
         private static WorldObject ProcessHideoutObject(WorldObject wo, AppliedRuleset ruleset)
         {
+            if (wo.WeenieClassId == 80007)
+                return wo;
+
             switch (wo.WeenieType)
             {
                 case WeenieType.Storage:
