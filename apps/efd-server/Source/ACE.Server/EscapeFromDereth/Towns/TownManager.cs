@@ -61,6 +61,17 @@ namespace ACE.Server.EscapeFromDereth.Towns
             NextHeartbeatTime = currentUnixTime + HeartbeatInterval;
         }
 
+        public static MeetingHall GetMeetingHallFromPlayer(Player player)
+        {
+            if (player == null)
+                return null;
+
+            if (MeetingHalls.TryGetValue(player.Location.Instance, out var meetingHall))
+                return meetingHall;
+            else
+                return null;
+        }
+
 
         public static void AddTaxToTownStorage(Town town, int taxAmount)
         {

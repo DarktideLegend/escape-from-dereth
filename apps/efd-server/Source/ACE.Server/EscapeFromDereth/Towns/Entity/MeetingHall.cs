@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace ACE.Server.EscapeFromDereth.Towns.Entity
 {
-    internal class MeetingHall : Arena
+    public class MeetingHall : Arena
     {
         public readonly Town Town;
 
