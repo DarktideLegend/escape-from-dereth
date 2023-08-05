@@ -503,7 +503,7 @@ namespace ACE.Server.WorldObjects
 
             if (fullLoot)
                 // exclude attuned
-                inventory = inventory.Where(i => (i.GetProperty(PropertyInt.Attuned) ?? 0) == 0).ToList();
+                inventory = inventory.Where(i => i.IsAttunedOrContainsAttuned is false).ToList();
             else
                 // exclude bonded items
                 inventory = inventory.Where(i => (i.GetProperty(PropertyInt.Bonded) ?? 0) == 0).ToList();
