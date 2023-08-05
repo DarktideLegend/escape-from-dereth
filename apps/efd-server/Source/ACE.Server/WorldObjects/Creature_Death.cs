@@ -71,10 +71,11 @@ namespace ACE.Server.WorldObjects
 
         private void HandleMeetingHallBoss(DamageHistoryInfo lastDamager)
         {
-            var town = TownManager.GetClosestTownFromPosition(Location);
             var killer = lastDamager.TryGetPetOwnerOrAttacker();
             if (killer != null)
             {
+                var meetingHall = TownManager.GetMeetingHallFromPlayer((Player)killer);
+                var town = meetingHall.Town;
                 var player = PlayerManager.FindByGuid(killer.Guid.Full);
                 var monarch = AllegianceManager.GetMonarch(player);
                 TownManager.CleanupMeetingHall(town.MeetingHallInstance);
