@@ -301,9 +301,6 @@ namespace ACE.Server.Managers
                 else
                 {
                     PlayerFactoryEx.LearnAllNonAdminSpells(player);
-                    PlayerFactoryEx.DisableSpellComponentRequirement(player);
-                    PlayerFactoryEx.LoadDefaultSpellBars(player);
-                    PlayerFactoryEx.LoadSkillSpecificDefaultSpellBar(player);
                     session.Network.EnqueueSend(new GameEventPopupString(session, AppendLines(popup_header, popup_motd, popup_welcome)));
                 }
             }
