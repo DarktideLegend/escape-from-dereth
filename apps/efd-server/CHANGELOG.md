@@ -1,3 +1,15 @@
+## [1.1.0-alpha.58](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.57...efd-server-v1.1.0-alpha.58) (2023-08-05)
+
+
+### Features
+
+* **efd-server:** ✨ hellgates are no always random dungeons ([912e0c2](https://github.com/DarktideLegend/escape-from-dereth/commit/912e0c27a5d82be97852bea055f4f98c1ef28cb0))
+
+
+### Bug Fixes
+
+* **efd-server:** 🐛 meeting halls are now properly disposed ([2c2fc39](https://github.com/DarktideLegend/escape-from-dereth/commit/2c2fc3913746941bc0b1f521a3d55a8fe36c292a))
+
 ## [1.1.0-alpha.57](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.56...efd-server-v1.1.0-alpha.57) (2023-08-04)
 
 
