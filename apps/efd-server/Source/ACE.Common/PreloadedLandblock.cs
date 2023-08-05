@@ -34,5 +34,12 @@ namespace ACE.Common
         [System.ComponentModel.DefaultValue(false)]
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
         public bool Enabled { get; set; }
+
+        /// <summary>
+        /// The realmIds associated with a landblock to be preloaded.
+        /// </summary>
+        public ushort[] RealmIds { get; set; }
+
+
     }
 }

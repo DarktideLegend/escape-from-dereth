@@ -105,46 +105,68 @@
         // This section requires LandblockPreloading to be true
         "PreloadedLandblocks": [
             {
+                "Id": "C6A9FFFF",
+                "Description": "Arwic",
+                "Permaload": true,
+                "IncludeAdjacents": true,
+                "Enabled": true,
+                "RealmIds": [ 6 ]
+            },
+            {
+                "Id": "E64EFFFF",
+                "Description": "Hebian-To",
+                "Permaload": true,
+                "IncludeAdjacents": true,
+                "Enabled": true,
+                "RealmIds": [ 6 ]
+            },
+            {
                 "Id": "E74EFFFF",
                 "Description": "Hebian-To (Global Events)",
                 "Permaload": true,
-                "IncludeAdjacents": false,
-                "Enabled": true
+                "IncludeAdjacents": true,
+                "Enabled": true,
+                "RealmIds": [ 6 ]
             },
             {
                 "Id": "A9B4FFFF",
                 "Description": "Holtburg",
                 "Permaload": true,
                 "IncludeAdjacents": true,
-                "Enabled": false
+                "Enabled": false,
+                "RealmIds": [ 6 ]
             },
             {
                 "Id": "DA55FFFF",
                 "Description": "Shoushi",
                 "Permaload": true,
                 "IncludeAdjacents": true,
-                "Enabled": false
+                "Enabled": false,
+                "RealmIds": [ 6 ]
             },
             {
                 "Id": "7D64FFFF",
                 "Description": "Yaraq",
                 "Permaload": true,
                 "IncludeAdjacents": true,
-                "Enabled": false
+                "Enabled": true,
+                "RealmIds": [ 6 ]
             },
             {
                 "Id": "0007FFFF",
                 "Description": "Town Network",
                 "Permaload": true,
                 "IncludeAdjacents": false,
-                "Enabled": false
+                "Enabled": true,
+                "RealmIds": [ 6 ]
             },
             {
                 "Id": "00000000",
                 "Description": "Apartment Landblocks",
                 "Permaload": true,
                 "IncludeAdjacents": false,
-                "Enabled": false
+                "Enabled": false,
+                "RealmIds": [ 6 ]
             }
         ]
     },
