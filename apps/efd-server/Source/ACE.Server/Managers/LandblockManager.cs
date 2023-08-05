@@ -114,7 +114,15 @@ namespace ACE.Server.Managers
 
         private static void PreloadLandblock(uint landblock, PreloadedLandblocks preloadLandblock)
         {
-            //Preload landblocks not supported on AC Realms (for now)
+            foreach (var realmId in preloadLandblock.RealmIds)
+            {
+
+                var instance = Position.InstanceIDFromVars(realmId, 0, false);
+                var landblockID = new LandblockId(landblock);
+                GetLandblock(landblockID, instance, null, preloadLandblock.IncludeAdjacents, preloadLandblock.Permaload);
+                log.DebugFormat("Landblock {0:X4}, Instance {4}, ({1}) preloaded. IncludeAdjacents = {2}, Permaload = {3}", landblockID.Landblock, preloadLandblock.Description, preloadLandblock.IncludeAdjacents, preloadLandblock.Permaload, instance);
+            }
+
             return;
         }
 
