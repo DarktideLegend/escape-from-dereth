@@ -25,7 +25,7 @@ namespace ACE.Server.WorldObjects
                 var bossTimeRemaining = TimeSpan.FromSeconds(hellgate.BossSpawnRemaining);
                 var bossCountdown = bossTimeRemaining.ToString(@"hh\:mm\:ss");
 
-                var dungeonName = hellgate.Landblock.Name;
+                var dungeonName = hellgate.DungeonName;
                 Session.Network.EnqueueSend(new GameMessageSystemChat($"Hellgate: [instance] = {instance} [group] = {hellgateGroup} [dungeon] = {dungeonName}", ChatMessageType.System));
                 Session.Network.EnqueueSend(new GameMessageSystemChat($"Hellgate: [is-open] = {hellgate.IsOpen}", ChatMessageType.System));
                 Session.Network.EnqueueSend(new GameMessageSystemChat($"Hellgate: [hellgate_countdown] = {hellgateCountdown}", ChatMessageType.System));
