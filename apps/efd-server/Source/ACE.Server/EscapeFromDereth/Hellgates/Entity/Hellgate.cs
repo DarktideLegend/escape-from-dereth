@@ -11,9 +11,10 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
 {
     public class Hellgate : Arena
     {
-        public readonly HellgateLandblock Landblock;
         public AppliedRuleset Ruleset { get; }
         public uint HellgateGroup;
+
+        public string DungeonName { get; private set; }
         public double Expiration { get; private set; }
         public double BossExpiration { get; private set; }
         public bool BossSpawned = false;
@@ -27,7 +28,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
         public Position ExitPosition;
 
         public Hellgate(
-            HellgateLandblock landblock,
+            string dungeonName,
             AppliedRuleset ruleset,
             Position exitPosition,
             Position dropPosition,
@@ -38,7 +39,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
             int tier,
             uint instance) : base(instance)
         {
-            Landblock = landblock;
+            DungeonName = dungeonName;
             Ruleset = ruleset;
             Expiration = expiration;
             BossExpiration = bossExpiration;

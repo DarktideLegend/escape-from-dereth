@@ -76,7 +76,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
                 if (timespan == 0)
                     timespan = 60; // by default, hellgates are open for an hour
 
-                var hellgateGroup = new HellgateGroup(landblock, timespan, maxHellgates, GuidManager.NewDynamicGuid());
+                var hellgateGroup = new HellgateGroup(timespan, maxHellgates, GuidManager.NewDynamicGuid());
 
                 if (ThreadSafeRandom.Next(1, 100) <= openChance)
                     hellgateGroup.IsOpen = true;
@@ -238,7 +238,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
                     actionChain.AddDelaySeconds(60); // give enough time for hellgate to be destroyed
                     actionChain.AddAction(WorldManager.ActionQueue, () =>
                     {
-                        var lb = LandblockManager.GetLandblockUnsafe(hellgate.Landblock.DropLocation.LandblockId, hellgate.Instance);
+                        var lb = LandblockManager.GetLandblockUnsafe(hellgate.DropPosition.LandblockId, hellgate.Instance);
                         if (lb != null)
                             LandblockManager.AddToDestructionQueue(lb);
                         hellgate.Destroy();
@@ -268,23 +268,26 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
 
         private static Hellgate CreateHellgate(Player leader, List<Realm> appliedRulesets, HellgateGroup hellgateGroup)
         {
-            var ephemeralRealm = RealmManager.GetNewEphemeralLandblock(hellgateGroup.HellgateLandblock.DropLocation.LandblockId, leader, appliedRulesets, true);
+            var index = ThreadSafeRandom.Next(0, HellgateLandblocks.Count - 1);
+            var landblockName = HellgateLandblockKeys[index];
+            var landblock = HellgateLandblocks[landblockName];
+            var ephemeralRealm = RealmManager.GetNewEphemeralLandblock(landblock.DropLocation.LandblockId, leader, appliedRulesets, true);
             var instance = ephemeralRealm.Instance;
             var expiration = hellgateGroup.HellgateGroupExpiration;
             var bossExpiration = hellgateGroup.HellgateBossSpawnExpiration;
             var isOpen = hellgateGroup.IsOpen;
             var groupGuid = hellgateGroup.Guid.Full;
 
-            var exitPosition = new Position(hellgateGroup.HellgateLandblock.ExitLocation);
+            var exitPosition = new Position(landblock.ExitLocation);
             exitPosition.Instance = instance;
 
-            var dropPosition = new Position(hellgateGroup.HellgateLandblock.DropLocation);
+            var dropPosition = new Position(landblock.DropLocation);
             dropPosition.Instance = instance;
 
             var tier = TownManager.GetMonsterTierByDistance(leader.Location);
 
             var hellgate = new Hellgate(
-                hellgateGroup.HellgateLandblock,
+                landblock.Name,
                 ephemeralRealm.RealmRuleset,
                 exitPosition,
                 dropPosition,

@@ -160,7 +160,7 @@ namespace ACE.Server.EscapeFromDereth.Mutations
         }
         public static WorldObject CreateHellgateBoss(Hellgate hellgate)
         {
-            var lb = LandblockManager.GetLandblockUnsafe(hellgate.Landblock.DropLocation.LandblockId, hellgate.Instance);
+            var lb = LandblockManager.GetLandblockUnsafe(hellgate.DropPosition.LandblockId, hellgate.Instance);
             var worldObjects = lb.GetAllWorldObjectsForDiagnostics();
 
             if (worldObjects.Count == 0)

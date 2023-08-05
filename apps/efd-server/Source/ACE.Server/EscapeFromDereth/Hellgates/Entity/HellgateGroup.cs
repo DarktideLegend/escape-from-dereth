@@ -13,8 +13,6 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
     {
         public readonly ObjectGuid Guid;
 
-        public readonly HellgateLandblock HellgateLandblock;
-
         private HashSet<uint> Hellgates = new HashSet<uint>();
 
         public bool IsOpen { get; set; } = false;
@@ -92,11 +90,10 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
             GroupTail = null;
         }
 
-        public HellgateGroup(HellgateLandblock hellgateLandblock, int timespan, int maxActiveHellgates, ObjectGuid guid)
+        public HellgateGroup(int timespan, int maxActiveHellgates, ObjectGuid guid)
         {
 
             Guid = guid;
-            HellgateLandblock = hellgateLandblock;
             MaxActiveHellgates = maxActiveHellgates;
             HellgateTimer = TimeSpan.FromMinutes(timespan);
             HellgateBossTimer = TimeSpan.FromMinutes(timespan * 0.5); // after half the duration has expired spawn a hellgate boss/surface portal
