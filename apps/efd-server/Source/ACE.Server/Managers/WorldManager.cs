@@ -259,6 +259,9 @@ namespace ACE.Server.Managers
             if (olthoiPlayerReturnedToLifestone)
                 session.Player.Location = new Position(session.Player.Sanctuary);
 
+
+            PlayerFactoryEx.EnableSpellComponentRequirement(session.Player);
+
             session.Player.PlayerEnterWorld();
 
             var success = LandblockManager.AddObject(session.Player, true);
