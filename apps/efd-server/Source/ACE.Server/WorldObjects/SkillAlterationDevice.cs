@@ -104,7 +104,7 @@ namespace ACE.Server.WorldObjects
 
         public bool VerifyRequirements(Player player, CreatureSkill skill, SkillBase skillBase)
         {
-            switch (TypeOfAlteration)
+            /*switch (TypeOfAlteration)
             {
                 // Gem of Enlightenment
                 case SkillAlterationType.Specialize:
@@ -162,7 +162,7 @@ namespace ACE.Server.WorldObjects
 
                     break;
 
-            }
+            }*/
             return true;
         }
 
