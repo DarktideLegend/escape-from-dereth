@@ -18,6 +18,7 @@ using ACE.Server.Network.GameEvent.Events;
 using ACE.Server.Network.GameMessages.Messages;
 using ACE.Server.Network.GameMessages;
 using ACE.Server.Network.Managers;
+using ACE.Server.EscapeFromDereth.Hellgates;
 
 namespace ACE.Server.Network
 {
@@ -223,6 +224,13 @@ namespace ACE.Server.Network
         public void LogOffPlayer(bool forceImmediate = false)
         {
             if (Player == null) return;
+
+            var hellgate = HellgateManager.GetHellgate(Player.Location.Instance);
+
+            if (hellgate != null)
+            {
+                Player.Die();
+            }
 
             // Character database objects are not cached. Each session gets a new character entity and dbContext from ShardDatabase.
             // To ensure the latest version of the character is saved before any new logins pull these records again, we queue a save here if necessary, at the instant logoff is requested.
