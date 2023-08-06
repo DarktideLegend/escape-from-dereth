@@ -1,3 +1,10 @@
+## [1.1.0-alpha.62](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.61...efd-server-v1.1.0-alpha.62) (2023-08-06)
+
+
+### Bug Fixes
+
+* **efd-server:** 🐛 add ust back to fitness instructor anthony ([d987d84](https://github.com/DarktideLegend/escape-from-dereth/commit/d987d84851616ba539b1285117c3cdbc8e797a13))
+
 ## [1.1.0-alpha.61](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.60...efd-server-v1.1.0-alpha.61) (2023-08-06)
 
 
