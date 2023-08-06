@@ -1,3 +1,26 @@
+## [1.1.0-alpha.59](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.58...efd-server-v1.1.0-alpha.59) (2023-08-06)
+
+
+### Features
+
+* **efd-server:** ✨ add ability to preload landblocks based on realm ([adde6ee](https://github.com/DarktideLegend/escape-from-dereth/commit/adde6eec4b2fe9979d0d31311712f4ca1d58d775))
+* **efd-server:** ✨ components are now required, spell bars are no longer loaded ([caca352](https://github.com/DarktideLegend/escape-from-dereth/commit/caca352cf4e6a75769396b46d7ef2d55d8e2c29c))
+* **efd-server:** ✨ fitness instructor anthony now sells blackmoor's favor ([97a6baa](https://github.com/DarktideLegend/escape-from-dereth/commit/97a6baad928e706a73a18c375f6b143b9da2d7ba))
+* **efd-server:** ✨ hellgate surface portal now triggers on collision ([6a3698c](https://github.com/DarktideLegend/escape-from-dereth/commit/6a3698ccc6e6edab3116c387e6e798b089890c17))
+
+
+### Bug Fixes
+
+* **efd-server:** 🐛 add keepalive object to hideout landblock ([6f1de7e](https://github.com/DarktideLegend/escape-from-dereth/commit/6f1de7e194d30fe96332ae040f699f516d34aa63))
+* **efd-server:** 🐛 attuned items in containers no longer drop with full loot on death ([0cb726a](https://github.com/DarktideLegend/escape-from-dereth/commit/0cb726aad5ccd4dca13640cedac3a0529bf11f03))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ hellgate logout is handled in session ([d0bc25e](https://github.com/DarktideLegend/escape-from-dereth/commit/d0bc25eea57218b3b4e3dddbcc7cda7752f73cb6))
+* **efd-server:** ♻️ keepalive object should not be filtered by MutationsManager ([244f092](https://github.com/DarktideLegend/escape-from-dereth/commit/244f092e6c3421f0c332f3448b3803188b961072))
+* **efd-server:** ♻️ recalls disabled property must check if RealmRuleset exists first ([37ef7df](https://github.com/DarktideLegend/escape-from-dereth/commit/37ef7df639a6237542535c808067d805b818de64))
+
 ## [1.1.0-alpha.58](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.57...efd-server-v1.1.0-alpha.58) (2023-08-05)
 
 
