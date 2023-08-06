@@ -13,6 +13,8 @@ namespace ACE.Server.WorldObjects
     {
         private readonly bool biotaOriginatedFromDatabase;
 
+        public bool IsCustomStorage => WeenieClassId == 600000 || WeenieClassId == 600005;
+
         public DateTime LastRequestedDatabaseSave { get; protected set; }
 
         /// <summary>
@@ -102,7 +104,8 @@ namespace ACE.Server.WorldObjects
         /// </summary>
         public bool IsStaticThatShouldPersistToShard()
         {
-            if (!Guid.IsStatic())
+            // check for custom storage chests 
+            if (!Guid.IsStatic() && !IsCustomStorage)
                 return false;
 
             if (BiotaOriginatedFromOrHasBeenSavedToDatabase())
