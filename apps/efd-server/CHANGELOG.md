@@ -1,3 +1,15 @@
+## [1.1.0-alpha.61](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.60...efd-server-v1.1.0-alpha.61) (2023-08-06)
+
+
+### Features
+
+* **efd-server:** ✨ spell components are now enforced for all players ([b5c4bef](https://github.com/DarktideLegend/escape-from-dereth/commit/b5c4bef963165270eac83d769fe0994f29f5ea12))
+
+
+### Bug Fixes
+
+* **efd-server:** 🐛 save custom storage the same way as housing chests ([5067025](https://github.com/DarktideLegend/escape-from-dereth/commit/50670259e09dd0bbcb7f370c8e69528c6699abac))
+
 ## [1.1.0-alpha.60](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.59...efd-server-v1.1.0-alpha.60) (2023-08-06)
 
 
