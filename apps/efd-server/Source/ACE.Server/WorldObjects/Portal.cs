@@ -262,7 +262,7 @@ namespace ACE.Server.WorldObjects
                 return new ActivationResult(false);
             }
 
-            if (WeenieClassId == 600004) // to hellgate exit 
+            if (WeenieClassId == 600004 || WeenieClassId == 600006) // to hellgate exit 
             {
                 if (IsProcessing)
                     return new ActivationResult(false);

@@ -153,7 +153,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
 
         private static void SpawnHellgateSurfacePortal(Hellgate hellgate)
         {
-            var surfacePortal = WorldObjectFactory.CreateNewWorldObject(600004);
+            var surfacePortal = WorldObjectFactory.CreateNewWorldObject(600006);
 
             if (surfacePortal != null)
             {
