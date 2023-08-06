@@ -1,3 +1,11 @@
+## [1.1.0-alpha.60](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.59...efd-server-v1.1.0-alpha.60) (2023-08-06)
+
+
+### Features
+
+* **efd-server:** ✨ players can now evade monsters ([2b84340](https://github.com/DarktideLegend/escape-from-dereth/commit/2b84340223a924faee84647bcc549406bf8a2a89))
+* **efd-server:** ✨ players can now respec skills ([324b466](https://github.com/DarktideLegend/escape-from-dereth/commit/324b466223e733d7647731630740de1b44460a9a))
+
 ## [1.1.0-alpha.59](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.58...efd-server-v1.1.0-alpha.59) (2023-08-06)
 
 
