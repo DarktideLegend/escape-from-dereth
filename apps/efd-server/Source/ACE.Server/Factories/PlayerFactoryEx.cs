@@ -160,6 +160,13 @@ namespace ACE.Server.Factories
             player.Session.Network.EnqueueSend(new GameMessageSystemChat("You can now cast spells without components.", ChatMessageType.Broadcast));
         }
 
+        public static void EnableSpellComponentRequirement(Player player)
+        {
+            player.SpellComponentsRequired = true;
+            player.EnqueueBroadcast(new GameMessagePublicUpdatePropertyBool(player, PropertyBool.SpellComponentsRequired, player.SpellComponentsRequired));
+            player.Session.Network.EnqueueSend(new GameMessageSystemChat("Spell components are now required to cast spells.", ChatMessageType.Broadcast));
+        }
+
         public static void SpendAllXp(Player player, bool sendNetworkUpdate = true)
         {
             player.SpendAllXp(sendNetworkUpdate);
