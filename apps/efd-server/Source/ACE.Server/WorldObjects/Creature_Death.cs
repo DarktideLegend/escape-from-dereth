@@ -750,6 +750,17 @@ namespace ACE.Server.WorldObjects
         {
             var droppedItems = new List<WorldObject>();
 
+            if (IsHellgateBoss)
+            {
+                var hellgate = HellgateManager.GetHellgate(Location.Instance);
+                var amount = hellgate.Tier * 2;
+
+                for (var i = 0; i < amount; ++i)
+                {
+                    corpse.TryAddToInventory(WorldObjectFactory.CreateNewWorldObject(20630));
+                }
+            }
+
             // create death treasure from loot generation factory
             if (DeathTreasure != null)
             {
@@ -815,9 +826,9 @@ namespace ACE.Server.WorldObjects
 
         private TreasureDeath CreateDeathTreasureProfile(TreasureDeath profile)
         {
-            var magicMax = IsHellgateBoss ? 100: profile.MagicItemMaxAmount;
-            var itemMax = IsHellgateBoss ? 100: profile.ItemMaxAmount;
-            var mundaneMax = IsHellgateBoss ? 1: profile.MundaneItemMaxAmount;
+            var magicMax = profile.MagicItemMaxAmount;
+            var itemMax = profile.ItemMaxAmount;
+            var mundaneMax =  profile.MundaneItemMaxAmount;
 
             var tier = profile.Tier;
 
