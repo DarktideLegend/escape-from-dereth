@@ -142,51 +142,31 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
                     }
                 }
 
-                if (hellgate.BossSpawned || !hellgate.ShouldSpawnBoss)
-                    continue;
+                if (hellgate.ShouldSpawnBoss)
+                    SpawnHellgateBoss(hellgate);
 
-                SpawnHellgateBoss(hellgate);
-                SpawnHellgateSurfacePortal(hellgate);
+                if (hellgate.ShouldSpawnSurface)
+                    SpawnHellgateSurfacePortal(hellgate);
+
 
             }
         }
 
-        private static void SpawnHellgateSurfacePortal(Hellgate hellgate)
+        public static void SpawnHellgateSurfacePortal(Hellgate hellgate)
         {
-            var surfacePortal = WorldObjectFactory.CreateNewWorldObject(600006);
+            var surfacePortal = MutationsManager.CreateHellgateSurfacePortal(hellgate);
 
-            if (surfacePortal != null)
-            {
-                surfacePortal.Location = new Position(hellgate.ExitPosition);
-                surfacePortal.Location.Instance = hellgate.Instance;
-                surfacePortal.Lifespan = int.MaxValue;
-                surfacePortal.EnterWorld();
-            }
+            if (surfacePortal != null && surfacePortal.EnterWorld() && surfacePortal.PhysicsObj != null)
+                hellgate.SpawnSurface();
         }
 
         private static void SpawnHellgateBoss(Hellgate hellgate)
         {
-            hellgate.BossSpawned = true;
+            var boss = MutationsManager.CreateHellgateBoss(hellgate);
 
-            var spawned = false;
+            if (boss != null && boss.EnterWorld() && boss.PhysicsObj != null)
+                hellgate.SpawnBoss();
 
-
-            while (!spawned)
-            {
-                var boss = MutationsManager.CreateHellgateBoss(hellgate);
-                if (boss == null)
-                {
-                    var hellgateGroup = HellgateGroups.GetValueOrDefault(hellgate.Expiration);
-                    if (hellgateGroup != null)
-                        CleanupHellgateGroup(hellgateGroup, false);
-                    return;
-                }
-
-                spawned = boss.EnterWorld();
-
-                if (!spawned)
-                    boss.Destroy();
-            }
         }
 
         public static void AddPlayerToHellgate(Player player, uint instance)
