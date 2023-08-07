@@ -1,3 +1,16 @@
+## [1.1.0-alpha.63](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.62...efd-server-v1.1.0-alpha.63) (2023-08-07)
+
+
+### Features
+
+* **efd-server:** ✨ hellgate bosses now drop multiple mmd notes depending on tier ([d565834](https://github.com/DarktideLegend/escape-from-dereth/commit/d5658345a896d6454543463398c790366fca6ad3))
+* **efd-server:** ✨ whitelisted towns now have their own class of monsters ([bd1048d](https://github.com/DarktideLegend/escape-from-dereth/commit/bd1048d009fbedb30d4a31615f78a4784a88293c))
+
+
+### Bug Fixes
+
+* **efd-server:** 🐛 hellgate bosses and surfaces portals will now spawn correctly ([f208ca2](https://github.com/DarktideLegend/escape-from-dereth/commit/f208ca2339813266fec75ee1a83e89b31ff1aaf0))
+
 ## [1.1.0-alpha.62](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.61...efd-server-v1.1.0-alpha.62) (2023-08-06)
 
 
