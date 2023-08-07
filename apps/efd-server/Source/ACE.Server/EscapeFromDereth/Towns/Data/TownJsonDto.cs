@@ -10,6 +10,8 @@ namespace ACE.Server.EscapeFromDereth.Towns.Data
     {
         public string Name { get; set; }
         public string Location { get; set; }
+
+        public uint CreatureType { get; set; }
     }
 }
 

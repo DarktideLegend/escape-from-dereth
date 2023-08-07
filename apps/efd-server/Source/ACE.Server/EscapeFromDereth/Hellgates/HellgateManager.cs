@@ -14,6 +14,7 @@ using log4net;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading;
 
 namespace ACE.Server.EscapeFromDereth.Hellgates
@@ -35,7 +36,6 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
         public static void Initialize()
         {
             LoadHellgateLandblocks();
-            PurgeForbiddenMonsterBiotas();
             InitializeHeartbeat();
             CreateHellgateGroup();
         }
@@ -49,15 +49,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             }
         }
 
-        private static void PurgeForbiddenMonsterBiotas()
-        {
-            // destroy all forbidden monster mobs when server starts
-            foreach (var wcid in Enumerable.Range(601001, 5))
-            {
-                var forgottenMobs = DatabaseManager.Shard.BaseDatabase.GetBiotasByWcid((uint)wcid).Select(biota => biota.Id);
-                DatabaseManager.Shard.BaseDatabase.RemoveBiotasInParallel(forgottenMobs);
-            }
-        }
+
 
         private static void InitializeHeartbeat()
         {
@@ -264,6 +256,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             var dropPosition = new Position(landblock.DropLocation);
             dropPosition.Instance = instance;
 
+            var town = TownManager.GetClosestTownFromPosition(leader.Location);
             var tier = TownManager.GetMonsterTierByDistance(leader.Location);
 
             var hellgate = new Hellgate(
@@ -276,6 +269,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
                 groupGuid,
                 isOpen,
                 tier,
+                town,
                 instance);
 
             hellgateGroup.AddHellgate(hellgate);

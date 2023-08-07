@@ -1,4 +1,5 @@
 using ACE.Database;
+using ACE.Entity.Enum;
 using ACE.Server.EscapeFromDereth.Common;
 using ACE.Server.EscapeFromDereth.Towns.Entity;
 using Newtonsoft.Json;
@@ -22,11 +23,22 @@ namespace ACE.Server.EscapeFromDereth.Towns.Data
                 if (result == null)
                     result = DatabaseManager.World.CreateTown(town.Name);
 
+                var cache = LoadWeenieIdCache(town.TownCreatureType);
+
+                town.LoadWeenieIdCache(cache);
+
                 town.SetOwnership(result.AllegianceId, result.Expiration);
                 town.SetTaxRate(result.TaxRate);
             }
 
             return towns;
+        }
+
+        public List<uint> LoadWeenieIdCache(CreatureType creatureType)
+        {
+            var cache = DatabaseManager.World.GetTownCreatureWeenieIds(creatureType);
+
+            return cache;
         }
 
         public void UpdateTown(Town town)
@@ -46,6 +58,7 @@ namespace ACE.Server.EscapeFromDereth.Towns.Data
         {
             return ReadTownJson().Select(dto => new Town(
                 dto.Name,
+                (CreatureType)dto.CreatureType,
                 EFDHelpers.slocToPosition(dto.Location)
                 )).ToList();
         }
