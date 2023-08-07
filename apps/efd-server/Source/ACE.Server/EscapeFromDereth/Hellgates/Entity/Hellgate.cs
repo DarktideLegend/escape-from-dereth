@@ -17,13 +17,20 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
         public string DungeonName { get; private set; }
         public double Expiration { get; private set; }
         public double BossExpiration { get; private set; }
-        public bool BossSpawned = false;
+        public bool ProcessingBossSpawn = false;
         public int Tier;
         public bool IsOpen;
         public Hellgate Next;
+        public bool HasBossSpawned { get; private set; } = false;
+        public bool HasSurfaceSpawned { get; private set; } = false;
+
         public double TimeRemaining => Expiration - Time.GetUnixTime();
+
         public double BossSpawnRemaining => BossExpiration - Time.GetUnixTime();
-        public bool ShouldSpawnBoss => BossSpawnRemaining <= 0;
+        public bool ShouldSpawnBoss => BossSpawnRemaining <= 0 && !HasBossSpawned;
+        public bool ShouldSpawnSurface => BossSpawnRemaining <= 0 && !HasSurfaceSpawned;
+
+
         public Position DropPosition;
         public Position ExitPosition;
 
@@ -48,6 +55,16 @@ namespace ACE.Server.EscapeFromDereth.Hellgates.Entity
             DropPosition = dropPosition;
             Tier = tier;
             IsOpen = isOpen;
+        }
+
+        public void SpawnSurface()
+        {
+            HasSurfaceSpawned = true;
+        }
+
+        public void SpawnBoss()
+        {
+            HasBossSpawned = true;
         }
 
         public void ReduceBossExpiration(double seconds)

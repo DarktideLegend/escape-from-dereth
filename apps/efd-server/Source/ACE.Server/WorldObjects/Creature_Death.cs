@@ -12,6 +12,7 @@ using ACE.Server.Entity;
 using ACE.Server.Entity.Actions;
 using ACE.Server.EscapeFromDereth.Common;
 using ACE.Server.EscapeFromDereth.Hellgates;
+using ACE.Server.EscapeFromDereth.Mutations;
 using ACE.Server.EscapeFromDereth.Towns;
 using ACE.Server.Factories;
 using ACE.Server.Managers;
@@ -85,17 +86,28 @@ namespace ACE.Server.WorldObjects
                 GameMessageSystemChat sysMessage = new GameMessageSystemChat(msg, ChatMessageType.WorldBroadcast);
                 PlayerManager.BroadcastToAll(sysMessage);
             }
-    }
+        }
 
         private void OnDeath_SummonHellgateSurfacePortal()
         {
             var pos = new Position(Location);
-            var wo = WorldObjectFactory.CreateNewWorldObject(600004);
-            wo.Lifespan = int.MaxValue;
-            wo.Location = pos;
+            var hellgate = HellgateManager.GetHellgate(Location.Instance);
 
-            if (wo != null)
-                wo.EnterWorld();
+            if (hellgate == null)
+                return;
+
+            var wo = MutationsManager.CreateHellgateSurfacePortal(hellgate, pos);
+
+            if (wo != null && wo.EnterWorld() && wo.PhysicsObj != null)
+            {
+                var actionChain = new ActionChain();
+                actionChain.AddDelaySeconds(5);
+                actionChain.AddAction(this, new ActionEventDelegate(() =>
+                {
+                    OnDeath_SummonHellgateSurfacePortal();
+                }));
+                actionChain.EnqueueChain();
+            }
         }
 
         private void OnDeath_SummonHellgate()

@@ -14,6 +14,7 @@ using ACE.Server.WorldObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -164,28 +165,44 @@ namespace ACE.Server.EscapeFromDereth.Mutations
         public static WorldObject CreateHellgateBoss(Hellgate hellgate)
         {
             var lb = LandblockManager.GetLandblockUnsafe(hellgate.DropPosition.LandblockId, hellgate.Instance);
+
+            if (lb == null)
+                return null;
+
             var worldObjects = lb.GetAllWorldObjectsForDiagnostics();
 
             if (worldObjects.Count == 0)
                 return null;
 
-            WorldObject monster = null;
+            WorldObject boss = null;
 
-            while(monster == null)
+            var random = ThreadSafeRandom.Next(0, worldObjects.Count - 1);
+            var wo = worldObjects[random];
+            if (wo != null && wo is Creature && wo is not Player && wo.IsGenerator is false)
             {
-                var random = ThreadSafeRandom.Next(0, worldObjects.Count - 1);
-                var wo = worldObjects[random];
-                if (wo != null && wo is Creature && wo is not Player && wo.IsGenerator is false)
-                {
-                    var boss = WorldObjectFactory.CreateNewWorldObject(wo.WeenieClassId);
-                    boss.Location = new Position(wo.Location);
-                    MutateHellgateBoss(boss, hellgate.Tier);
-                    monster = boss;
-                    wo.Destroy();
-                }
+                var creature = WorldObjectFactory.CreateNewWorldObject(wo.WeenieClassId);
+                creature.Location = new Position(wo.Location);
+                creature.Lifespan = int.MaxValue;
+                MutateHellgateBoss(creature, hellgate.Tier);
+                wo.Destroy();
+                boss = creature;
             }
 
-            return monster;
+            return boss;
+        }
+
+        public static WorldObject CreateHellgateSurfacePortal(Hellgate hellgate, Position location = null)
+        {
+            var surfacePortal = location != null ? WorldObjectFactory.CreateNewWorldObject(600004) : WorldObjectFactory.CreateNewWorldObject(600006);
+
+            if (surfacePortal != null)
+            {
+                surfacePortal.Location = new Position(location ?? hellgate.ExitPosition);
+                surfacePortal.Location.Instance = hellgate.Instance;
+                surfacePortal.Lifespan = int.MaxValue;
+            }
+
+            return surfacePortal;
         }
 
         private static WorldObject ProcessHellgateGenerator(GenericObject genericObject, AppliedRuleset ruleset)
