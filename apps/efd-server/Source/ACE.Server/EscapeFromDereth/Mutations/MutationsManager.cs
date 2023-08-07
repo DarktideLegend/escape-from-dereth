@@ -7,10 +7,12 @@ using ACE.Entity.Models;
 using ACE.Server.EscapeFromDereth.Hellgates;
 using ACE.Server.EscapeFromDereth.Hellgates.Entity;
 using ACE.Server.EscapeFromDereth.Towns;
+using ACE.Server.EscapeFromDereth.Towns.Entity;
 using ACE.Server.Factories;
 using ACE.Server.Managers;
 using ACE.Server.Realms;
 using ACE.Server.WorldObjects;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +25,8 @@ namespace ACE.Server.EscapeFromDereth.Mutations
     public class MutationsManager
 
     {
+        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public static WorldObject ProcessWorldObject(WorldObject wo, AppliedRuleset ruleset)
         {
             var hasCustomContent = wo.Weenie.GetProperty(PropertyBool.IsCustomContent) ?? false;
@@ -241,7 +245,7 @@ namespace ACE.Server.EscapeFromDereth.Mutations
 
             if (hellgate != null)
             {
-                var forgottenCreature = CreateForgottenMonster(hellgate.Tier);
+                var forgottenCreature = CreateForgottenMonster(hellgate.ClosestTown, hellgate.Tier);
                 forgottenCreature.Location = new Position(creature.Location);
                 CreatureRealmMutate(forgottenCreature, ruleset);
                 MutateDeathTreasureTypeByTier(forgottenCreature, hellgate.Tier);
@@ -252,6 +256,7 @@ namespace ACE.Server.EscapeFromDereth.Mutations
 
             return null;
         }
+
         private static WorldObject CreateHideoutStorage(WorldObject wo)
         {
             var storage = WorldObjectFactory.CreateNewWorldObject(600000);
@@ -341,21 +346,10 @@ namespace ACE.Server.EscapeFromDereth.Mutations
             return (uint)value;
         }
 
-        private static Creature CreateForgottenMonster(int tier)
+        private static Creature CreateForgottenMonster(Town town, int tier)
         {
-            if (tier == 1)
-                return (Creature)WorldObjectFactory.CreateNewWorldObject(601001); // create a Forgotten Leech if this is short distance
-
-            if (tier == 2)
-                return (Creature)WorldObjectFactory.CreateNewWorldObject(601002); // create a Forgotten Revenant if this is a medium distance
-
-            if (tier == 3)
-                return (Creature)WorldObjectFactory.CreateNewWorldObject(601003); // create a Forgotten Demilich if this is a long distance
-
-            if (tier == 4)
-                return (Creature)WorldObjectFactory.CreateNewWorldObject(601004); // create a Forgotten Olthoi Slayer if this is a long distance
-
-            return (Creature)WorldObjectFactory.CreateNewWorldObject(601005); // create a Forgotten Champion if this is an extreme distance
+            var weenieId = town.GetWeenieIdByTier((uint)tier);
+            return (Creature)WorldObjectFactory.CreateNewWorldObject(weenieId);
         }
 
         private static Creature CreatureHomeRealmMutate(Creature creature)
@@ -368,12 +362,14 @@ namespace ACE.Server.EscapeFromDereth.Mutations
                 if (creature.Level < 80 || ThreadSafeRandom.Next(0, 100) < 25) // 25% chance of forgotten mob
                 {
                     var tier = TownManager.GetMonsterTierByDistance(creature.Location);
-                    var forgottenCreature = CreateForgottenMonster(tier);
-                    MutateDeathTreasureTypeByTier(forgottenCreature, 1);
+                    var town = TownManager.GetClosestTownFromPosition(creature.Location);
+                    var forgottenCreature = CreateForgottenMonster(town, tier);
                     forgottenCreature.Location = new Position(creature.Location);
 
                     if (ThreadSafeRandom.Next(0, 100) < 8) // 8% chance of mutating a forgotten monster to a Gatekeeper
                         MutateGatekeeper(forgottenCreature);
+                    else
+                        forgottenCreature.Name = $"Forgotten {forgottenCreature.Name}";
 
                     creature.Destroy(); // destroy original creature since we are replacing with a custom monster
                     forgottenCreature.SaveBiotaToDatabase();

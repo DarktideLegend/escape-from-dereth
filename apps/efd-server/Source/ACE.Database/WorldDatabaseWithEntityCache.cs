@@ -11,6 +11,7 @@ using ACE.Database.Models.World;
 using ACE.Database.Extensions;
 using ACE.Entity.Enum;
 using ACE.Entity.Enum.Properties;
+using System.Xml.Linq;
 
 namespace ACE.Database
 {
@@ -220,6 +221,8 @@ namespace ACE.Database
                 return results;
             }
         }
+
+
 
         public ACE.Entity.Models.Weenie GetScrollWeenie(uint spellID)
         {
@@ -1160,5 +1163,81 @@ namespace ACE.Database
         {
             cachedWieldedTreasure.Clear();
         }
+
+        private class CreatureTierProps
+        {
+            public uint Tier { get; }
+            public uint MinLevel { get; }
+            public uint MaxLevel { get; }
+            public uint MinXp { get; }
+            public uint MaxXp { get; }
+            public uint TreasureMax { get; }
+            public uint TreasureMin { get; }
+            public uint MaxHealth { get; }
+
+            public CreatureTierProps(uint tier, uint minLevel, uint maxLevel, uint minXp, uint maxXp, uint treasureMin, uint treasureMax, uint maxHealth)
+            {
+                Tier = tier;
+                MinLevel = minLevel;
+                MaxLevel = maxLevel;
+                MinXp = minXp;
+                MaxXp = maxXp;
+                TreasureMax = treasureMax;
+                TreasureMin = treasureMin;
+                MaxHealth = maxHealth;
+            }
+        }
+
+        private readonly Dictionary<uint, CreatureTierProps> CreatureCacheProps = new Dictionary<uint, CreatureTierProps>()
+        {
+            { 1, new CreatureTierProps(1, 80, 100, 30000, 50000, 0, 1000, 1000) },
+            { 2, new CreatureTierProps(1, 100, 115, 80000, 100000, 0, 1000, 2000) },
+            { 3, new CreatureTierProps(3, 130, 150, 200000, 500000, 0, 1000, 5000) },
+            { 4, new CreatureTierProps(4, 185, 220, 800000, 1200000, 0, 1000, 5000) },
+            { 5, new CreatureTierProps(5, 200, 300, 800000, 2000000, 2000, 3000, 5000) },
+        };
+
+        public uint GetCreatureWeenieIdByTier(CreatureType creatureType, uint tier)
+        {
+            var props = CreatureCacheProps[tier];
+
+
+            using(var context = new WorldDbContext())
+            {
+
+                var query = from weenieRecord in context.Weenie
+                            join name in context.WeeniePropertiesString on weenieRecord.ClassId equals name.ObjectId
+                            join xp in context.WeeniePropertiesInt on weenieRecord.ClassId equals xp.ObjectId
+                            join level in context.WeeniePropertiesInt on weenieRecord.ClassId equals level.ObjectId
+                            join type in context.WeeniePropertiesInt on weenieRecord.ClassId equals type.ObjectId
+                            join treasure in context.WeeniePropertiesDID on weenieRecord.ClassId equals treasure.ObjectId
+                            join health in context.WeeniePropertiesAttribute2nd on weenieRecord.ClassId equals health.ObjectId
+                            where name.Type == (short)PropertyString.Name &&
+                            type.Type == 2 &&
+                            type.Value == (int)creatureType &&
+                            xp.Value >= props.MinXp &&
+                            xp.Value <= props.MaxXp &&
+                            health.CurrentLevel < props.MaxHealth &&
+                            treasure.Value >= props.TreasureMin &&
+                            treasure.Value <= props.TreasureMax &&
+                            level.Value >= props.MinLevel &&
+                            level.Value <= props.MaxLevel 
+                            select weenieRecord.ClassId;
+
+                return query.FirstOrDefault();
+            }
+
+        }
+
+        public List<uint> GetTownCreatureWeenieIds(CreatureType creatureType)
+        {
+            var weenieIds = new List<uint>();
+
+            for (var i = 1; i <= 5; i++)
+                weenieIds.Add(GetCreatureWeenieIdByTier(creatureType, (uint)i));
+
+            return weenieIds;
+        }
+
     }
 }

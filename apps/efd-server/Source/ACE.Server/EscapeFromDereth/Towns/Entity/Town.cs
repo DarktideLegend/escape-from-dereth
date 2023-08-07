@@ -1,5 +1,6 @@
 using ACE.Common;
 using ACE.Entity;
+using ACE.Entity.Enum;
 using ACE.Server.WorldObjects;
 using Org.BouncyCastle.Bcpg.Sig;
 using System;
@@ -10,6 +11,7 @@ namespace ACE.Server.EscapeFromDereth.Towns.Entity
     public class Town
     {
         public string Name { get; private set; }
+        public CreatureType TownCreatureType { get; }
         public Position Location { get; private set; }
         public uint MeetingHallInstance { get; set; } = 0;
         public double Expiration { get; private set; } = 0;
@@ -21,6 +23,23 @@ namespace ACE.Server.EscapeFromDereth.Towns.Entity
         public double TimeRemaining => Expiration - Time.GetUnixTime();
         public bool IsExpired => TimeRemaining <= 0;
         public bool ShouldCreateMeetingHall => IsExpired && MeetingHallInstance <= 0;
+
+        public readonly Dictionary<uint, uint> CachedWeenieIdsByTier = new Dictionary<uint, uint>();
+
+        public uint GetWeenieIdByTier(uint tier)
+        {
+            if (CachedWeenieIdsByTier.TryGetValue(tier, out var id))
+                return id;
+            else return 0;
+        }
+
+        public void LoadWeenieIdCache(List<uint> weenieIds)
+        {
+            for(var i = 0; i <  weenieIds.Count; i++)
+            {
+                CachedWeenieIdsByTier[(uint)i + 1] = weenieIds[i];
+            }
+        }
 
         public void OpenTownMeetingHall()
         {
@@ -34,9 +53,10 @@ namespace ACE.Server.EscapeFromDereth.Towns.Entity
         }
         public TownAccouncementState AnnouncementState { get; private set; } = TownAccouncementState.Idle;
 
-        public Town(string name, Position location)
+        public Town(string name, CreatureType creatureType, Position location)
         {
             Name = name;
+            TownCreatureType = creatureType;
             Location = location;
         }
 

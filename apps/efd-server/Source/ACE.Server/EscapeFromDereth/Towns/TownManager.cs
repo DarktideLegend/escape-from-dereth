@@ -8,6 +8,7 @@ using ACE.Server.Entity;
 using ACE.Server.Entity.Actions;
 using ACE.Server.EscapeFromDereth.Common;
 using ACE.Server.EscapeFromDereth.Hellgates.Entity;
+using ACE.Server.EscapeFromDereth.Mutations;
 using ACE.Server.EscapeFromDereth.Towns.Data;
 using ACE.Server.EscapeFromDereth.Towns.Entity;
 using ACE.Server.Factories;
@@ -53,8 +54,23 @@ namespace ACE.Server.EscapeFromDereth.Towns
                 TownsList.Add(town);
             }
 
+            PurgeForbiddenMonsterBiotas();
+
             InitializeHeartbeat();
         }
+
+        public static void PurgeForbiddenMonsterBiotas()
+        {
+            var ids = Towns.Values.SelectMany(town => town.CachedWeenieIdsByTier).Select(cache => cache.Value).ToList();
+            // destroy all forbidden monster mobs when server starts
+            foreach (var wcid in ids)
+            {
+                log.Info($"Purging Forbidden Creatures with WeenieClassId: {wcid}");
+                var forgottenMobs = DatabaseManager.Shard.BaseDatabase.GetBiotasByWcid((uint)wcid).Select(biota => biota.Id);
+                DatabaseManager.Shard.BaseDatabase.RemoveBiotasInParallel(forgottenMobs);
+            }
+        }
+
         private static void InitializeHeartbeat()
         {
             var currentUnixTime = Time.GetUnixTime();
