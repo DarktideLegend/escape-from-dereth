@@ -832,25 +832,6 @@ namespace ACE.Server.WorldObjects
 
             var tier = profile.Tier;
 
-            if (IsInHellgate)
-            {
-                var hellgate = HellgateManager.GetHellgate(Location.Instance);
-
-                if (hellgate != null)
-                {
-                    switch (hellgate.Tier)
-                    {
-                        case 4:
-                        case 5:
-                            tier = 7;
-                            break;
-                        default:
-                            tier = 5;
-                            break;
-                    }
-                }
-            }
-
             var weenie = DatabaseManager.World.GetCachedWeenie(WeenieClassId);
 
             if (!IsInHellgate && ThreadSafeRandom.Next(0, 100) > 10)
