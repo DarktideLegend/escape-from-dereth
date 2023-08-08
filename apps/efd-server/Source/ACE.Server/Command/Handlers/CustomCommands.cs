@@ -134,7 +134,6 @@ namespace ACE.Server.Command.Handlers
                     player.PrintHellgateInfo(hellgate);
             }
         }
-}
 
         [CommandHandler("update-town-tax", AccessLevel.Player, CommandHandlerFlag.RequiresWorld, "Change the tax rate of the closest town.")]
         public static void HandleUpdateTownTax(Session session, params string[] parameters)
