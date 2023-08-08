@@ -115,7 +115,7 @@ namespace ACE.Server.Entity
                 var weenie = DatabaseManager.World.GetCachedWeenie(WeenieClassId);
                 if (weenie != null && weenie.WeenieType == WeenieType.Creature)
                 {
-                    var creatureSpawnGeneratorDuration = Generator.RealmRuleset.GetProperty(RealmPropertyFloat.CreatureRespawnDuration);
+                    var creatureSpawnGeneratorDuration = Generator?.RealmRuleset?.GetProperty(RealmPropertyFloat.CreatureRespawnDuration) ?? 0;
                     var isMonster = weenie.GetProperty(PropertyBool.Attackable) ?? false || (TargetingTactic)(weenie.GetProperty(PropertyInt.TargetingTactic) ?? 0) != TargetingTactic.None; 
                     if (creatureSpawnGeneratorDuration > 0 && isMonster)
                         return (5f); // 5 second generator delay if respawn duration is set
