@@ -98,15 +98,20 @@ namespace ACE.Server.WorldObjects
 
             var wo = MutationsManager.CreateHellgateSurfacePortal(hellgate, pos);
 
-            if (wo != null && wo.EnterWorld() && wo.PhysicsObj != null)
+            if (wo != null)
             {
-                var actionChain = new ActionChain();
-                actionChain.AddDelaySeconds(5);
-                actionChain.AddAction(this, new ActionEventDelegate(() =>
+                wo.EnterWorld();
+
+                if (wo.PhysicsObj == null)
                 {
-                    OnDeath_SummonHellgateSurfacePortal();
-                }));
-                actionChain.EnqueueChain();
+                    var actionChain = new ActionChain();
+                    actionChain.AddDelaySeconds(5);
+                    actionChain.AddAction(this, new ActionEventDelegate(() =>
+                    {
+                        OnDeath_SummonHellgateSurfacePortal();
+                    }));
+                    actionChain.EnqueueChain();
+                }
             }
         }
 
