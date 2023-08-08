@@ -837,8 +837,6 @@ namespace ACE.Server.WorldObjects
 
             var tier = profile.Tier;
 
-            var weenie = DatabaseManager.World.GetCachedWeenie(WeenieClassId);
-
             if (!IsInHellgate && ThreadSafeRandom.Next(0, 100) > 10)
                 tier = 1;
 
