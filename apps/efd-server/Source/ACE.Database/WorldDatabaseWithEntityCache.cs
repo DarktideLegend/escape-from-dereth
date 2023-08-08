@@ -1191,9 +1191,9 @@ namespace ACE.Database
         private readonly Dictionary<uint, CreatureTierProps> CreatureCacheProps = new Dictionary<uint, CreatureTierProps>()
         {
             { 1, new CreatureTierProps(1, 80, 100, 30000, 50000, 0, 1000, 1000) },
-            { 2, new CreatureTierProps(1, 100, 115, 80000, 100000, 0, 1000, 2000) },
-            { 3, new CreatureTierProps(3, 130, 150, 200000, 500000, 0, 1000, 5000) },
-            { 4, new CreatureTierProps(4, 185, 220, 800000, 1200000, 0, 1000, 5000) },
+            { 2, new CreatureTierProps(1, 100, 115, 80000, 100000, 0, 1000, 1000) },
+            { 3, new CreatureTierProps(3, 130, 150, 200000, 500000, 0, 1000, 1500) },
+            { 4, new CreatureTierProps(4, 185, 220, 800000, 1200000, 0, 1000, 3000) },
             { 5, new CreatureTierProps(5, 200, 300, 800000, 2000000, 2000, 3000, 5000) },
         };
 
@@ -1217,6 +1217,8 @@ namespace ACE.Database
                             type.Value == (int)creatureType &&
                             xp.Value >= props.MinXp &&
                             xp.Value <= props.MaxXp &&
+                            health.Type == 1 &&
+                            health.InitLevel < props.MaxHealth &&
                             health.CurrentLevel < props.MaxHealth &&
                             treasure.Value >= props.TreasureMin &&
                             treasure.Value <= props.TreasureMax &&
