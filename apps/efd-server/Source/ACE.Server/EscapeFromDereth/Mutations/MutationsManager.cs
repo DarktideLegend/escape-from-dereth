@@ -13,13 +13,8 @@ using ACE.Server.Managers;
 using ACE.Server.Realms;
 using ACE.Server.WorldObjects;
 using log4net;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ACE.Server.EscapeFromDereth.Mutations
 {
@@ -265,10 +260,10 @@ namespace ACE.Server.EscapeFromDereth.Mutations
             {
                 var forgottenCreature = CreateForgottenMonster(hellgate.ClosestTown, hellgate.Tier);
                 forgottenCreature.Location = new Position(creature.Location);
+                MutateForgottenCreatureName(forgottenCreature);
                 CreatureRealmMutate(forgottenCreature, ruleset);
-                MutateDeathTreasureTypeByTier(forgottenCreature, hellgate.Tier);
+                //MutateDeathTreasureTypeByTier(forgottenCreature, hellgate.Tier);
                 creature.Destroy();
-                forgottenCreature.SaveBiotaToDatabase();
                 return forgottenCreature;
             }
 
@@ -387,15 +382,21 @@ namespace ACE.Server.EscapeFromDereth.Mutations
                     if (ThreadSafeRandom.Next(0, 100) < 8) // 8% chance of mutating a forgotten monster to a Gatekeeper
                         MutateGatekeeper(forgottenCreature);
                     else
-                        forgottenCreature.Name = $"Forgotten {forgottenCreature.Name}";
+                        MutateForgottenCreatureName(forgottenCreature);
 
                     creature.Destroy(); // destroy original creature since we are replacing with a custom monster
-                    forgottenCreature.SaveBiotaToDatabase();
                     return forgottenCreature;
                 }
             }
 
             return creature;
+        }
+
+
+        private static void MutateForgottenCreatureName(Creature creature)
+        {
+            if (!creature.Name.Contains("Forgotten"))
+                creature.Name = $"Forgotten {creature.Name}";
         }
 
         public static void MutateDeathTreasureTypeByTier(Creature creature, int tier)
@@ -459,7 +460,6 @@ namespace ACE.Server.EscapeFromDereth.Mutations
             wo.SetProperty(PropertyFloat.DefaultScale, 1.5); // scale the boss to have 1.5x size
             wo.Name = $"Hellgate Boss";
 
-            MutateDeathTreasureTypeByTier(wo as Creature, tier);
             wo.SaveBiotaToDatabase();
         }
     }
