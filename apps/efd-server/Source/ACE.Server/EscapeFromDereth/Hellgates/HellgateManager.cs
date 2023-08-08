@@ -146,14 +146,14 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
         {
             var boss = MutationsManager.CreateHellgateBoss(hellgate);
 
-            if (boss != null && boss.EnterWorld() && boss.PhysicsObj != null)
+            if (boss != null)
             {
-                hellgate.SpawnBoss();
-                foreach (var player in hellgate.Players)
-                    player.PrintHellgateInfo(hellgate);
+                boss.EnterWorld();
+                if (boss.PhysicsObj != null)
+                    hellgate.SpawnBoss();
+                    foreach (var player in hellgate.Players)
+                        player.PrintHellgateInfo(hellgate);
             }
-
-
         }
 
         public static void AddPlayerToHellgate(Player player, uint instance)
@@ -161,7 +161,14 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             if (ActiveHellgates.TryGetValue(instance, out Hellgate hellgate))
             {
                 hellgate.AddPlayer(player);
-                player.PrintHellgateInfo(hellgate);
+
+                var actionChain = new ActionChain();
+                actionChain.AddDelayForOneTick();
+                actionChain.AddAction(player, new ActionEventDelegate(() =>
+                {
+                    player.PrintHellgateInfo(hellgate);
+                }));
+                actionChain.EnqueueChain();
 
                 log.Info($"Added {player.Name} to hellgate - {hellgate.Instance} ");
                 return;
@@ -257,6 +264,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
 
             var hellgate = new Hellgate(
                 landblock.Name,
+
                 ephemeralRealm.RealmRuleset,
                 exitPosition,
                 dropPosition,

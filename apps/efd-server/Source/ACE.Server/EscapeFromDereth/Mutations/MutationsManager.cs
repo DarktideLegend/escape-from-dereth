@@ -14,6 +14,7 @@ using ACE.Server.Realms;
 using ACE.Server.WorldObjects;
 using log4net;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Policy;
@@ -166,6 +167,20 @@ namespace ACE.Server.EscapeFromDereth.Mutations
 
             return wo;
         }
+
+        private class DistanceComparer : IComparer<WorldObject>
+        {
+            private Position Location;
+            public DistanceComparer(Position location)
+            {
+                Location = location;
+            }   
+            public int Compare(WorldObject x, WorldObject y)
+            {
+                return (int)(x.Location.DistanceTo(Location) - y.Location.DistanceTo(Location));
+            }
+        }
+
         public static WorldObject CreateHellgateBoss(Hellgate hellgate)
         {
             var lb = LandblockManager.GetLandblockUnsafe(hellgate.DropPosition.LandblockId, hellgate.Instance);
@@ -175,24 +190,27 @@ namespace ACE.Server.EscapeFromDereth.Mutations
 
             var worldObjects = lb.GetAllWorldObjectsForDiagnostics();
 
-            if (worldObjects.Count == 0)
+            var player = worldObjects.Where(wo => wo is Player).FirstOrDefault();
+
+            if (player == null)
                 return null;
 
-            WorldObject boss = null;
+            var wo = worldObjects
+                .Where(wo => wo is Creature && wo is not Player && !wo.IsGenerator)
+                .OrderBy(creature => creature, new DistanceComparer(player.Location))
+                .FirstOrDefault();
 
-            var random = ThreadSafeRandom.Next(0, worldObjects.Count - 1);
-            var wo = worldObjects[random];
-            if (wo != null && wo is Creature && wo is not Player && wo.IsGenerator is false)
+            if (wo != null)
             {
-                var creature = WorldObjectFactory.CreateNewWorldObject(wo.WeenieClassId);
-                creature.Location = new Position(wo.Location);
-                creature.Lifespan = int.MaxValue;
-                MutateHellgateBoss(creature, hellgate.Tier);
+                var boss = WorldObjectFactory.CreateNewWorldObject(wo.WeenieClassId);
+                boss.Location = new Position(wo.Location);
+                boss.Lifespan = int.MaxValue;
+                MutateHellgateBoss(boss, hellgate.Tier);
                 wo.Destroy();
-                boss = creature;
+                return boss;
             }
 
-            return boss;
+            return wo;
         }
 
         public static WorldObject CreateHellgateSurfacePortal(Hellgate hellgate, Position location = null)
