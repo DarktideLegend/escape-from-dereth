@@ -2,7 +2,9 @@ using ACE.Database;
 using ACE.Entity.Enum;
 using ACE.Server.EscapeFromDereth.Common;
 using ACE.Server.EscapeFromDereth.Towns.Entity;
+using log4net;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,6 +15,8 @@ namespace ACE.Server.EscapeFromDereth.Towns.Data
 {
     internal class TownRepository
     {
+        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public List<Town> GetAllTowns()
         {
             var towns = GetTownsFromJson();
@@ -34,7 +38,7 @@ namespace ACE.Server.EscapeFromDereth.Towns.Data
             return towns;
         }
 
-        public List<uint> LoadWeenieIdCache(CreatureType creatureType)
+        public List<List<uint>> LoadWeenieIdCache(CreatureType creatureType)
         {
             var cache = DatabaseManager.World.GetTownCreatureWeenieIds(creatureType);
 
@@ -51,6 +55,20 @@ namespace ACE.Server.EscapeFromDereth.Towns.Data
                 townModel.TaxRate = town.TaxRate;
                 townModel.Expiration = town.Expiration;
                 DatabaseManager.World.UpdateTown(townModel);
+            }
+        }
+
+        internal void PurgeForbiddenMonsterBiotas(List<List<uint>> cache)
+        {
+            foreach (var ids in cache)
+            {
+                foreach(var wcid in ids)
+                {
+
+                    log.Info($"Purging Forbidden Creatures with WeenieClassId: {wcid}");
+                    var forgottenMobs = DatabaseManager.Shard.BaseDatabase.GetBiotasByWcid((uint)wcid).Select(biota => biota.Id);
+                    DatabaseManager.Shard.BaseDatabase.RemoveBiotasInParallel(forgottenMobs);
+                }
             }
         }
 
