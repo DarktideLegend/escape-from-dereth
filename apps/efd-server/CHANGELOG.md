@@ -1,3 +1,12 @@
+## [1.1.0-alpha.65](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.64...efd-server-v1.1.0-alpha.65) (2023-08-08)
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ landblocks destroy all non player creatures with Forgotten in their name ([db06770](https://github.com/DarktideLegend/escape-from-dereth/commit/db067705171bbfb712f90ed9c74945fc678101d7))
+* **efd-server:** ♻️ no longer mutate loot tier of hellgate monsters ([d22cdd8](https://github.com/DarktideLegend/escape-from-dereth/commit/d22cdd878dec21721146c9867c27db680524e195))
+* **efd-server:** ♻️ reduce maximum hp for mobs for tier 2 - 3 ([c116d28](https://github.com/DarktideLegend/escape-from-dereth/commit/c116d282e05a3e131d69323bd51fe41239f8fdb2))
+
 ## [1.1.0-alpha.64](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.63...efd-server-v1.1.0-alpha.64) (2023-08-08)
 
 
