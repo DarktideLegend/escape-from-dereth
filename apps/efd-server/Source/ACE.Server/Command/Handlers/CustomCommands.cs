@@ -122,6 +122,20 @@ namespace ACE.Server.Command.Handlers
             }
         }
 
+        [CommandHandler("hellgate", AccessLevel.Player, CommandHandlerFlag.RequiresWorld, "This command prints hellgate information.")]
+        public static void HandleHellgateInfo(Session session, params string[] parameters)
+        {
+            var player = session?.Player;
+
+            if (player != null)
+            {
+                var hellgate = HellgateManager.GetHellgate(player.Location.Instance);
+                if (hellgate != null)
+                    player.PrintHellgateInfo(hellgate);
+            }
+        }
+}
+
         [CommandHandler("update-town-tax", AccessLevel.Player, CommandHandlerFlag.RequiresWorld, "Change the tax rate of the closest town.")]
         public static void HandleUpdateTownTax(Session session, params string[] parameters)
         {

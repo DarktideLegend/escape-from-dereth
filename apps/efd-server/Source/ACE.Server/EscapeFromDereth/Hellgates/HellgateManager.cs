@@ -126,21 +126,11 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
         {
             foreach (var hellgate in ActiveHellgates.Values)
             {
-                foreach (var player in hellgate.Players)
-                {
-                    if (player != null)
-                    {
-                        player.Hellgate_Tick(hellgate);
-                    }
-                }
-
                 if (hellgate.ShouldSpawnBoss)
                     SpawnHellgateBoss(hellgate);
 
                 if (hellgate.ShouldSpawnSurface)
                     SpawnHellgateSurfacePortal(hellgate);
-
-
             }
         }
 
@@ -157,7 +147,12 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             var boss = MutationsManager.CreateHellgateBoss(hellgate);
 
             if (boss != null && boss.EnterWorld() && boss.PhysicsObj != null)
+            {
                 hellgate.SpawnBoss();
+                foreach (var player in hellgate.Players)
+                    player.PrintHellgateInfo(hellgate);
+            }
+
 
         }
 
@@ -166,6 +161,7 @@ namespace ACE.Server.EscapeFromDereth.Hellgates
             if (ActiveHellgates.TryGetValue(instance, out Hellgate hellgate))
             {
                 hellgate.AddPlayer(player);
+                player.PrintHellgateInfo(hellgate);
 
                 log.Info($"Added {player.Name} to hellgate - {hellgate.Instance} ");
                 return;
