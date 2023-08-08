@@ -24,16 +24,16 @@ namespace ACE.Server.EscapeFromDereth.Towns.Entity
         public bool IsExpired => TimeRemaining <= 0;
         public bool ShouldCreateMeetingHall => IsExpired && MeetingHallInstance <= 0;
 
-        public readonly Dictionary<uint, uint> CachedWeenieIdsByTier = new Dictionary<uint, uint>();
+        public readonly Dictionary<uint, List<uint>> CachedWeenieIdsByTier = new Dictionary<uint, List<uint>>();
 
         public uint GetWeenieIdByTier(uint tier)
         {
-            if (CachedWeenieIdsByTier.TryGetValue(tier, out var id))
-                return id;
+            if (CachedWeenieIdsByTier.TryGetValue(tier, out var ids))
+                return ids[ThreadSafeRandom.Next(0, ids.Count - 1)];
             else return 0;
         }
 
-        public void LoadWeenieIdCache(List<uint> weenieIds)
+        public void LoadWeenieIdCache(List<List<uint>> weenieIds)
         {
             for(var i = 0; i <  weenieIds.Count; i++)
             {

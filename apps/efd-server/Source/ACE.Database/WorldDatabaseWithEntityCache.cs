@@ -1197,7 +1197,7 @@ namespace ACE.Database
             { 5, new CreatureTierProps(5, 200, 300, 800000, 2000000, 2000, 3000, 5000) },
         };
 
-        public uint GetCreatureWeenieIdByTier(CreatureType creatureType, uint tier)
+        public List<uint> GetCreatureWeenieIdByTier(CreatureType creatureType, uint tier)
         {
             var props = CreatureCacheProps[tier];
 
@@ -1224,14 +1224,14 @@ namespace ACE.Database
                             level.Value <= props.MaxLevel 
                             select weenieRecord.ClassId;
 
-                return query.FirstOrDefault();
+                return query.ToList();
             }
 
         }
 
-        public List<uint> GetTownCreatureWeenieIds(CreatureType creatureType)
+        public List<List<uint>> GetTownCreatureWeenieIds(CreatureType creatureType)
         {
-            var weenieIds = new List<uint>();
+            var weenieIds = new List<List<uint>>();
 
             for (var i = 1; i <= 5; i++)
                 weenieIds.Add(GetCreatureWeenieIdByTier(creatureType, (uint)i));

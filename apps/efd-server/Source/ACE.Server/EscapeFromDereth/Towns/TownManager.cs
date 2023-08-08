@@ -54,21 +54,16 @@ namespace ACE.Server.EscapeFromDereth.Towns
                 TownsList.Add(town);
             }
 
-            PurgeForbiddenMonsterBiotas();
+            PurgeForbiddenMonsters();
 
             InitializeHeartbeat();
         }
 
-        public static void PurgeForbiddenMonsterBiotas()
+        public static void PurgeForbiddenMonsters()
         {
-            var ids = Towns.Values.SelectMany(town => town.CachedWeenieIdsByTier).Select(cache => cache.Value).ToList();
+            var cache = Towns.Values.SelectMany(town => town.CachedWeenieIdsByTier).Select(cache => cache.Value).ToList();
             // destroy all forbidden monster mobs when server starts
-            foreach (var wcid in ids)
-            {
-                log.Info($"Purging Forbidden Creatures with WeenieClassId: {wcid}");
-                var forgottenMobs = DatabaseManager.Shard.BaseDatabase.GetBiotasByWcid((uint)wcid).Select(biota => biota.Id);
-                DatabaseManager.Shard.BaseDatabase.RemoveBiotasInParallel(forgottenMobs);
-            }
+            TownRepo.PurgeForbiddenMonsterBiotas(cache);
         }
 
         private static void InitializeHeartbeat()
