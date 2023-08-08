@@ -1,3 +1,19 @@
+## [1.1.0-alpha.64](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.63...efd-server-v1.1.0-alpha.64) (2023-08-08)
+
+
+### Features
+
+* **efd-server:** ✨ add /hellgate command to replace hellgate message spam ([c176fbd](https://github.com/DarktideLegend/escape-from-dereth/commit/c176fbdfcdee452d5fe42f47bf38278926a2439f))
+* **efd-server:** ✨ hellgate bosses now spawn close to players ([dab9943](https://github.com/DarktideLegend/escape-from-dereth/commit/dab994374276e115fe791fe8bae9755c9ea07958))
+* **efd-server:** ✨ monsters now spawn with a variety of monsters for each tier ([c798a94](https://github.com/DarktideLegend/escape-from-dereth/commit/c798a941275e3a9c407ff8bf07b87a047828005d))
+* **efd-server:** ✨ monsters now use their own tier for loot profiles ([61ede2e](https://github.com/DarktideLegend/escape-from-dereth/commit/61ede2ee1afb9d91aa6f8005826135f866cc17eb))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ add missing bracket ([599b06b](https://github.com/DarktideLegend/escape-from-dereth/commit/599b06bc50cbd759e607f1a894979708172eb60d))
+* **efd-server:** ♻️ check for physics object after entering world for hellgate surface portal ([082dde1](https://github.com/DarktideLegend/escape-from-dereth/commit/082dde105c5758a0dcdf220dd3a0e658f9b80d47))
+
 ## [1.1.0-alpha.63](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.62...efd-server-v1.1.0-alpha.63) (2023-08-07)
 
 
