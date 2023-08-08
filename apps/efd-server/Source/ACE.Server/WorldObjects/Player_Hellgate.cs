@@ -33,10 +33,5 @@ namespace ACE.Server.WorldObjects
                     Session.Network.EnqueueSend(new GameMessageSystemChat($"Hellgate: [boss_countdown] = {bossCountdown}", ChatMessageType.System));
             }
         }
-
-        public void Hellgate_Tick(Hellgate hellgate)
-        {
-            PrintHellgateInfo(hellgate);
-        }
     }
 }
