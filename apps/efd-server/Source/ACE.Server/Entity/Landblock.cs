@@ -1167,7 +1167,7 @@ namespace ACE.Server.Entity
             // remove all objects
             foreach (var wo in worldObjects.ToList())
             {
-                if (!wo.Value.BiotaOriginatedFromOrHasBeenSavedToDatabase())
+                if (!wo.Value.BiotaOriginatedFromOrHasBeenSavedToDatabase() || wo.Value.Name.Contains("Forgotten") && wo.Value is not Player)
                     wo.Value.Destroy(false, true);
                 else
                     RemoveWorldObjectInternal(wo.Key);
