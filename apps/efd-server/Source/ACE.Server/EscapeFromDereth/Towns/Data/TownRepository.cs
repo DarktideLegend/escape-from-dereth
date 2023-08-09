@@ -42,6 +42,16 @@ namespace ACE.Server.EscapeFromDereth.Towns.Data
         {
             var cache = DatabaseManager.World.GetTownCreatureWeenieIds(creatureType);
 
+            log.Info($"Cache for creature type: {creatureType.ToString()}");
+
+            for (var i = 0; i < 5; ++i)
+            {
+                log.Info($"Monsters for tier {i + 1}");
+                foreach(var id in cache[i])
+                    log.Info($"Name: {DatabaseManager.World.GetWeenie(id).ClassName}");
+            }
+
+
             return cache;
         }
 
