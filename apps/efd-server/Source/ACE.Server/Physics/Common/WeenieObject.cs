@@ -83,10 +83,8 @@ namespace ACE.Server.Physics.Common
 
         private static bool IsPetFellowshipMember(Player player, CombatPet combatPet)
         {
-            if (combatPet.P_PetOwner.GetFellowshipTargets().Contains(player))
-                return true;
+            return combatPet.P_PetOwner.GetFellowshipTargets().Contains(player);
 
-            return false;
         }
 
         private static bool IsPetAllegianceMember(Player player, CombatPet combatPet)
@@ -94,7 +92,10 @@ namespace ACE.Server.Physics.Common
             if (player.Allegiance == null)
                 return false;
 
-            if (combatPet.P_PetOwner.MonarchId == player.MonarchId)
+            var monarchId = combatPet?.P_PetOwner?.MonarchId;
+            var playerMonarchId = player?.MonarchId;
+
+            if (monarchId != null && playerMonarchId != null && monarchId == playerMonarchId)
                 return true;
 
             return false;
