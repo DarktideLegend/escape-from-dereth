@@ -1195,11 +1195,19 @@ namespace ACE.Server.WorldObjects
                 return;
             }
 
+            if (targetCreature.IsInHellgate)
+            {
+                return;
+            }
+  
             if (targetCreature is Player)
             {
                 var recallsDisabled = !targetCreature.RealmRuleset.GetProperty(RealmPropertyBool.HasRecalls);
                 if (recallsDisabled)
+                {
+                    player.Session.Network.EnqueueSend(new GameEventWeenieError(player.Session, WeenieError.YouCannotSummonPortal));
                     return;
+                }
             }
 
             if (player != null && player.PKTimerActive)
@@ -1268,12 +1276,11 @@ namespace ACE.Server.WorldObjects
                     else if (targetCreature != null && targetCreature.Location != null)
                         summonLoc = targetCreature.Location.InFrontOf(3.0f);
                 }
+
+                summonLoc.Instance = targetCreature.Location.Instance;
             }
 
-            if (summonLoc != null)
-                summonLoc.LandblockId = new LandblockId(summonLoc.GetCell());
-
-            var success = SummonPortal(portalId, summonLoc, spell.PortalLifetime, this, player ?? targetCreature as Player);
+            var success = SummonPortal(portalId, summonLoc, spell.PortalLifetime);
 
             if (!success && player != null)
                 player.Session.Network.EnqueueSend(new GameEventWeenieError(player.Session, WeenieError.YouFailToSummonPortal));
@@ -1296,44 +1303,12 @@ namespace ACE.Server.WorldObjects
         /// <summary>
         /// Spawns a portal for SpellType.PortalSummon spells
         /// </summary>
-        protected static bool SummonPortal(uint portalId, Position location, double portalLifetime, WorldObject source, Player summoner)
+        protected static bool SummonPortal(uint portalId, Position location, double portalLifetime)
         {
             var portal = GetPortal(portalId);
 
             if (portal == null || location == null)
                 return false;
-
-            Position targetPosition = new Position(portal.Destination);
-            var summonTargetRealms = source.GetRealmsToApply();
-
-            bool doEphemeralInstance = false;
-            if (summonTargetRealms.Count > 0)
-                doEphemeralInstance = true;
-
-            if (summoner != null)
-            {
-                if (summonTargetRealms.Any(x => x == null))
-                {
-                    log.Error($"SummonTargetRealm for guid {source.Guid} has an invalid realm ID.");
-                    summoner.Session.Network.EnqueueSend(new GameMessageSystemChat($"Unable to summon: Realm not found.", ChatMessageType.Magic));
-                    return false;
-                }
-
-                if (summoner.RealmRuleset.GetProperty(RealmPropertyBool.IsDuelingRealm))
-                    doEphemeralInstance = true;
-
-                if (doEphemeralInstance)
-                {
-                    if (summonTargetRealms.Any(x => x.Realm.Type != RealmType.Ruleset))
-                    {
-                        log.Error($"SummonTargetRealm for guid {source.Guid} has invalid realm ID {summonTargetRealms.First(x => x.Realm.Type != RealmType.Ruleset).Realm.Id}. Realm must be of type 'Ruleset'");
-                        summoner.Session.Network.EnqueueSend(new GameMessageSystemChat($"Unable to summon: Invalid realm type.", ChatMessageType.Magic));
-                        return false;
-                    }
-                    var landblock = RealmManager.GetNewEphemeralLandblock(portal.Destination.LandblockId, summoner, summonTargetRealms.Select(x => x.Realm).ToList());
-                    targetPosition.Instance = landblock.Instance;
-                }
-            }
 
             var gateway = WorldObjectFactory.CreateNewWorldObject("portalgateway") as Portal;
 
@@ -1343,7 +1318,7 @@ namespace ACE.Server.WorldObjects
             gateway.Location = new Position(location);
             gateway.OriginalPortal = portalId;
 
-            gateway.UpdatePortalDestination(targetPosition);
+            gateway.UpdatePortalDestination(new Position(portal.Destination));
 
             gateway.TimeToRot = portalLifetime;
 
