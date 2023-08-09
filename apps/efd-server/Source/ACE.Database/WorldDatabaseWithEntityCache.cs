@@ -1192,7 +1192,7 @@ namespace ACE.Database
         {
             { 1, new CreatureTierProps(1, 80, 100, 30000, 50000, 0, 1000, 1000) },
             { 2, new CreatureTierProps(1, 100, 115, 80000, 100000, 0, 1000, 1000) },
-            { 3, new CreatureTierProps(3, 130, 150, 200000, 500000, 0, 1000, 1500) },
+            { 3, new CreatureTierProps(3, 130, 150, 200000, 500000, 0, 1000, 1000) },
             { 4, new CreatureTierProps(4, 185, 220, 800000, 1200000, 0, 1000, 3000) },
             { 5, new CreatureTierProps(5, 200, 300, 800000, 2000000, 2000, 3000, 5000) },
         };
@@ -1237,6 +1237,9 @@ namespace ACE.Database
 
             for (var i = 1; i <= 5; i++)
                 weenieIds.Add(GetCreatureWeenieIdByTier(creatureType, (uint)i));
+
+
+
 
             return weenieIds;
         }
