@@ -6,6 +6,7 @@ using System.Threading;
 using ACE.Entity.Enum;
 using ACE.Server.Physics.Managers;
 using ACE.Server.WorldObjects;
+using log4net;
 
 namespace ACE.Server.Physics.Common
 {
@@ -15,6 +16,8 @@ namespace ACE.Server.Physics.Common
     /// </summary>
     public class ObjectMaint
     {
+        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         /// <summary>
         /// The client automatically removes known objects if they remain outside visibility for this amount of time
         /// </summary>
@@ -936,8 +939,16 @@ namespace ACE.Server.Physics.Common
                         return false;
                     }
 
-                    if (obj.WeenieObj.IsPetAlly(PhysicsObj.WeenieObj.WorldObject))
+                    try
+                    {
+                        if (obj.WeenieObj.IsPetAlly(PhysicsObj.WeenieObj.WorldObject))
+                            return false;
+                    } catch(Exception ex)
+                    {
+                        log.Warn($"Crash prevented for adding visible target!");
+                        log.Error(ex.StackTrace);
                         return false;
+                    }
                 }
                 else
                 {
