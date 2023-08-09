@@ -502,8 +502,14 @@ namespace ACE.Server.WorldObjects
             var inventory = GetAllPossessions();
 
             if (fullLoot)
-                // exclude attuned
-                inventory = inventory.Where(i => i.IsAttunedOrContainsAttuned is false).ToList();
+            {
+                // exclude attuned items, containers, salvage, ust
+                inventory = inventory.Where(i =>
+                i.IsAttunedOrContainsAttuned is false &&
+                i is Container is false &&
+                i.ItemType != ItemType.TinkeringMaterial &&
+                i.ItemType != ItemType.TinkeringTool).ToList();
+            }
             else
                 // exclude bonded items
                 inventory = inventory.Where(i => (i.GetProperty(PropertyInt.Bonded) ?? 0) == 0).ToList();
