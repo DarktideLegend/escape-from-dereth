@@ -1,3 +1,23 @@
+## [1.1.0-alpha.67](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.66...efd-server-v1.1.0-alpha.67) (2023-08-09)
+
+
+### Features
+
+* **efd-server:** ✨ containers, salvage, and ust no longer drop in full loot realms ([3d87052](https://github.com/DarktideLegend/escape-from-dereth/commit/3d8705230a16af5fe1a7f2b8213d547f75547d62))
+* **efd-server:** ✨ manually using summoners automatically assigns their mastery to players ([4871aa7](https://github.com/DarktideLegend/escape-from-dereth/commit/4871aa7ae91d9632566e741adb95fce679cabac9))
+
+
+### Bug Fixes
+
+* **efd-server:** 🐛  temporary fix to prevent pvp summoners from crashing the server ([4230ff8](https://github.com/DarktideLegend/escape-from-dereth/commit/4230ff849a3963b9a2fcb68c48d6565262873276))
+* **efd-server:** 🐛 generators should only spawn objects that exist ([1424e81](https://github.com/DarktideLegend/escape-from-dereth/commit/1424e819604766b76eddc4a45088552151b668b2))
+* **efd-server:** 🐛 prevent creatures from summoning portals inside hellgates ([a298912](https://github.com/DarktideLegend/escape-from-dereth/commit/a298912b9e28317854623653cf305dbc78283ada))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ remove dead code ([ff8d821](https://github.com/DarktideLegend/escape-from-dereth/commit/ff8d82116c76bd19bc31576e0d437c7768098e64))
+
 ## [1.1.0-alpha.66](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.65...efd-server-v1.1.0-alpha.66) (2023-08-09)
 
 
