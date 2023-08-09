@@ -263,13 +263,16 @@ namespace ACE.Server.Entity
             {
                 var creatureSpawnMultiplier = Generator.RealmRuleset.GetProperty(RealmPropertyFloat.CreatureSpawnMultiplier);
                 var wo = AddWorldObject();
+
+                if (wo == null)
+                    return objects;
+
+                // never multiply an npc spawn
                 if (wo is Creature creature && creature.IsNPC)
                     objects.Add(wo);
                 else
                     for (var i = 0; i < creatureSpawnMultiplier; i++)
-                    {
                         objects.Add(AddWorldObject());
-                    }
             }
 
             var spawned = new List<WorldObject>();
