@@ -1,3 +1,11 @@
+## [1.1.0-alpha.66](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.65...efd-server-v1.1.0-alpha.66) (2023-08-09)
+
+
+### Bug Fixes
+
+* **efd-server:** 🐛 check if generator and ruleset exist before adding generator delay ([fc0b3f1](https://github.com/DarktideLegend/escape-from-dereth/commit/fc0b3f1d30a71bbbcdbb82416d4f7cce46b28456))
+* **efd-server:** 🐛 reduce maxHp of tier 3 creature spawns ([d619adc](https://github.com/DarktideLegend/escape-from-dereth/commit/d619adc73695cec29460c2579820cc076a0285fa))
+
 ## [1.1.0-alpha.65](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.64...efd-server-v1.1.0-alpha.65) (2023-08-08)
 
 
