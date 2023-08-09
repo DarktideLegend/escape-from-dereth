@@ -167,14 +167,6 @@ namespace ACE.Server.WorldObjects
 
             dieEntered = true;
 
-            if (IsHellgateBoss)
-            {
-                {
-                    
-
-                }
-            } 
-
             UpdateVital(Health, 0);
 
             if (topDamager != null)
