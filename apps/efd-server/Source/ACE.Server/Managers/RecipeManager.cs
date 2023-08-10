@@ -69,7 +69,10 @@ namespace ACE.Server.Managers
             if (recipe == null)
             {
                 if (TryHandleHardcodedRecipe(player, source, target))
+                {
+                    player.SendUseDoneEvent();
                     return;
+                }
                 player.Session.Network.EnqueueSend(new GameMessageSystemChat($"The {source.NameWithMaterial} cannot be used on the {target.NameWithMaterial}.", ChatMessageType.Craft));
                 player.SendUseDoneEvent();
                 return;
@@ -152,9 +155,26 @@ namespace ACE.Server.Managers
 
         private static bool TryHandleHardcodedRecipe(Player player, WorldObject source, WorldObject target)
         {
+            if (source.WeenieClassId == 604001)
+                return ApplySlayerSkull(player, source, target);
             if (target.GetProperty(PropertyBool.AllowRulesetStamp) == true && source.WeenieClassName == "realm-ruleset-stamp")
                 return ApplyRulesetStamp(player, source, target);
             return false;
+        }
+
+        private static bool ApplySlayerSkull(Player player, WorldObject source, WorldObject target)
+        {
+            var isWeaponOrCaster = (target.ItemType & ItemType.WeaponOrCaster) != 0;
+            if (isWeaponOrCaster && target.SlayerCreatureType == null && source.SlayerCreatureType != null)
+            {
+                target.SlayerCreatureType = source.SlayerCreatureType;
+                target.SlayerDamageBonus = 2;
+                player.TryConsumeFromInventoryWithNetworking(source);
+                return true;
+            }
+
+            return false;
+
         }
 
         private static bool ApplyRulesetStamp(Player player, WorldObject source, WorldObject target)

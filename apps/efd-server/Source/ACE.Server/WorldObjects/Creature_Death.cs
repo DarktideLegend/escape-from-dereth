@@ -765,6 +765,8 @@ namespace ACE.Server.WorldObjects
                 List<WorldObject> items = LootGenerationFactory.CreateRandomLootObjects(profile);
                 foreach (WorldObject wo in items)
                 {
+                    if ((wo.WeenieClassId == 604001 || wo.ItemType == ItemType.TinkeringMaterial) && !IsInHellgate)
+                        continue;
                     if (corpse != null)
                         corpse.TryAddToInventory(wo);
                     else
