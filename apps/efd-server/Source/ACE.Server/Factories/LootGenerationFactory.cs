@@ -133,7 +133,7 @@ namespace ACE.Server.Factories
                     // https://asheron.fandom.com/wiki/Announcements_-_2010/04_-_Shedding_Skin :: May 5th, 2010 entry
                     if (profile.Tier > 4 && lootBias != LootBias.Weapons && dropRate > 0)
                     {
-                        if (ThreadSafeRandom.Next(1, (int) (100 * dropRateMod)) <= 2) // base 1% to drop aetheria?
+                        if (ThreadSafeRandom.Next(1, (int)(100 * dropRateMod)) <= 2) // base 1% to drop aetheria?
                         {
                             lootWorldObject = CreateAetheria(profile.Tier);
                             if (lootWorldObject != null)
@@ -173,6 +173,27 @@ namespace ACE.Server.Factories
                 WorldObject lootWorldObject;
 
                 var loot = new List<WorldObject>();
+
+                var salvageWcids = SalvageChance.Roll();
+
+                if (ThreadSafeRandom.Next(1, 250) <= 1) // 1 / 250 chance of dropping a slayer skull
+                {
+                    var creatureType = SlayersChance.GetCreatureType();
+                    var wo = WorldObjectFactory.CreateNewWorldObject(604001);
+                    wo.Name = $"{creatureType} Slayer Skull";
+                    wo.LongDesc = $"Use this skull on any loot-generated weapon or caster to give it a {creatureType} Slayer effect.";
+                    wo.SlayerCreatureType = creatureType;
+                    loot.Add(wo);
+                }
+
+                foreach (var wcid in salvageWcids)
+                {
+                    var wo = WorldObjectFactory.CreateNewWorldObject((uint)wcid);
+                    wo.Structure = 100;
+                    wo.Workmanship = 5f;
+                    wo.Value = 0;
+                    loot.Add(wo);
+                }
 
                 var itemChance = ThreadSafeRandom.Next(1, 100);
                 if (itemChance <= profile.ItemChance)
@@ -1198,7 +1219,7 @@ namespace ACE.Server.Factories
                     MutatePetDevice(wo, treasureDeath.Tier);
                     break;
 
-                // other mundane items (mana stones, food/drink, healing kits, lockpicks, and spell components/peas) don't get mutated
+                    // other mundane items (mana stones, food/drink, healing kits, lockpicks, and spell components/peas) don't get mutated
             }
             return wo;
         }
@@ -1282,7 +1303,7 @@ namespace ACE.Server.Factories
             wo.WieldDifficulty = wieldLevelReq;
 
             // as per retail pcaps, must be set to appear in client
-            wo.WieldSkillType = 1;  
+            wo.WieldSkillType = 1;
         }
-    }         
+    }
 }

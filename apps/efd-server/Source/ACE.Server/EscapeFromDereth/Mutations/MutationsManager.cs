@@ -10,9 +10,11 @@ using ACE.Server.EscapeFromDereth.Towns;
 using ACE.Server.EscapeFromDereth.Towns.Entity;
 using ACE.Server.Factories;
 using ACE.Server.Managers;
+using ACE.Server.Network.GameMessages.Messages;
 using ACE.Server.Realms;
 using ACE.Server.WorldObjects;
 using log4net;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -427,7 +429,6 @@ namespace ACE.Server.EscapeFromDereth.Mutations
             wo.SpawnHellgateOnDeath = true;
             wo.SetProperty(PropertyFloat.DefaultScale, 3); // scale the gatekeeper to have 3x size
             wo.Name = $"Forgotten Gatekeeper";
-            wo.SaveBiotaToDatabase();
         }
 
         private static Storage GetPersistentStorage(Weenie weenie, Position location)
@@ -459,8 +460,6 @@ namespace ACE.Server.EscapeFromDereth.Mutations
             wo.SpawnHellgateSurfaceOnDeath = true;
             wo.SetProperty(PropertyFloat.DefaultScale, 1.5); // scale the boss to have 1.5x size
             wo.Name = $"Hellgate Boss";
-
-            wo.SaveBiotaToDatabase();
         }
     }
 }
