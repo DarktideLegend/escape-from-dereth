@@ -1,3 +1,10 @@
+## [1.1.0-alpha.68](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.67...efd-server-v1.1.0-alpha.68) (2023-08-10)
+
+
+### Features
+
+* **efd-server:** ✨ hellgate mobs drop full bags of salvage and a rare chance to drop a slayer imbue ([f345d69](https://github.com/DarktideLegend/escape-from-dereth/commit/f345d6930a9453913c6417a1f3cf58f3734827b5))
+
 ## [1.1.0-alpha.67](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.66...efd-server-v1.1.0-alpha.67) (2023-08-09)
 
 
