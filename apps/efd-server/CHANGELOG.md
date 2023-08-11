@@ -1,3 +1,15 @@
+## [1.1.0-alpha.69](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.68...efd-server-v1.1.0-alpha.69) (2023-08-11)
+
+
+### Features
+
+* **efd-server:** ✨ add aetheria mana stone and armatures to quality of life vendor ([5c6a03e](https://github.com/DarktideLegend/escape-from-dereth/commit/5c6a03edfc2b3c874dc88e9459dbb19f79a9795c))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ remove old fitness instructor anthony weenie ([941d217](https://github.com/DarktideLegend/escape-from-dereth/commit/941d21762228c0a2eb70ed857ff265b53d7f8483))
+
 ## [1.1.0-alpha.68](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.67...efd-server-v1.1.0-alpha.68) (2023-08-10)
 
 
