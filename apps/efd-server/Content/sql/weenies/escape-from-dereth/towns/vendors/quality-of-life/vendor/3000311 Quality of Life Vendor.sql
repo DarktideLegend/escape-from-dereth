@@ -121,6 +121,10 @@ VALUES (3000311, 0,     0,  0, 0, 0, False) /* Create nothing for Undef */
      , (3000311, 4, 34257, -1, 0, 0, False) /* Create Asheron's Lesser Benediction (34257) for Shop */
      , (3000311, 4, 15856, -1, 0, 0, False) /* Create Encrusted Bloodstone Jewel (15856) for Shop */
      , (3000311, 4, 30246, -1, 0, 0, False) /* Create Artist's Crystal (30246) for Shop */
+     , (3000311, 4, 41509, -1, 0, 0, False) /* Create Minor Item Tinkering Armature (41509) for Shop */
+     , (3000311, 4, 41507, -1, 0, 0, False) /* Create Moderate Item Tinkering Armature (41507) for Shop */
+     , (3000311, 4, 41508, -1, 0, 0, False) /* Create Major Item Tinkering Armature (41508) for Shop */
+     , (3000311, 4, 42645, -1, 0, 0, False) /* Create Aetheria Mana Stone (42645) for Shop */
      , (3000311, 4,  8904, -1, 0, 0, False) /* Create Focusing Stone (8904) for Shop */;
      
 
@@ -154,3 +158,4 @@ VALUES (3000311, 0,     0,  0, 0, 0, False) /* Create nothing for Undef */
   "IsDone": false
 }
 */
+eh
