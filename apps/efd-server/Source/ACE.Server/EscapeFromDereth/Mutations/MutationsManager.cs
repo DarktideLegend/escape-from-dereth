@@ -90,9 +90,6 @@ namespace ACE.Server.EscapeFromDereth.Mutations
                     return ProcessHomeRealmPortal(wo as Portal, ruleset);
                 case WeenieType.Storage:
                     return ProcessHomeRealmStorage(wo, ruleset);
-                case WeenieType.Door:
-                    wo.Destroy();
-                    return null;
                 case WeenieType.SlumLord: // disable housing in home realm
                     wo.Destroy();
                     return null;
