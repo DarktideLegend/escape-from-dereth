@@ -838,11 +838,15 @@ namespace ACE.Server.WorldObjects
                 SetPosition(PositionType.HomeRealmExitTo, new Position(Location.InFrontOf(-5f, true)));
 
 
+            /* disable towns feature 
+
             if (prevrealm.Realm.Id == 1017) // if leaving town meeting hall
                 TownManager.RemovePlayerFromMeetingHall(this, Location.Instance);
 
             if (newRealm.Realm.Id == 1017) // if entering town meeting hall
                 TownManager.AddPlayerToMeetingHall(this, newLocation.Instance);
+
+            */
 
             if (prevrealm.Realm.Id == 1016) // if leaving hellgate
                 HellgateManager.RemovePlayerFromHellgate(this, Location.Instance);

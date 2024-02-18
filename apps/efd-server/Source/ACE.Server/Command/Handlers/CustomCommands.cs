@@ -113,6 +113,8 @@ namespace ACE.Server.Command.Handlers
         [CommandHandler("open-meeting-hall", AccessLevel.Admin, CommandHandlerFlag.RequiresWorld, "Triggers the opening of a closed meeting hall.")]
         public static void OpenMeetingHall(Session session, params string[] parameters)
         {
+            /* disable towns feature
+
             var player = session?.Player;
             var town = TownManager.GetClosestTownFromPosition(player.Location);
 
@@ -120,6 +122,8 @@ namespace ACE.Server.Command.Handlers
             {
                 town.OpenTownMeetingHall();
             }
+
+            */
         }
 
         [CommandHandler("hellgate", AccessLevel.Player, CommandHandlerFlag.RequiresWorld, "This command prints hellgate information.")]
@@ -138,6 +142,8 @@ namespace ACE.Server.Command.Handlers
         [CommandHandler("update-town-tax", AccessLevel.Player, CommandHandlerFlag.RequiresWorld, "Change the tax rate of the closest town.")]
         public static void HandleUpdateTownTax(Session session, params string[] parameters)
         {
+            /* disable towns feature
+
             if (parameters.Length > 1)
             {
                 session.Network.EnqueueSend(new GameMessageSystemChat($"You must provide a valid tax rate ex: 0.5", ChatMessageType.Broadcast));
@@ -164,11 +170,15 @@ namespace ACE.Server.Command.Handlers
             }
             else
                 session.Network.EnqueueSend(new GameMessageSystemChat($"Only the monarch of {town.Name} may update the town tax rate.", ChatMessageType.Broadcast));
+
+            */
         }
 
         [CommandHandler("town-info", AccessLevel.Player, CommandHandlerFlag.RequiresWorld, "Get town info closest to your location.")]
         public static void HandleTownInfo(Session session, params string[] parameters)
         {
+            /* disable towns feature
+
             var player = session.Player;
 
             var town = TownManager.GetClosestTownFromPosition(player.Location);
@@ -191,6 +201,7 @@ namespace ACE.Server.Command.Handlers
             else
                 session.Network.EnqueueSend(new GameMessageSystemChat($"[{town.Name}] The meeting hall is currently open!", ChatMessageType.System));
 
+            */
 
         }
 

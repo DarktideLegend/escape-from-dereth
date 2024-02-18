@@ -285,12 +285,16 @@ namespace ACE.Server.WorldObjects
             var player = wo as Player;
             if (player == null) return;
 
-            // vendors should only be accessible in whitelisted Towns unless you are and admin
+            /* disable towns feature
+
+            // vendors should only be accessible in whitelisted Towns unless you are an admin
             if (TownManager.GetTownDistance(Location) > 400 && player is not Admin)
             {
                 player.SendTransientError($"You can only use vendors near a whitelisted town, type /town-info to find your nearest town.");
                 return;
             }
+
+            */
 
             if (player.IsBusy)
             {
@@ -619,11 +623,15 @@ namespace ACE.Server.WorldObjects
                 // detect rollover?
                 totalPrice += cost;
 
+                /* disable towns feature
+
                 if (shouldTax)
                 {
                     totalTax += taxAmount;
                     totalPrice += taxAmount;
                 }
+
+                */
             }
 
 
@@ -640,8 +648,12 @@ namespace ACE.Server.WorldObjects
                     return false;
                 }
 
+                /* disable towns feature
+
                 if (isTaxable && !insufficientFunds)
                     TownManager.AddTaxToTownStorage(town, (int)totalTax);
+
+                */
             }
             else
             {
@@ -694,20 +706,28 @@ namespace ACE.Server.WorldObjects
         {
             var payout = 0;
 
+            /* disable towns feature
+
             var town = TownManager.GetClosestTownFromPosition(Location);
             var isOwner = town.AllegianceId == player.Guid.Full;
             var isOwnerFollower = town.AllegianceId == player?.Allegiance?.MonarchId;
             var isTaxable = !isOwner && !isOwnerFollower;
 
+            */
+
             foreach (WorldObject item in items.Values)
             {
                 var cost = GetBuyCost(item);
+                /* disable towns feature
+
                 if (isTaxable && !item.IsTradeNote)
                 { 
                     var taxAmount = (int)(cost * town.TaxRate);
                     cost -= taxAmount;
                     TownManager.AddTaxToTownStorage(town, taxAmount);
                 }
+
+                */
                 payout += cost;
             }
 

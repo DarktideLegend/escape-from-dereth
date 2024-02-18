@@ -280,6 +280,8 @@ namespace ACE.Server.WorldObjects
 
             }
 
+            /* disable towns feature
+
             // to TownMeetingHall
             if (Name.Contains("Meeting Hall"))
             {
@@ -294,6 +296,8 @@ namespace ACE.Server.WorldObjects
 
                 return ProcessMeetingHall(player, rules);
             }
+
+            */
 
             if (WeenieClassId == 600003) // to hellgate (ephemeral realm)
             {

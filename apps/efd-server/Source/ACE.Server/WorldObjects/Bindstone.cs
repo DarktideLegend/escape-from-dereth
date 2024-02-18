@@ -49,11 +49,6 @@ namespace ACE.Server.WorldObjects
             if (!(worldObject is Player player))
                 return;
 
-            // Bindstones are used to travel back to ur LS
-            player.HandleActionTeleToLifestone(true);
-            return;
-
-
             // check if player is in an allegiance
             if (player.Allegiance == null)
             {

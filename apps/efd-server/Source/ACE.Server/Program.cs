@@ -299,6 +299,7 @@ namespace ACE.Server
             log.Info("Initializing RealmManager...");
             RealmManager.Initialize();
 
+
             log.Info("Initializing TownManager...");
             TownManager.Initialize();
 
