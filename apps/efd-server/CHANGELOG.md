@@ -1,3 +1,15 @@
+## [1.1.0-alpha.70](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.69...efd-server-v1.1.0-alpha.70) (2024-02-18)
+
+
+### Features
+
+* **efd-server:** ✨ reset EscapeFromDereth realm ruleset to defaulty AC rules ([b374bf8](https://github.com/DarktideLegend/escape-from-dereth/commit/b374bf8b9b6f545e6579ddccbd82aea7c96a4443))
+
+
+### Other changes that don't modify src or test files
+
+* **efd-server:** 🔧 disable towns feature ([efc4e95](https://github.com/DarktideLegend/escape-from-dereth/commit/efc4e9565734c594098e3a72d31b84755c46ca79))
+
 ## [1.1.0-alpha.69](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.68...efd-server-v1.1.0-alpha.69) (2023-08-11)
 
 
