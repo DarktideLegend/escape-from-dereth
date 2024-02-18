@@ -64,8 +64,12 @@ namespace ACE.Server.WorldObjects
             if (SpawnHellgateSurfaceOnDeath) // if hellgate boss
                 OnDeath_SummonHellgateSurfacePortal();
 
+            /* disable towns feature
+
             if (IsMeetingHallBoss)
                 HandleMeetingHallBoss(lastDamager);
+
+            */
 
             return GetDeathMessage(lastDamager, damageType, criticalHit);
         }

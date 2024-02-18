@@ -357,7 +357,12 @@ namespace ACE.Server.Managers
 
             // TODO: find better place to Tick hellgates and Towns more efficiently
             HellgateManager.Tick(Time.GetUnixTime());
+
+            /* disable towns feature
+
             TownManager.Tick(Time.GetUnixTime());
+
+            */
         }
 
         private static void TickSingleThreadedWork()

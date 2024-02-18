@@ -38,8 +38,12 @@ namespace ACE.Server.EscapeFromDereth.Mutations
                     return ProcessHomeRealmObject(wo, ruleset);
                 case 1016:
                     return ProcessHellgateObject(wo, ruleset);
+                /* disable towns feature
+
                 case 1017:
                     return ProcessTownMeetingHallObject(wo, ruleset);
+
+                */
                 case 0x7FFF:
                     return ProcessHideoutObject(wo, ruleset);
             }
@@ -115,7 +119,10 @@ namespace ACE.Server.EscapeFromDereth.Mutations
 
         private static WorldObject ProcessHomeRealmPortal(Portal portal, AppliedRuleset ruleset)
         {
+            /* disable towns feature
+
             var location = TownManager.GetTownDistance(portal.Location);
+
             // town network portals only exist in whitelisted towns
             if (portal.Name.Contains("Town Network") && location > 600)
             {
@@ -133,6 +140,8 @@ namespace ACE.Server.EscapeFromDereth.Mutations
                 portal.PortalRestrictions |= PortalBitmask.NoSummon;
                 portal.PortalRestrictions |= PortalBitmask.NoRecall;
             }
+
+            */
 
 
             return portal;
@@ -374,6 +383,8 @@ namespace ACE.Server.EscapeFromDereth.Mutations
                 if (creature.Location.Indoors)
                     return creature;
 
+                /* disable towns feature
+
                 if (creature.Level < 80 || ThreadSafeRandom.Next(0, 100) < 25) // 25% chance of forgotten mob
                 {
                     var tier = TownManager.GetMonsterTierByDistance(creature.Location);
@@ -389,6 +400,8 @@ namespace ACE.Server.EscapeFromDereth.Mutations
                     creature.Destroy(); // destroy original creature since we are replacing with a custom monster
                     return forgottenCreature;
                 }
+
+                */
             }
 
             return creature;
