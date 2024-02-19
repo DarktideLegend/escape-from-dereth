@@ -1043,7 +1043,7 @@ namespace ACE.Server.WorldObjects
 
         public void PK_DeathTick()
         {
-            if (MinimumTimeSincePk == null && RecallsDisabled)
+            if (MinimumTimeSincePk == null || RecallsDisabled)
                 return;
 
             if (PkLevel == PKLevel.NPK && !RealmRuleset.GetProperty(RealmPropertyBool.IsPKOnly) && !PropertyManager.GetBool("pk_server").Item && !PropertyManager.GetBool("pkl_server").Item)

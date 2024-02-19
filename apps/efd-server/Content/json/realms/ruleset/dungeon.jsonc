@@ -1,0 +1,15 @@
+
+{
+  "name": "Dungeon",
+  "type": "Ruleset",
+    "properties": {
+        "Description": ".",
+        "IsFullLootOnDeath": false,
+        "IsNeutralZone": true,
+        "CreatureRespawnDuration": {
+            "low": 30.0,
+            "high": 120.0,
+            "reroll": "landblock"
+        }
+    }
+}
