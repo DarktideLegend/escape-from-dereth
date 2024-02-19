@@ -1,6 +1,8 @@
 using ACE.Entity;
 using ACE.Entity.Models;
 using ACE.Server.EscapeFromDereth.Dungeons.Entity;
+using ACE.Server.EscapeFromDereth.Hellgates.Entity;
+using ACE.Server.EscapeFromDereth.Mutations;
 using ACE.Server.Managers;
 using ACE.Server.WorldObjects;
 using log4net;
@@ -70,5 +72,16 @@ namespace ACE.Server.EscapeFromDereth.Dungeons
             log.Info($"Creating Dungeon for {creator.Name} - {instance}");
             return dungeon;
         }
+
+        public static void SpawnDungeonBoss(Position position)
+        {
+            var boss = MutationsManager.CreateDungeonBoss(position);
+
+            if (boss != null)
+            {
+                boss.EnterWorld();
+            }
+        }
     }
+
 }

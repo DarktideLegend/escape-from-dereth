@@ -302,8 +302,7 @@ namespace ACE.Server.WorldObjects
 
             */
 
-
-
+            /* disable hellgate feature
 
             if (WeenieClassId == 600003) // to hellgate (ephemeral realm)
             {
@@ -320,7 +319,7 @@ namespace ACE.Server.WorldObjects
                 return ProcessHellgate(player, rules);
             }
 
-
+            */
 
             if (QuestRestriction != null && !player.IgnorePortalRestrictions)
             {
