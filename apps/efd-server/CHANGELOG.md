@@ -1,3 +1,10 @@
+## [1.1.0-alpha.72](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.71...efd-server-v1.1.0-alpha.72) (2024-02-19)
+
+
+### Features
+
+* **efd-server:** ✨ add ReplaceMobs realm ruleset ([d6524ca](https://github.com/DarktideLegend/escape-from-dereth/commit/d6524cacae14ac5840869be352e0a6bf8ec03d14))
+
 ## [1.1.0-alpha.71](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.70...efd-server-v1.1.0-alpha.71) (2024-02-19)
 
 
