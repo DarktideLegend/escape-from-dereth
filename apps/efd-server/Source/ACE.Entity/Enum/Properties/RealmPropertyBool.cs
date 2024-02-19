@@ -90,7 +90,10 @@ namespace ACE.Entity.Enum.Properties
         UseWieldRequirements,
 
         [RealmPropertyBool(false)]
-        HasPvpSummoners
+        HasPvpSummoners,
+
+        [RealmPropertyBool(false)]
+        ReplaceMobs,
     }
 
 

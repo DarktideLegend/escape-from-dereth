@@ -1,9 +1,11 @@
 using ACE.Common;
 using ACE.Database;
+using ACE.DatLoader.FileTypes;
 using ACE.Entity;
 using ACE.Entity.Enum;
 using ACE.Entity.Enum.Properties;
 using ACE.Entity.Models;
+using ACE.Server.EscapeFromDereth.Dungeons;
 using ACE.Server.EscapeFromDereth.Hellgates;
 using ACE.Server.EscapeFromDereth.Hellgates.Entity;
 using ACE.Server.EscapeFromDereth.Towns;
@@ -25,11 +27,11 @@ namespace ACE.Server.EscapeFromDereth.Mutations
     {
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public static WorldObject ProcessWorldObject(WorldObject wo, AppliedRuleset ruleset)
+        public static WorldObject ProcessWorldObject(WorldObject wo, AppliedRuleset ruleset, bool replace = true)
         {
             var hasCustomContent = wo.Weenie.GetProperty(PropertyBool.IsCustomContent) ?? false;
 
-            if (hasCustomContent)
+            if (hasCustomContent || !replace)
                 return wo;
 
             switch (ruleset.Realm.Id)
@@ -44,11 +46,44 @@ namespace ACE.Server.EscapeFromDereth.Mutations
                     return ProcessTownMeetingHallObject(wo, ruleset);
 
                 */
+                case 1018:
+                    return ProcessDungeonObject(wo, ruleset);
                 case 0x7FFF:
                     return ProcessHideoutObject(wo, ruleset);
             }
 
             return wo;
+        }
+
+        private static WorldObject ProcessDungeonObject(WorldObject wo, AppliedRuleset ruleset)
+        {
+            switch (wo.WeenieType)
+            {
+                case WeenieType.Creature:
+                    return ProcessDungeonCreature(wo as Creature, ruleset);
+                case WeenieType.Generic:
+                    return ProcessHellgateGenerator(wo as GenericObject, ruleset);
+            }
+
+            return wo;
+        }
+
+        private static WorldObject ProcessDungeonCreature(Creature creature, AppliedRuleset ruleset)
+        {
+            var dungeon = DungeonManager.GetDungeon(creature.Location.LandblockShort);
+
+            if (dungeon != null)
+            {
+                var forgottenCreature = CreateForgottenMonster(TownManager.GetRandomTown(), 1);
+                forgottenCreature.Location = new Position(creature.Location);
+                MutateForgottenCreatureName(forgottenCreature);
+                CreatureRealmMutate(forgottenCreature, ruleset);
+                //MutateDeathTreasureTypeByTier(forgottenCreature, hellgate.Tier);
+                creature.Destroy();
+                return forgottenCreature;
+            }
+
+            return null;
         }
 
         private static WorldObject ProcessTownMeetingHallObject(WorldObject wo, AppliedRuleset ruleset)
@@ -182,6 +217,58 @@ namespace ACE.Server.EscapeFromDereth.Mutations
             {
                 return (int)(x.Location.DistanceTo(Location) - y.Location.DistanceTo(Location));
             }
+        }
+
+        
+        public static WorldObject CreateDungeonBoss(Position position)
+        {
+            var dungeon = DungeonManager.GetDungeon(position.LandblockShort);
+
+            if (dungeon == null)
+                return null;
+
+            var lb = LandblockManager.GetLandblockUnsafe(position.LandblockId, dungeon.Instance);
+
+            if (lb == null)
+                return null;
+
+            var worldObjects = lb.GetAllWorldObjectsForDiagnostics();
+
+            var player = worldObjects.Where(wo => wo is Player).FirstOrDefault();
+
+            if (player == null)
+                return null;
+
+            var wo = worldObjects
+                .Where(wo => wo is Creature && wo is not Player && !wo.IsGenerator)
+                .OrderBy(creature => creature, new DistanceComparer(player.Location))
+                .FirstOrDefault();
+
+            if (wo != null)
+            {
+                var boss = WorldObjectFactory.CreateNewWorldObject(wo.WeenieClassId);
+                boss.Location = new Position(wo.Location);
+                boss.Lifespan = int.MaxValue;
+                MutateDungeonBoss(boss);
+                wo.Destroy();
+                return boss;
+            }
+
+            return wo;
+        }
+
+        private static void MutateDungeonBoss(WorldObject wo, int tier = 1)
+        {
+
+            if (wo.Biota?.PropertiesAttribute2nd?.ContainsKey(PropertyAttribute2nd.MaxHealth) == true)
+            {
+                var level = (uint)(5000 * tier);
+                wo.Biota.PropertiesAttribute2nd[PropertyAttribute2nd.MaxHealth].InitLevel = level;
+                wo.Biota.PropertiesAttribute2nd[PropertyAttribute2nd.MaxHealth].CurrentLevel = level;
+            }
+
+            wo.SetProperty(PropertyFloat.DefaultScale, 1.5); // scale the boss to have 1.5x size
+            wo.Name = $"Dungeon Boss";
         }
 
         public static WorldObject CreateHellgateBoss(Hellgate hellgate)

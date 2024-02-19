@@ -303,8 +303,12 @@ namespace ACE.Server
             log.Info("Initializing TownManager...");
             TownManager.Initialize();
 
+            /* disable hellgate feature
+
             log.Info("Initializing HellgateManager...");
             HellgateManager.Initialize();
+
+            */
 
             log.Info("Initializing PlayerManager...");
             PlayerManager.Initialize();

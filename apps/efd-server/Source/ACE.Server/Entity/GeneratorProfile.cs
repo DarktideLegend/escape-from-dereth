@@ -262,6 +262,8 @@ namespace ACE.Server.Entity
             else
             {
                 var creatureSpawnMultiplier = Generator.RealmRuleset.GetProperty(RealmPropertyFloat.CreatureSpawnMultiplier);
+                var replaceMobs = Generator.RealmRuleset.GetProperty(RealmPropertyBool.ReplaceMobs);
+
                 var wo = AddWorldObject();
 
                 if (wo == null)
@@ -272,7 +274,14 @@ namespace ACE.Server.Entity
                     objects.Add(wo);
                 else
                     for (var i = 0; i < creatureSpawnMultiplier; i++)
-                        objects.Add(AddWorldObject());
+                    {
+
+                        if (!replaceMobs && i == 0)
+                            objects.Add(AddWorldObject(false));
+                        else
+                            objects.Add(AddWorldObject());
+
+                    }
             }
 
             var spawned = new List<WorldObject>();
@@ -317,11 +326,11 @@ namespace ACE.Server.Entity
             return spawned;
         }
 
-        public WorldObject AddWorldObject()
+        public WorldObject AddWorldObject(bool replace = true)
         {
             var wo = WorldObjectFactory.CreateNewWorldObject(Biota.WeenieClassId);
             wo.Location = new ACE.Entity.Position(Generator.Location);
-            wo = MutationsManager.ProcessWorldObject(wo, Generator.RealmRuleset);
+            wo = MutationsManager.ProcessWorldObject(wo, Generator.RealmRuleset, replace);
             if (wo == null)
             {
                 log.Warn($"[GENERATOR] 0x{Generator.Guid}:{Generator.WeenieClassId} {Generator.Name}.Spawn(): failed to create wcid {Biota.WeenieClassId}");
