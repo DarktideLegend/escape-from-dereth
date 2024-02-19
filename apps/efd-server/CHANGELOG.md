@@ -1,3 +1,10 @@
+## [1.1.0-alpha.71](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.70...efd-server-v1.1.0-alpha.71) (2024-02-19)
+
+
+### Features
+
+* **efd-server:** ✨ add dungeons feature ([d32f48a](https://github.com/DarktideLegend/escape-from-dereth/commit/d32f48a9c51b7601ab75b779bfd1d5f18a777fc7))
+
 ## [1.1.0-alpha.70](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.69...efd-server-v1.1.0-alpha.70) (2024-02-18)
 
 
