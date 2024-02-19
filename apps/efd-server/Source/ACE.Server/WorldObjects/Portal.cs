@@ -17,6 +17,9 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using ACE.Server.EscapeFromDereth.Towns;
+using ACE.Server.EscapeFromDereth.Dungeons;
+using ACE.Server.Realms;
+using System.Reflection.Emit;
 
 namespace ACE.Server.WorldObjects
 {
@@ -299,6 +302,9 @@ namespace ACE.Server.WorldObjects
 
             */
 
+
+
+
             if (WeenieClassId == 600003) // to hellgate (ephemeral realm)
             {
 
@@ -313,6 +319,8 @@ namespace ACE.Server.WorldObjects
 
                 return ProcessHellgate(player, rules);
             }
+
+
 
             if (QuestRestriction != null && !player.IgnorePortalRestrictions)
             {

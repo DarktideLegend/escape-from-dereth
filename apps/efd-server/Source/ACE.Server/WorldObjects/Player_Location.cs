@@ -19,6 +19,7 @@ using ACE.Server.Managers;
 using ACE.Server.Realms;
 using ACE.Server.EscapeFromDereth.Towns;
 using ACE.Server.EscapeFromDereth.Hellgates;
+using ACE.Server.EscapeFromDereth.Dungeons;
 
 namespace ACE.Server.WorldObjects
 {
@@ -742,8 +743,15 @@ namespace ACE.Server.WorldObjects
             if (_newPosition.Instance == 0)
                 _newPosition.Instance = Location.Instance;
 
+
+
             Position.ParseInstanceID(Location.Instance, out var isTemporaryRuleset, out ushort _a, out ushort _b);
-            if (isTemporaryRuleset)
+
+            var dungeon = DungeonManager.GetDungeon(Location.LandblockShort);
+
+            var isDungeon = dungeon != null;
+
+            if (isTemporaryRuleset && !isDungeon)
             {
                 if (!teleportingFromInstance && ExitInstance())
                     return;
@@ -754,6 +762,40 @@ namespace ACE.Server.WorldObjects
                 Session.Network.EnqueueSend(new GameMessageSystemChat($"Error: Realm at destination location does not exist.", ChatMessageType.System));
                 return;
             }
+
+            var nextLandblock = LandblockManager.GetLandblock(_newPosition.LandblockId, Location.Instance, null, false);
+
+            if (nextLandblock.IsDungeon)
+            {
+                var nextDungeon = DungeonManager.GetDungeon(_newPosition.LandblockShort);
+                if (nextDungeon == null)
+                {
+                    var rules = new List<Realm>()
+                    {
+                        RealmManager.GetRealm(HomeRealm).Realm,
+                        RealmManager.GetRealm(1018).Realm // dungeon ruleset
+                    };
+
+                    var newDungeon = DungeonManager.CreateDungeon(this, _newPosition, rules);
+                    _newPosition.Instance = newDungeon.Instance;
+                } else
+                {
+                    _newPosition.Instance = nextDungeon.Instance;
+                }
+
+            }
+
+            if (isDungeon && !nextLandblock.IsDungeon)
+            {
+                var homerealm = RealmManager.GetRealm(HomeRealm);
+                if (homerealm == null)
+                    homerealm = RealmManager.GetRealm(6);
+                var pos = new Position(_newPosition);
+                pos.SetToDefaultRealmInstance(homerealm.Realm.Id);
+
+                _newPosition.Instance = pos.Instance;
+            }
+
             if (!ValidatePlayerRealmPosition(_newPosition))
             {
                 if (IsAdmin)
@@ -766,6 +808,7 @@ namespace ACE.Server.WorldObjects
                     return;
                 }
             }
+
 
             var newPosition = new Position(_newPosition);
             //newPosition.PositionZ += 0.005f;
@@ -847,6 +890,7 @@ namespace ACE.Server.WorldObjects
                 TownManager.AddPlayerToMeetingHall(this, newLocation.Instance);
 
             */
+
 
             if (prevrealm.Realm.Id == 1016) // if leaving hellgate
                 HellgateManager.RemovePlayerFromHellgate(this, Location.Instance);
