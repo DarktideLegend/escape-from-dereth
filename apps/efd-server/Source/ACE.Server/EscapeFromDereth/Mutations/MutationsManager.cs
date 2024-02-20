@@ -74,7 +74,8 @@ namespace ACE.Server.EscapeFromDereth.Mutations
 
             if (dungeon != null)
             {
-                var forgottenCreature = CreateForgottenMonster(TownManager.GetRandomTown(), 1);
+                var dungeonCreature = dungeon.GetRandomCreature();
+                var forgottenCreature = CreateForgottenMonster(dungeonCreature);
                 forgottenCreature.Location = new Position(creature.Location);
                 MutateForgottenCreatureName(forgottenCreature);
                 CreatureRealmMutate(forgottenCreature, ruleset);
@@ -220,24 +221,39 @@ namespace ACE.Server.EscapeFromDereth.Mutations
         }
 
         
-        public static WorldObject CreateDungeonBoss(Position position)
+        public static WorldObject CreateDungeonBoss(Position position, AppliedRuleset ruleset)
         {
+            var lb = LandblockManager.GetLandblockUnsafe(position.LandblockId, position.Instance);
             var dungeon = DungeonManager.GetDungeon(position.LandblockShort);
-
-            if (dungeon == null)
-                return null;
-
-            var lb = LandblockManager.GetLandblockUnsafe(position.LandblockId, dungeon.Instance);
 
             if (lb == null)
                 return null;
 
             var worldObjects = lb.GetAllWorldObjectsForDiagnostics();
 
+            var creatures = worldObjects
+                .Where(wo => wo is Creature && wo is not Player && !wo.IsGenerator);
+            var creatureCount = creatures.Count();
+
+            if (creatureCount < 5)
+            {
+                return null;
+            }
+
+
             var player = worldObjects.Where(wo => wo is Player).FirstOrDefault();
 
             if (player == null)
-                return null;
+            {
+                var random = new Random();
+                var creature = creatures.OrderBy(creature => random.Next()).FirstOrDefault();
+                var boss = WorldObjectFactory.CreateNewWorldObject(creature.WeenieClassId);
+                boss.Location = new Position(creature.Location);
+                boss.Lifespan = int.MaxValue;
+                MutateDungeonBoss(boss, dungeon.Tier);
+                creature.Destroy();
+                return boss;
+            }
 
             var wo = worldObjects
                 .Where(wo => wo is Creature && wo is not Player && !wo.IsGenerator)
@@ -249,7 +265,7 @@ namespace ACE.Server.EscapeFromDereth.Mutations
                 var boss = WorldObjectFactory.CreateNewWorldObject(wo.WeenieClassId);
                 boss.Location = new Position(wo.Location);
                 boss.Lifespan = int.MaxValue;
-                MutateDungeonBoss(boss);
+                MutateDungeonBoss(boss, dungeon.Tier);
                 wo.Destroy();
                 return boss;
             }
@@ -257,7 +273,7 @@ namespace ACE.Server.EscapeFromDereth.Mutations
             return wo;
         }
 
-        private static void MutateDungeonBoss(WorldObject wo, int tier = 1)
+        private static void MutateDungeonBoss(WorldObject wo, uint tier = 1)
         {
 
             if (wo.Biota?.PropertiesAttribute2nd?.ContainsKey(PropertyAttribute2nd.MaxHealth) == true)
@@ -353,7 +369,7 @@ namespace ACE.Server.EscapeFromDereth.Mutations
 
             if (hellgate != null)
             {
-                var forgottenCreature = CreateForgottenMonster(hellgate.ClosestTown, hellgate.Tier);
+                var forgottenCreature = CreateForgottenMonster(0);
                 forgottenCreature.Location = new Position(creature.Location);
                 MutateForgottenCreatureName(forgottenCreature);
                 CreatureRealmMutate(forgottenCreature, ruleset);
@@ -454,9 +470,8 @@ namespace ACE.Server.EscapeFromDereth.Mutations
             return (uint)value;
         }
 
-        private static Creature CreateForgottenMonster(Town town, int tier)
+        private static Creature CreateForgottenMonster(uint weenieId)
         {
-            var weenieId = town.GetWeenieIdByTier((uint)tier);
             return (Creature)WorldObjectFactory.CreateNewWorldObject(weenieId);
         }
 
@@ -464,10 +479,11 @@ namespace ACE.Server.EscapeFromDereth.Mutations
         {
             if (!(creature is Player) && creature.IsMonster)
             {
+                /* disable towns feature
+
                 if (creature.Location.Indoors)
                     return creature;
 
-                /* disable towns feature
 
                 if (creature.Level < 80 || ThreadSafeRandom.Next(0, 100) < 25) // 25% chance of forgotten mob
                 {

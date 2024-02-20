@@ -17,6 +17,7 @@ using ACE.Server.Network.Managers;
 using ACE.Server.EscapeFromDereth.Hellgates;
 using ACE.Server.Mods;
 using ACE.Server.EscapeFromDereth.Towns;
+using ACE.Server.EscapeFromDereth.Dungeons;
 
 namespace ACE.Server
 {
@@ -309,6 +310,10 @@ namespace ACE.Server
             HellgateManager.Initialize();
 
             */
+
+            log.Info("Initializing DungeonManager...");
+            DungeonManager.Initialize();
+
 
             log.Info("Initializing PlayerManager...");
             PlayerManager.Initialize();

@@ -16,6 +16,7 @@ using ACE.Server.WorldObjects;
 using ACE.Server.Realms;
 using ACE.Server.EscapeFromDereth.Hellgates;
 using ACE.Server.EscapeFromDereth.Towns;
+using ACE.Server.EscapeFromDereth.Dungeons;
 
 namespace ACE.Server.Managers
 {
@@ -355,14 +356,19 @@ namespace ACE.Server.Managers
                 }
             }
 
+            /* disable hellgate feature
+
             // TODO: find better place to Tick hellgates and Towns more efficiently
             HellgateManager.Tick(Time.GetUnixTime());
+
+            */
 
             /* disable towns feature
 
             TownManager.Tick(Time.GetUnixTime());
 
             */
+            DungeonManager.Tick(Time.GetUnixTime());
         }
 
         private static void TickSingleThreadedWork()

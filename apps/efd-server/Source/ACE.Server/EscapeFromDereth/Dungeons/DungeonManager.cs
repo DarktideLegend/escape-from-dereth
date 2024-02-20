@@ -1,9 +1,14 @@
+using ACE.Common;
+using ACE.Database;
 using ACE.Entity;
 using ACE.Entity.Models;
+using ACE.Server.Entity;
 using ACE.Server.EscapeFromDereth.Dungeons.Entity;
 using ACE.Server.EscapeFromDereth.Hellgates.Entity;
 using ACE.Server.EscapeFromDereth.Mutations;
+using ACE.Server.Factories;
 using ACE.Server.Managers;
+using ACE.Server.Realms;
 using ACE.Server.WorldObjects;
 using log4net;
 using System;
@@ -19,13 +24,23 @@ namespace ACE.Server.EscapeFromDereth.Dungeons
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private static double NextHeartbeatTime;
+
         private static readonly double HeartbeatInterval = 5.0f;
 
         private static readonly Dictionary<ulong, Dungeon> ActiveDungeons = new Dictionary<ulong, Dungeon>();
 
-
-
         private static readonly Dictionary<ulong, DungeonLandblock> DungeonLandblocks = new Dictionary<ulong, DungeonLandblock>();
+
+        public static void Initialize()
+        {
+            InitializeHeartbeat();
+        }
+
+        private static void InitializeHeartbeat()
+        {
+            var currentUnixTime = Time.GetUnixTime();
+            NextHeartbeatTime = currentUnixTime + HeartbeatInterval;
+        }
 
         public static Dungeon GetDungeon(uint landblock)
         {
@@ -43,6 +58,22 @@ namespace ACE.Server.EscapeFromDereth.Dungeons
         }
 
 
+        public static uint GetMonsterTierByLevel(uint level)
+        {
+
+            if (level <= 80)
+                return 1;
+            if (level <= 100)
+                return 2;
+            if (level <= 130)
+                return 3;
+            if (level <= 185)
+                return 4;
+
+            return 5;
+        }
+
+
         public static Dungeon CreateDungeon(Player creator, Position drop, List<Realm> appliedRulesets)
         {
             var existingDungeon = GetDungeon(drop.LandblockShort);
@@ -57,13 +88,29 @@ namespace ACE.Server.EscapeFromDereth.Dungeons
             var dropPosition = new Position(drop);
             dropPosition.Instance = instance;
 
-            var tier = 1;
+            var dungeonObjects = GetDungeonObjectsFromPosition(drop, ephemeralRealm.RealmRuleset);
+
+            var creatures = dungeonObjects
+                .Where(wo => wo is Creature creature && creature is not Player && !creature.IsGenerator && !creature.IsNPC);
+
+            var averageLevel = creatures.Average(wo => wo.Level) ?? 1;
+
+            var tier = GetMonsterTierByLevel((uint)averageLevel);
+
+            var creatureWeenieIds = DatabaseManager.World.GetDungeonCreatureWeenieIds(tier);
+
+            while(creatureWeenieIds.Count <= 0)
+            {
+
+                creatureWeenieIds = DatabaseManager.World.GetDungeonCreatureWeenieIds(tier);
+            }
 
             var dungeon = new Dungeon(
                 ephemeralRealm.RealmRuleset,
                 dropPosition,
                 isOpen,
                 tier,
+                creatureWeenieIds,
                 instance);
 
 
@@ -73,14 +120,52 @@ namespace ACE.Server.EscapeFromDereth.Dungeons
             return dungeon;
         }
 
-        public static void SpawnDungeonBoss(Position position)
+        public static void ResetDungeonBoss(Position location)
         {
-            var boss = MutationsManager.CreateDungeonBoss(position);
+            var dungeon = GetDungeon(location.LandblockShort);
+
+            if (dungeon != null)
+            {
+                dungeon.ResetBoss();
+            }
+        }
+
+        public static List<WorldObject> GetDungeonObjectsFromPosition(Position position, AppliedRuleset ruleset)
+        {
+            var Id = new LandblockId(position.LandblockId.Raw);
+
+            var objects = DatabaseManager.World.GetCachedInstancesByLandblock(Id.Landblock, RealmManager.DefaultRealm.Realm.Id);
+            return objects.Select(link => WorldObjectFactory.CreateNewWorldObject(link.WeenieClassId)).ToList();
+        }
+
+        public static void SpawnDungeonBoss(Dungeon dungeon)
+        {
+            var boss = MutationsManager.CreateDungeonBoss(dungeon.DropPosition, dungeon.Ruleset);
 
             if (boss != null)
             {
                 boss.EnterWorld();
+                if (boss.PhysicsObj != null)
+                    dungeon.SpawnBoss();
             }
+        }
+
+        internal static void Tick(double currentUnixTime)
+        {
+            if (NextHeartbeatTime > currentUnixTime)
+                return;
+
+            foreach (var kvp in ActiveDungeons)
+            {
+                var dungeon = kvp.Value;
+
+                if (dungeon.ShouldSpawnBoss)
+                {
+                    SpawnDungeonBoss(dungeon);
+                }
+            }
+
+            NextHeartbeatTime = currentUnixTime + HeartbeatInterval;
         }
     }
 

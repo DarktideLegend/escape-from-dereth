@@ -1230,6 +1230,15 @@ namespace ACE.Database
             }
 
         }
+        public List<uint> GetDungeonCreatureWeenieIds(uint tier)
+        {
+            var enumValues = (CreatureType[])Enum.GetValues(typeof(CreatureType));
+            var randomIndex = ThreadSafeRandom.Next(0, enumValues.Length - 1);
+            var creatureType = enumValues[randomIndex];
+
+            return GetCreatureWeenieIdByTier(creatureType, tier);
+        }
+
 
         public List<List<uint>> GetTownCreatureWeenieIds(CreatureType creatureType)
         {

@@ -16,14 +16,18 @@ namespace ACE.Server.EscapeFromDereth.Dungeons.Entity
 
         public bool ProcessingBossSpawn = false;
 
-        public int Tier;
+        public uint Tier;
 
         public bool IsOpen;
 
         public Dungeon Next;
-        public double BossSpawnCountdown { get; private set; }
+        public bool BossStatus { get; private set; } = false;
+
+        private List<uint> DungeonCreatures = new List<uint>();
+
+        public double BossSpawnCountdown { get; private set; } = Time.GetUnixTime();
         public double BossSpawnRemaining => BossSpawnCountdown - Time.GetUnixTime();
-        public bool ShouldSpawnBoss => BossSpawnRemaining <= 0;
+        public bool ShouldSpawnBoss => BossSpawnRemaining <= 0 && !BossStatus;
 
 
         public Position DropPosition;
@@ -33,13 +37,32 @@ namespace ACE.Server.EscapeFromDereth.Dungeons.Entity
             AppliedRuleset ruleset,
             Position dropPosition,
             bool isOpen,
-            int tier,
+            uint tier,
+            List<uint> dungeonCreatures,
             uint instance) : base(instance)
         {
             Ruleset = ruleset;
             DropPosition = dropPosition;
             Tier = tier;
             IsOpen = isOpen;
+            DungeonCreatures = dungeonCreatures;
+        }
+
+        public void ResetBoss()
+        {
+            BossStatus = false;
+            SetBossSpawnCountdown(Time.GetUnixTime() + TimeSpan.FromMinutes(30).TotalSeconds);
+        }
+
+        public void SpawnBoss()
+        {
+            BossStatus = true;
+        }
+
+        public uint GetRandomCreature()
+        {
+            var randomIndex = ThreadSafeRandom.Next(0, DungeonCreatures.Count - 1);
+            return DungeonCreatures[randomIndex];
         }
 
         public void SetBossSpawnCountdown(double countdown)
