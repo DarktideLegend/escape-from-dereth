@@ -12,7 +12,7 @@ namespace ACE.Server.EscapeFromDereth.Dungeons.Entity
         public Position DropLocation;
         public string Name;
 
-        public DungeonLandblock(string name, Position dropLocation, Position exitLocation)
+        public DungeonLandblock(string name, Position dropLocation)
         {
             this.DropLocation = dropLocation;
             this.Name = name;

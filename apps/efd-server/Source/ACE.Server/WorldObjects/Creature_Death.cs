@@ -11,6 +11,7 @@ using ACE.Entity.Models;
 using ACE.Server.Entity;
 using ACE.Server.Entity.Actions;
 using ACE.Server.EscapeFromDereth.Common;
+using ACE.Server.EscapeFromDereth.Dungeons;
 using ACE.Server.EscapeFromDereth.Hellgates;
 using ACE.Server.EscapeFromDereth.Mutations;
 using ACE.Server.EscapeFromDereth.Towns;
@@ -42,6 +43,9 @@ namespace ACE.Server.WorldObjects
 
             IsTurning = false;
             IsMoving = false;
+
+            if (IsInDungeon && IsDungeonBoss)
+                DungeonManager.ResetDungeonBoss(Location);
 
             if (IsInHellgate)
                 HellgateManager.GetHellgate(Location.Instance)?.ReduceBossExpiration(10);
@@ -751,6 +755,15 @@ namespace ACE.Server.WorldObjects
         {
             var droppedItems = new List<WorldObject>();
 
+            if (IsDungeonBoss)
+            {
+                var dungeon = DungeonManager.GetDungeon(Location.LandblockShort);
+
+                for (var i = 0; i < dungeon.Tier; ++i)
+                {
+                    corpse.TryAddToInventory(WorldObjectFactory.CreateNewWorldObject(20630));
+                }
+            }
             if (IsHellgateBoss)
             {
                 var hellgate = HellgateManager.GetHellgate(Location.Instance);
@@ -769,7 +782,7 @@ namespace ACE.Server.WorldObjects
                 List<WorldObject> items = LootGenerationFactory.CreateRandomLootObjects(profile);
                 foreach (WorldObject wo in items)
                 {
-                    if ((wo.WeenieClassId == 604001 || wo.ItemType == ItemType.TinkeringMaterial) && !IsInHellgate)
+                    if ((wo.WeenieClassId == 604001 || wo.ItemType == ItemType.TinkeringMaterial) && !IsInDungeon)
                         continue;
                     if (corpse != null)
                         corpse.TryAddToInventory(wo);
@@ -835,27 +848,24 @@ namespace ACE.Server.WorldObjects
 
             var tier = profile.Tier;
 
-            if (!IsInHellgate && ThreadSafeRandom.Next(0, 100) > 10)
-                tier = 1;
-
             var deathTreasureProfile = new TreasureDeath()
             {
                 Tier = tier,
-                UnknownChances = IsInHellgate ? 19 : profile.UnknownChances,
+                UnknownChances = IsInDungeon ? 19 : profile.UnknownChances,
                 ItemMaxAmount = itemMax,
-                TreasureType = IsInHellgate ? 2222 : profile.TreasureType,
+                TreasureType = IsInDungeon ? 2222 : profile.TreasureType,
                 ItemMinAmount = profile.ItemMinAmount,
-                ItemChance = IsInHellgate ? 100 : profile.ItemChance,
-                ItemTreasureTypeSelectionChances = IsInHellgate ? 8 : profile.ItemTreasureTypeSelectionChances,
+                ItemChance = IsInDungeon ? 100 : profile.ItemChance,
+                ItemTreasureTypeSelectionChances = IsInDungeon ? 8 : profile.ItemTreasureTypeSelectionChances,
                 MagicItemMaxAmount = magicMax,
                 MagicItemMinAmount = profile.MagicItemMinAmount,
-                MagicItemChance = IsInHellgate ? 100 : profile.MagicItemChance,
-                MagicItemTreasureTypeSelectionChances = IsInHellgate ? 8 : profile.MagicItemTreasureTypeSelectionChances,
+                MagicItemChance = IsInDungeon ? 100 : profile.MagicItemChance,
+                MagicItemTreasureTypeSelectionChances = IsInDungeon ? 8 : profile.MagicItemTreasureTypeSelectionChances,
                 MundaneItemMaxAmount = mundaneMax,
                 MundaneItemMinAmount = profile.MundaneItemMinAmount,
                 MundaneItemChance = profile.MundaneItemChance,
                 MundaneItemTypeSelectionChances = profile.MundaneItemTypeSelectionChances,
-                LootQualityMod = IsInHellgate ? 0 : profile.LootQualityMod,
+                LootQualityMod = IsInDungeon ? 0 : profile.LootQualityMod,
 
             };
 

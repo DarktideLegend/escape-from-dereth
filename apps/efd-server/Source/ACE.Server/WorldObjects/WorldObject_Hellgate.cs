@@ -1,4 +1,5 @@
 using ACE.Entity.Enum.Properties;
+using ACE.Server.EscapeFromDereth.Dungeons;
 using ACE.Server.EscapeFromDereth.Hellgates;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace ACE.Server.WorldObjects
     {
         
         public bool IsHellgateBoss => Name == "Hellgate Boss";
+        public bool IsDungeonBoss => Name == "Dungeon Boss";
 
         public bool IsMeetingHallBoss => WeenieClassId == 4000226;
 
@@ -24,5 +26,6 @@ namespace ACE.Server.WorldObjects
         public bool SpawnHellgateSurfaceOnDeath = false;
 
         public bool IsInHellgate => HellgateManager.PositionIsHellgate(Location);
+        public bool IsInDungeon => DungeonManager.PositionIsDungeon(Location);
     }
 }
