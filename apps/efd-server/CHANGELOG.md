@@ -1,3 +1,10 @@
+## [1.1.0-alpha.73](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.72...efd-server-v1.1.0-alpha.73) (2024-02-20)
+
+
+### Features
+
+* **efd-server:** ✨ dungeon mobs/boss generation scale based on level ([60edc7c](https://github.com/DarktideLegend/escape-from-dereth/commit/60edc7cf67cb659c9120f00d3fdd9a3146ad05e0))
+
 ## [1.1.0-alpha.72](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.71...efd-server-v1.1.0-alpha.72) (2024-02-19)
 
 
