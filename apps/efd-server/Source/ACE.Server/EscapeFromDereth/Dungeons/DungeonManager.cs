@@ -15,6 +15,7 @@ using log4net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -27,6 +28,8 @@ namespace ACE.Server.EscapeFromDereth.Dungeons
         private static double NextHeartbeatTime;
 
         private static readonly double HeartbeatInterval = 5.0f;
+
+        private static readonly HashSet<Dungeon> DungeonDisposalQueue = new HashSet<Dungeon>();
 
         private static readonly Dictionary<ulong, Dungeon> ActiveDungeons = new Dictionary<ulong, Dungeon>();
 
@@ -86,8 +89,10 @@ namespace ACE.Server.EscapeFromDereth.Dungeons
             var instance = ephemeralRealm.Instance;
             var isOpen = false;
 
-            var dropPosition = new Position(drop);
-            dropPosition.Instance = instance;
+            var dropPosition = new Position(drop)
+            {
+                Instance = instance
+            };
 
             var dungeonObjects = GetDungeonObjectsFromPosition(drop, ephemeralRealm.RealmRuleset);
 
@@ -108,27 +113,27 @@ namespace ACE.Server.EscapeFromDereth.Dungeons
 
             var tier = GetMonsterTierByLevel((uint)averageLevel);
 
-            var creatureWeenieIds = DatabaseManager.World.GetDungeonCreatureWeenieIds(averageCreatureType, tier);
+            var creatureWeenieIds = DatabaseManager.World.GetDungeonCreatureWeenieIds(tier, averageCreatureType);
 
             if (averageCreatureType == CreatureType.Invalid)
             {
-                creatureWeenieIds = DatabaseManager.World.GetDungeonCreatureWeenieIds(CreatureType.Undead, tier, false);
+                creatureWeenieIds = DatabaseManager.World.GetDungeonCreatureWeenieIds(tier, CreatureType.Undead);
             }
             else
             {
                 var maxRetry = 107;
                 var tries = 0;
 
-                while ((tries < maxRetry) && creatureWeenieIds.Count <= 0)
+                while ((tries < maxRetry) && creatureWeenieIds.Count == 0)
                 {
-                    creatureWeenieIds = DatabaseManager.World.GetDungeonCreatureWeenieIds(averageCreatureType, tier, true);
+                    creatureWeenieIds = DatabaseManager.World.GetDungeonCreatureWeenieIds(tier);
                     tries++;
                 }
 
                 if (tries >= maxRetry)
                 {
                     // default Undead 
-                    creatureWeenieIds = DatabaseManager.World.GetDungeonCreatureWeenieIds(CreatureType.Undead, tier, false);
+                    creatureWeenieIds = DatabaseManager.World.GetDungeonCreatureWeenieIds(tier, CreatureType.Undead);
                 }
             }
 
@@ -139,6 +144,7 @@ namespace ACE.Server.EscapeFromDereth.Dungeons
                 isOpen,
                 tier,
                 creatureWeenieIds,
+                averageCreatureType,
                 instance);
 
 
@@ -178,6 +184,8 @@ namespace ACE.Server.EscapeFromDereth.Dungeons
 
         public static void SpawnDungeonBoss(Dungeon dungeon)
         {
+
+
             var boss = MutationsManager.CreateDungeonBoss(dungeon.DropPosition, dungeon.Ruleset);
 
             if (boss != null)
@@ -197,6 +205,18 @@ namespace ACE.Server.EscapeFromDereth.Dungeons
             {
                 var dungeon = kvp.Value;
 
+                if (dungeon.MarkForDestruction != null && dungeon.MarkForDestruction - Time.GetUnixTime() <= 0)
+                {
+                    var lb = LandblockManager.GetLandblockUnsafe(dungeon.DropPosition.LandblockId, dungeon.Instance);
+                    if (lb != null)
+                    {
+                        LandblockManager.AddToDestructionQueue(lb);
+                        ActiveDungeons.Remove(dungeon.DropPosition.LandblockShort);
+                    }
+
+
+                }
+
                 if (dungeon.ShouldSpawnBoss)
                 {
                     SpawnDungeonBoss(dungeon);
@@ -204,6 +224,34 @@ namespace ACE.Server.EscapeFromDereth.Dungeons
             }
 
             NextHeartbeatTime = currentUnixTime + HeartbeatInterval;
+        }
+        internal static void AddPlayerToDungeon(Player player, Position position)
+        {
+            var dungeon = GetDungeon(position.LandblockShort);
+            if (dungeon != null)
+            {
+                dungeon.AddPlayer(player);
+                log.Info($"Player {player} has entered dungeon instance: {dungeon.Instance}");
+
+                dungeon.MarkForDestruction = null;
+            }
+        }
+
+        internal static void RemovePlayerFromDungeon(Player player)
+        {
+            var dungeon = GetDungeon(player.Location.LandblockShort);
+            if (dungeon != null)
+            {
+                var removed = dungeon.RemovePlayer(player);
+                var isEmpty = dungeon.IsEmpty;
+                if (removed)
+                    log.Info($"Player {player} has left dungeon instance: {dungeon.Instance}");
+                if (removed && isEmpty)
+                {
+                    dungeon.MarkForDestruction = Time.GetUnixTime() + TimeSpan.FromMinutes(1).TotalSeconds;
+                    log.Info($"Marking dungeon for destruction instance: {dungeon.Instance}");
+                }
+            }
         }
     }
 

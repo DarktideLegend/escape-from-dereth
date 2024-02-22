@@ -11,6 +11,7 @@ namespace ACE.Server.EscapeFromDereth.Common
     {
         public readonly List<Player> Players = new List<Player>();
         public readonly uint Instance;
+        public bool IsEmpty => Players.Count == 0;
 
         public Arena(uint instance)
         {

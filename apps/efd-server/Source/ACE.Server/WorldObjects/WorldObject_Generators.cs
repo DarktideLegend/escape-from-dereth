@@ -619,7 +619,7 @@ namespace ACE.Server.WorldObjects
                 GeneratorProfiles.Add(new GeneratorProfile(this, profile, link.Guid));
                 if (profile.Probability == -1)
                 {
-                    var creatureSpawnMultiplier = RealmRuleset.GetProperty(RealmPropertyFloat.CreatureSpawnMultiplier);
+                    var creatureSpawnMultiplier = Convert.ToInt32(RealmRuleset.GetProperty(RealmPropertyFloat.CreatureSpawnMultiplier));
                     InitCreate += profile.InitCreate;
                     MaxCreate += profile.MaxCreate * (int)(creatureSpawnMultiplier);
                 }

@@ -7,6 +7,11 @@
         "IsFullLootOnDeath": false,
         "IsNeutralZone": true,
         "ReplaceMobs":  false,
+        "ExperienceMultiplierAll": {
+          "low": 0.1,
+          "high": 3.0,
+          "reroll": "landblock"
+        },
         "CreatureSpawnMultiplier": {
           "low": 1.0,
           "high": 3.4,

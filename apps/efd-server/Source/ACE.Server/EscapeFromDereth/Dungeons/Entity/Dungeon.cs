@@ -1,5 +1,6 @@
 using ACE.Common;
 using ACE.Entity;
+using ACE.Entity.Enum;
 using ACE.Server.EscapeFromDereth.Common;
 using ACE.Server.Realms;
 using System;
@@ -29,8 +30,11 @@ namespace ACE.Server.EscapeFromDereth.Dungeons.Entity
         public double BossSpawnRemaining => BossSpawnCountdown - Time.GetUnixTime();
         public bool ShouldSpawnBoss => BossSpawnRemaining <= 0 && !BossStatus;
 
+        public double? MarkForDestruction { get; internal set; }
 
         public Position DropPosition;
+
+        public readonly CreatureType CreatureType;
 
 
         public Dungeon(
@@ -39,6 +43,7 @@ namespace ACE.Server.EscapeFromDereth.Dungeons.Entity
             bool isOpen,
             uint tier,
             List<uint> dungeonCreatures,
+            CreatureType creatureType,
             uint instance) : base(instance)
         {
             Ruleset = ruleset;
@@ -46,6 +51,7 @@ namespace ACE.Server.EscapeFromDereth.Dungeons.Entity
             Tier = tier;
             IsOpen = isOpen;
             DungeonCreatures = dungeonCreatures;
+            CreatureType = creatureType;
         }
 
         public void ResetBoss()

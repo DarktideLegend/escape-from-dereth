@@ -1197,7 +1197,7 @@ namespace ACE.Database
             { 5, new CreatureTierProps(5, 200, 300, 800000, 2000000, 2000, 3000, 5000) },
         };
 
-        public List<uint> GetCreatureWeenieIdByTier(CreatureType creatureType, uint tier)
+        public List<uint> GetCreatureWeenieIdsByTier(CreatureType creatureType, uint tier)
         {
             var props = CreatureCacheProps[tier];
 
@@ -1230,17 +1230,17 @@ namespace ACE.Database
             }
 
         }
-        public List<uint> GetDungeonCreatureWeenieIds(CreatureType creatureType, uint tier, bool random = false)
+        public List<uint> GetDungeonCreatureWeenieIds(uint tier, CreatureType creatureType = CreatureType.Invalid)
         {
-            if (random)
+            if (creatureType == CreatureType.Invalid)
             {
                 var enumValues = (CreatureType[])Enum.GetValues(typeof(CreatureType));
                 var randomIndex = ThreadSafeRandom.Next(0, enumValues.Length - 1);
                 var randomCreatureType = enumValues[randomIndex];
-                return GetCreatureWeenieIdByTier(randomCreatureType, tier);
+                return GetCreatureWeenieIdsByTier(randomCreatureType, tier);
             }
 
-            return GetCreatureWeenieIdByTier(creatureType, tier);
+            return GetCreatureWeenieIdsByTier(creatureType, tier);
         }
 
 
@@ -1249,7 +1249,7 @@ namespace ACE.Database
             var weenieIds = new List<List<uint>>();
 
             for (var i = 1; i <= 5; i++)
-                weenieIds.Add(GetCreatureWeenieIdByTier(creatureType, (uint)i));
+                weenieIds.Add(GetCreatureWeenieIdsByTier(creatureType, (uint)i));
 
 
 

@@ -891,6 +891,11 @@ namespace ACE.Server.WorldObjects
 
             */
 
+            if (newRealm.Realm.Id == 1018) // if entering dungeon
+                DungeonManager.AddPlayerToDungeon(this, newLocation);
+
+            if (prevrealm.Realm.Id == 1018) // if leaving dungeon
+                DungeonManager.RemovePlayerFromDungeon(this);
 
             if (prevrealm.Realm.Id == 1016) // if leaving hellgate
                 HellgateManager.RemovePlayerFromHellgate(this, Location.Instance);

@@ -6,14 +6,11 @@ using ACE.Entity.Enum;
 using ACE.Entity.Enum.Properties;
 using ACE.Entity.Models;
 using ACE.Server.EscapeFromDereth.Dungeons;
-using ACE.Server.EscapeFromDereth.Dungeons.Entity;
 using ACE.Server.EscapeFromDereth.Hellgates;
 using ACE.Server.EscapeFromDereth.Hellgates.Entity;
 using ACE.Server.EscapeFromDereth.Towns;
-using ACE.Server.EscapeFromDereth.Towns.Entity;
 using ACE.Server.Factories;
 using ACE.Server.Managers;
-using ACE.Server.Network.GameMessages.Messages;
 using ACE.Server.Realms;
 using ACE.Server.WorldObjects;
 using log4net;
@@ -102,11 +99,11 @@ namespace ACE.Server.EscapeFromDereth.Mutations
             {
                 var ore = WorldObjectFactory.CreateNewWorldObject(603001);
 
-                if (tier >= 2 && ThreadSafeRandom.Next(1, 10) == 1) 
+                if (tier >= 2 && ThreadSafeRandom.Next(1, 10) == 1)
                 {
                     ore?.Destroy();
                     ore = WorldObjectFactory.CreateNewWorldObject((uint)603002);
-                } 
+                }
 
                 if (tier >= 4 && ThreadSafeRandom.Next(1, 20) == 1)
                 {
@@ -215,7 +212,7 @@ namespace ACE.Server.EscapeFromDereth.Mutations
 
         private static WorldObject ProcessHomeRealmCreature(Creature creature, AppliedRuleset ruleset)
         {
-           var ore = RollForOre(creature.Location);
+            var ore = RollForOre(creature.Location);
 
             if (ore != null)
             {
@@ -254,35 +251,59 @@ namespace ACE.Server.EscapeFromDereth.Mutations
             public DistanceComparer(Position location)
             {
                 Location = location;
-            }   
+            }
             public int Compare(WorldObject x, WorldObject y)
             {
                 return (int)(x.Location.DistanceTo(Location) - y.Location.DistanceTo(Location));
             }
         }
 
-        
+
         public static WorldObject CreateDungeonBoss(Position position, AppliedRuleset ruleset)
         {
             var lb = LandblockManager.GetLandblockUnsafe(position.LandblockId, position.Instance);
             var dungeon = DungeonManager.GetDungeon(position.LandblockShort);
 
-            if (lb == null)
+            if (lb == null || dungeon == null)
                 return null;
 
             var worldObjects = lb.GetAllWorldObjectsForDiagnostics();
 
             var creatures = worldObjects
-                .Where(wo => wo is Creature creature && wo is not Player && !wo.IsGenerator && !creature.IsNPC && !creature.IsOreNode);
+                .Where(wo => wo is Creature creature && wo is not Player && !wo.IsGenerator && !creature.IsNPC && !creature.IsOreNode).ToList();
             var creatureCount = creatures.Count();
 
             if (creatureCount < 5)
-            {
                 return null;
-            }
-
 
             var player = worldObjects.Where(wo => wo is Player).FirstOrDefault();
+
+            var tier = dungeon.Tier < 5 ? dungeon.Tier + 1 : dungeon.Tier;
+            var weenies = DatabaseManager.World.GetCreatureWeenieIdsByTier(dungeon.CreatureType, tier);
+
+            if (weenies.Count > 0)
+            {
+                var randomLocation = creatures.GetRandom().Location;
+                creatures.Clear();
+                var newBoss = WorldObjectFactory.CreateNewWorldObject(weenies.GetRandom());
+                newBoss.Location = new Position(randomLocation);
+                creatures.Add(newBoss);
+
+            }
+            else
+            {
+                while (weenies.Count == 0)
+                {
+                    weenies = DatabaseManager.World.GetDungeonCreatureWeenieIds(tier);
+                }
+
+                var randomLocation = creatures.GetRandom().Location;
+                creatures.Clear();
+                var newBoss = WorldObjectFactory.CreateNewWorldObject(weenies.GetRandom());
+                newBoss.Location = new Position(randomLocation);
+                creatures.Add(newBoss);
+            }
+
 
             if (player == null)
             {
@@ -291,7 +312,7 @@ namespace ACE.Server.EscapeFromDereth.Mutations
                 var boss = WorldObjectFactory.CreateNewWorldObject(creature.WeenieClassId);
                 boss.Location = new Position(creature.Location);
                 boss.Lifespan = int.MaxValue;
-                MutateDungeonBoss(boss, dungeon.Tier);
+                MutateDungeonBoss(boss, tier);
                 creature.Destroy();
                 return boss;
             }
@@ -303,10 +324,12 @@ namespace ACE.Server.EscapeFromDereth.Mutations
 
             if (wo != null)
             {
-                var boss = WorldObjectFactory.CreateNewWorldObject(wo.WeenieClassId);
+                var random = new Random();
+                var creature = creatures.OrderBy(creature => random.Next()).FirstOrDefault();
+                var boss = WorldObjectFactory.CreateNewWorldObject(creature.WeenieClassId);
                 boss.Location = new Position(wo.Location);
                 boss.Lifespan = int.MaxValue;
-                MutateDungeonBoss(boss, dungeon.Tier);
+                MutateDungeonBoss(boss, tier);
                 wo.Destroy();
                 return boss;
             }
@@ -319,13 +342,14 @@ namespace ACE.Server.EscapeFromDereth.Mutations
 
             if (wo.Biota?.PropertiesAttribute2nd?.ContainsKey(PropertyAttribute2nd.MaxHealth) == true)
             {
-                var level = (uint)(5000 * tier);
-                wo.Biota.PropertiesAttribute2nd[PropertyAttribute2nd.MaxHealth].InitLevel = level;
-                wo.Biota.PropertiesAttribute2nd[PropertyAttribute2nd.MaxHealth].CurrentLevel = level;
+
+                var max = wo.Biota.PropertiesAttribute2nd[PropertyAttribute2nd.MaxHealth].CurrentLevel * tier;
+                wo.Biota.PropertiesAttribute2nd[PropertyAttribute2nd.MaxHealth].InitLevel = max;
+                wo.Biota.PropertiesAttribute2nd[PropertyAttribute2nd.MaxHealth].CurrentLevel = max;
             }
 
             wo.SetProperty(PropertyFloat.DefaultScale, 1.5); // scale the boss to have 1.5x size
-            wo.Name = $"Dungeon Boss";
+            wo.Name = $"{wo.Name} Dungeon Boss";
         }
 
         public static WorldObject CreateHellgateBoss(Hellgate hellgate)

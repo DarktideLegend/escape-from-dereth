@@ -14,7 +14,7 @@ namespace ACE.Server.WorldObjects
     {
         
         public bool IsHellgateBoss => Name == "Hellgate Boss";
-        public bool IsDungeonBoss => Name == "Dungeon Boss";
+        public bool IsDungeonBoss => Name.Contains("Dungeon Boss");
 
         public bool IsMeetingHallBoss => WeenieClassId == 4000226;
 
