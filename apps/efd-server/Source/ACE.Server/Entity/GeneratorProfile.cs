@@ -261,7 +261,7 @@ namespace ACE.Server.Entity
             }
             else
             {
-                var creatureSpawnMultiplier = Generator.RealmRuleset.GetProperty(RealmPropertyFloat.CreatureSpawnMultiplier);
+                var creatureSpawnMultiplier = Convert.ToInt32(Generator.RealmRuleset.GetProperty(RealmPropertyFloat.CreatureSpawnMultiplier));
                 var replaceMobs = Generator.RealmRuleset.GetProperty(RealmPropertyBool.ReplaceMobs);
 
                 var wo = AddWorldObject();

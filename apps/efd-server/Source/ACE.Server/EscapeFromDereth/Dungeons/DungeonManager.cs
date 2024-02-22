@@ -1,6 +1,7 @@
 using ACE.Common;
 using ACE.Database;
 using ACE.Entity;
+using ACE.Entity.Enum;
 using ACE.Entity.Models;
 using ACE.Server.Entity;
 using ACE.Server.EscapeFromDereth.Dungeons.Entity;
@@ -90,20 +91,47 @@ namespace ACE.Server.EscapeFromDereth.Dungeons
 
             var dungeonObjects = GetDungeonObjectsFromPosition(drop, ephemeralRealm.RealmRuleset);
 
-            var creatures = dungeonObjects
+            var generatorCreatureObjects = GetGeneratorCreaturesObjectsFromDungeon(dungeonObjects);
+
+            var spawnedCreatures = dungeonObjects
                 .Where(wo => wo is Creature creature && creature is not Player && !creature.IsGenerator && !creature.IsNPC);
 
-            var averageLevel = creatures.Average(wo => wo.Level) ?? 1;
+            var creatures = generatorCreatureObjects.Concat(spawnedCreatures).Distinct().ToList();
+
+            var averageLevel = creatures.Any() ? creatures.Average(wo => wo.Level) : 1;
+
+            var averageCreatureType = creatures.Any() ? creatures
+                .GroupBy(obj => obj.CreatureType)
+                .OrderByDescending(group => group.Count())
+                .Select(group => group.Key)
+                .FirstOrDefault(CreatureType.Invalid) ?? CreatureType.Invalid : CreatureType.Invalid;
 
             var tier = GetMonsterTierByLevel((uint)averageLevel);
 
-            var creatureWeenieIds = DatabaseManager.World.GetDungeonCreatureWeenieIds(tier);
+            var creatureWeenieIds = DatabaseManager.World.GetDungeonCreatureWeenieIds(averageCreatureType, tier);
 
-            while(creatureWeenieIds.Count <= 0)
+            if (averageCreatureType == CreatureType.Invalid)
             {
-
-                creatureWeenieIds = DatabaseManager.World.GetDungeonCreatureWeenieIds(tier);
+                creatureWeenieIds = DatabaseManager.World.GetDungeonCreatureWeenieIds(CreatureType.Undead, tier, false);
             }
+            else
+            {
+                var maxRetry = 107;
+                var tries = 0;
+
+                while ((tries < maxRetry) && creatureWeenieIds.Count <= 0)
+                {
+                    creatureWeenieIds = DatabaseManager.World.GetDungeonCreatureWeenieIds(averageCreatureType, tier, true);
+                    tries++;
+                }
+
+                if (tries >= maxRetry)
+                {
+                    // default Undead 
+                    creatureWeenieIds = DatabaseManager.World.GetDungeonCreatureWeenieIds(CreatureType.Undead, tier, false);
+                }
+            }
+
 
             var dungeon = new Dungeon(
                 ephemeralRealm.RealmRuleset,
@@ -118,6 +146,16 @@ namespace ACE.Server.EscapeFromDereth.Dungeons
 
             log.Info($"Creating Dungeon for {creator.Name} - {instance}");
             return dungeon;
+        }
+
+        private static List<WorldObject> GetGeneratorCreaturesObjectsFromDungeon(List<WorldObject> dungeonObjects)
+        {
+            return dungeonObjects
+                .Where(wo => wo.IsGenerator)
+                .SelectMany(wo => wo.Biota.PropertiesGenerator.Select(prop => prop.WeenieClassId))
+                .Select(wcid => WorldObjectFactory.CreateNewWorldObject(wcid))
+                .Where(wo => wo is Creature creature && creature is not Player && !creature.IsGenerator && !creature.IsNPC)
+                .ToList();
         }
 
         public static void ResetDungeonBoss(Position location)

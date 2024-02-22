@@ -6,9 +6,10 @@
         "Description": ".",
         "IsFullLootOnDeath": false,
         "IsNeutralZone": true,
+        "ReplaceMobs":  false,
         "CreatureSpawnMultiplier": {
-          "low": 1,
-          "high": 3,
+          "low": 1.0,
+          "high": 4.0,
           "reroll": "landblock"
         },
         "CreatureRespawnDuration": {
