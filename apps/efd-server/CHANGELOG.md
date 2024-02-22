@@ -1,3 +1,16 @@
+## [1.1.0-alpha.74](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.73...efd-server-v1.1.0-alpha.74) (2024-02-22)
+
+
+### Features
+
+* **efd-server:** ✨ add Ore feature ([a2b3add](https://github.com/DarktideLegend/escape-from-dereth/commit/a2b3addd852fa3354d11302d94fdffc36e9d4215))
+* **efd-server:** ✨ dungeons are marked for disposal when vacant ([a321ee3](https://github.com/DarktideLegend/escape-from-dereth/commit/a321ee32d65ab1ac4b566033313938ec41405e08))
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ update Generator realm logic ([638db1c](https://github.com/DarktideLegend/escape-from-dereth/commit/638db1c6236560fd3694834559fe1c1c16f61d8a))
+
 ## [1.1.0-alpha.73](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.72...efd-server-v1.1.0-alpha.73) (2024-02-20)
 
 
