@@ -1,3 +1,4 @@
+
 using ACE.Entity.Enum.Properties;
 using ACE.Server.EscapeFromDereth.Dungeons;
 using ACE.Server.EscapeFromDereth.Hellgates;
@@ -16,6 +17,15 @@ namespace ACE.Server.WorldObjects
         public bool IsDungeonBoss => Name == "Dungeon Boss";
 
         public bool IsMeetingHallBoss => WeenieClassId == 4000226;
+
+        private List<uint> OreNodes = new List<uint>()
+        {
+            603001,
+            603002,
+            603003,
+        };
+
+        public bool IsOreNode => OreNodes.Contains(WeenieClassId);
 
         public bool SpawnHellgateOnDeath
         {

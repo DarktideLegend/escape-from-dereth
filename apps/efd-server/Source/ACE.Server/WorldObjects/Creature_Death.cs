@@ -755,6 +755,15 @@ namespace ACE.Server.WorldObjects
         {
             var droppedItems = new List<WorldObject>();
 
+            if (IsOreNode)
+            {
+                var amount = WeenieClassId == 603001 ? 1 : WeenieClassId == 603002 ? 25 : 100;
+                for (var i = 0; i < amount; ++i)
+                {
+                    corpse.TryAddToInventory(WorldObjectFactory.CreateNewWorldObject(603004));
+                }
+            }
+
             if (IsDungeonBoss)
             {
                 var dungeon = DungeonManager.GetDungeon(Location.LandblockShort);

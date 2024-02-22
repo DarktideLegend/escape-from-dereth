@@ -7,6 +7,7 @@
     "ExperienceMultiplierAll": 0.1,
     "HasRebuffs": false,
     "HasHousing": false,
+    "ReplaceMobs": true,
     "HasPvpSummoners": true,
     "UseWieldRequirements": false
   }

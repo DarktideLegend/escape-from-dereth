@@ -6,6 +6,7 @@ using ACE.Entity.Enum;
 using ACE.Entity.Enum.Properties;
 using ACE.Entity.Models;
 using ACE.Server.EscapeFromDereth.Dungeons;
+using ACE.Server.EscapeFromDereth.Dungeons.Entity;
 using ACE.Server.EscapeFromDereth.Hellgates;
 using ACE.Server.EscapeFromDereth.Hellgates.Entity;
 using ACE.Server.EscapeFromDereth.Towns;
@@ -74,6 +75,14 @@ namespace ACE.Server.EscapeFromDereth.Mutations
 
             if (dungeon != null)
             {
+                var ore = RollForOre(creature.Location, dungeon.Tier);
+
+                if (ore != null)
+                {
+                    creature.Destroy();
+                    return ore;
+                }
+
                 var dungeonCreature = dungeon.GetRandomCreature();
                 var forgottenCreature = CreateForgottenMonster(dungeonCreature);
                 forgottenCreature.Location = new Position(creature.Location);
@@ -82,6 +91,30 @@ namespace ACE.Server.EscapeFromDereth.Mutations
                 //MutateDeathTreasureTypeByTier(forgottenCreature, hellgate.Tier);
                 creature.Destroy();
                 return forgottenCreature;
+            }
+
+            return null;
+        }
+
+        private static WorldObject RollForOre(Position position, uint tier = 1)
+        {
+            if (ThreadSafeRandom.Next(1, 100) == 1)
+            {
+                var ore = WorldObjectFactory.CreateNewWorldObject(603001);
+
+                if (tier >= 2 && ThreadSafeRandom.Next(1, 10) == 1) 
+                {
+                    ore?.Destroy();
+                    ore = WorldObjectFactory.CreateNewWorldObject((uint)603002);
+                } 
+
+                if (tier >= 4 && ThreadSafeRandom.Next(1, 20) == 1)
+                {
+                    ore?.Destroy();
+                    ore = WorldObjectFactory.CreateNewWorldObject((uint)603003);
+                }
+                ore.Location = new Position(position);
+                return ore;
             }
 
             return null;
@@ -182,6 +215,14 @@ namespace ACE.Server.EscapeFromDereth.Mutations
 
         private static WorldObject ProcessHomeRealmCreature(Creature creature, AppliedRuleset ruleset)
         {
+           var ore = RollForOre(creature.Location);
+
+            if (ore != null)
+            {
+                creature.Destroy();
+                return ore;
+            }
+
             var homeRealmCreature = CreatureHomeRealmMutate(creature);
             CreatureRealmMutate(homeRealmCreature, ruleset);
 
@@ -232,7 +273,7 @@ namespace ACE.Server.EscapeFromDereth.Mutations
             var worldObjects = lb.GetAllWorldObjectsForDiagnostics();
 
             var creatures = worldObjects
-                .Where(wo => wo is Creature && wo is not Player && !wo.IsGenerator);
+                .Where(wo => wo is Creature creature && wo is not Player && !wo.IsGenerator && !creature.IsNPC && !creature.IsOreNode);
             var creatureCount = creatures.Count();
 
             if (creatureCount < 5)

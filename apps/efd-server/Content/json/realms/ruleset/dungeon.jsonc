@@ -9,7 +9,7 @@
         "ReplaceMobs":  false,
         "CreatureSpawnMultiplier": {
           "low": 1.0,
-          "high": 4.0,
+          "high": 3.4,
           "reroll": "landblock"
         },
         "CreatureRespawnDuration": {
