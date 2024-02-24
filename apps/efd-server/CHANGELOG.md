@@ -1,3 +1,10 @@
+## [1.1.0-alpha.75](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.74...efd-server-v1.1.0-alpha.75) (2024-02-24)
+
+
+### Code Refactoring
+
+* **efd-server:** ♻️ update GetMonsterTierByLevel mapping ([90af1bf](https://github.com/DarktideLegend/escape-from-dereth/commit/90af1bf8a94e9cc9c9e0661d4ae4572823e8019e))
+
 ## [1.1.0-alpha.74](https://github.com/DarktideLegend/escape-from-dereth/compare/efd-server-v1.1.0-alpha.73...efd-server-v1.1.0-alpha.74) (2024-02-22)
 
 
