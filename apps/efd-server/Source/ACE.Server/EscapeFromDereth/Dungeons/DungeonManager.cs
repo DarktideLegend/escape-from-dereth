@@ -64,17 +64,20 @@ namespace ACE.Server.EscapeFromDereth.Dungeons
 
         public static uint GetMonsterTierByLevel(uint level)
         {
+            uint tier = 1;
 
-            if (level <= 80)
-                return 1;
+            if (level <= 300)
+                tier = 5;
+            if (level <= 220)
+                tier = 4;
+            if (level <= 150)
+                tier = 3;
+            if (level <= 115)
+                tier = 2;
             if (level <= 100)
-                return 2;
-            if (level <= 130)
-                return 3;
-            if (level <= 185)
-                return 4;
+                tier = 1;
 
-            return 5;
+            return tier;
         }
 
 
